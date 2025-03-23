@@ -1,0 +1,65 @@
+.c-text {
+    overflow: hidden;
+    display: flex;
+    /* width: 100vw; */
+    font-size: 350px;
+    font-weight: bold;
+    letter-spacing:30px; /*文字間隔*/
+    line-height:300px; /*行間隔*/
+    color: #ffffff;
+    text-shadow: 0px 2px 10px #d0d0d0;
+}
+
+.c-text__item {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+  
+.c-text__item:nth-child(1) {
+    animation: MoveLeft var(--tick-duration, 36s) var(--tick-delay, -18s) infinite linear;
+}
+.c-text__item:nth-child(2) {
+    animation: MoveLeft2 var(--tick-duration, 36s) infinite linear;
+}
+.c-text__item2:nth-child(1) {
+    animation: MoveRight var(--tick-duration, 36s) var(--tick-delay, -18s) infinite linear;
+}
+.c-text__item2:nth-child(2) {
+    animation: MoveRight2 var(--tick-duration, 36s) infinite linear;
+}
+
+@keyframes MoveLeft {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+  
+@keyframes MoveLeft2 {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-200%);
+    }
+}
+
+@keyframes MoveRight {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(100%);
+    }
+}
+  
+@keyframes MoveRight2 {
+    from {
+        transform: translateX(-200%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}

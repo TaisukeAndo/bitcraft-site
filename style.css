@@ -1,0 +1,167 @@
+@charset "UTF-8";
+
+/*全体スタイル-------------------------------*/
+body {
+    margin: 0px;
+    padding: 0px;
+    font-family: "Inter";
+}
+a{  
+    color:inherit;
+    text-decoration: none;
+}
+ul{
+    list-style: none;
+    padding: 0px;
+}
+.number-white{
+    position: relative;
+    font-size: 150px;
+    font-weight: bold;
+    background: linear-gradient(0deg, #ffffff 0%, #dcdcdc 60%, #686868 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    z-index: 10; /*重ね順*/
+    margin: 0px;
+}
+.content{
+    position: relative;
+    top: -880px;
+    padding: 0px 10%;
+}
+.content .section-title{
+    position:relative;
+    z-index: 20; /*重ね順*/
+    top: -100px;
+}
+.content h2{
+    font-size: 48px;
+    margin: 0px;
+}
+.content .section-title p{
+    font-size: 16px;
+    margin: 0px;
+}
+
+/*header-------------------------------*/
+header{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;/*上下中心*/
+    position: fixed; 
+    z-index: 30;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0px 0px 10px rgb(144, 144, 144);
+    width: 100%;
+    height: 70px;
+    margin-top: 0px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.header-logo{
+    align-items: center;/*上下中心*/
+    margin: auto 0px;
+}
+.header-logo img{
+    width: 130px;
+}
+header ul{
+    display:flex;
+    /*text-align: right;*/ /*右揃え*/
+    width: auto;
+    height: 40px;
+}
+header ul li{
+    /*display: inline-block;*/
+    align-items: center;
+    /*text-align: right;*/ /*右揃え*/
+    margin-left: 30px;
+    margin-right: 30px;
+}
+.contact-button{
+    /*display: inline-block;*/
+    text-align: center;
+    color: white;
+    background-color: black;
+    width: 200px;
+    border-radius: 50px;
+    height: 100%;
+    padding: 0px;
+}
+.contact-button a{
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+/*home-------------------------------*/
+.home{
+    position: relative;
+    top: -880px;
+    padding-top:150px;
+    padding-left: 100px;
+    padding-right: 10px;
+    margin-bottom: 100px;
+}
+.home .title-disc{
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0px;
+}
+.home h1{
+    font-size: 100px;
+    letter-spacing:15px; /*文字間隔*/
+    margin: 0px;
+}
+.home .discription{
+    line-height:35px; /*行間隔*/
+    width: 650px;
+}
+
+/*Service-------------------------------*/
+.service-list{
+    display: inline-block;
+    width: 350px;
+    height: 450px;
+    margin-bottom: 20px;
+}
+.service-list img{
+    width: 100%;
+}
+.service-list .title{
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+.service-list .title h3{
+    margin: 0px;
+}
+
+.service-list p{
+    margin: 0px;
+}
+
+.trans-button{
+  width: 18px;
+  height: 18px;
+  background: #333;
+  border-radius: 50%;
+  margin-left: 20px;
+}
+.trans-button p{
+    margin: 0px;
+}
+
+/*Idea-------------------------------*/
+
+/*About-------------------------------*/
+.about{
+    background-color: black;
+    color:#ffffff;
+}
+
+/*footer-------------------------------*/
+footer{
+    background-color: black;
+    color:#ffffff;
+}
