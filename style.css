@@ -138,8 +138,17 @@ header ul li{
     margin: 0px;
 }
 
+.list-item .service-image{
+    border: 0.5px solid #848484;
+    width: 330px;
+    height: 247px;
+    flex: 0 0 330px; /*幅を固定*/
+}
 .list-item img{
+    object-fit: cover;
+    /* object-position: center center; */
     width: 100%;
+    height: 100%;
 }
 .list-item .title{
     display: flex;
@@ -159,14 +168,22 @@ header ul li{
 .idea-list{
     position: relative;
     top: -50px;
-    display: block;
 }
 .idea-list .idea-item{
     display: flex;
     margin-bottom: 30px;
 }
+.idea-image{
+    border: 0.5px solid #848484;
+    width: 255px;
+    height: 190px;
+    flex: 0 0 255px; /*幅を固定*/
+}
 .idea-image img{
-    width: 250px;
+    object-fit: cover;
+    /* object-position: center center; */
+    width: 100%;
+    height: 100%;
 }
 .idea-disc {
     margin-left: 30px;
@@ -213,6 +230,18 @@ header ul li{
     top: -40px;
     display: flex;
     padding-bottom:50px ;
+}
+.profile-image{
+    border: 0.5px solid #848484;
+    width: 350px;
+    height: 260px;
+    flex: 0 0 350px; /*幅を固定*/
+}
+.profile-image img{
+    object-fit: cover;
+    /* object-position: center center; */
+    width: 100%;
+    height: 100%;
 }
 .profile-disc{
     margin-left: 50px;
