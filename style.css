@@ -1,10 +1,11 @@
 @charset "UTF-8";
 
 /*全体スタイル-------------------------------*/
-body {
+main,body {
     margin: 0px;
     padding: 0px;
     font-family: "Inter";
+    position: relative;
 }
 a{  
     color:inherit;
@@ -18,16 +19,15 @@ ul{
     position: relative;
     font-size: 150px;
     font-weight: bold;
-    background: linear-gradient(0deg, #ffffff 0%, #dcdcdc 60%, #686868 80%);
+    background: linear-gradient(0deg, #ffffff 0%, #dcdcdc 60%, #9f9f9f 80%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     z-index: 10; /*重ね順*/
     margin: 0px;
 }
 .content{
-    position: relative;
-    top: -880px;
-    padding: 0px 10%;
+    padding: 0px 15%;
+    margin-bottom: 70px;
 }
 .content .section-title{
     position:relative;
@@ -36,10 +36,15 @@ ul{
 }
 .content h2{
     font-size: 48px;
+    width: auto;
+    height: auto;
     margin: 0px;
 }
 .content .section-title p{
     font-size: 16px;
+    font-weight: 100;
+    width: auto;
+    height: auto;
     margin: 0px;
 }
 
@@ -47,59 +52,56 @@ ul{
 header{
     display:flex;
     justify-content: space-between;
-    align-items: center;/*上下中心*/
-    position: fixed; 
+    box-sizing: border-box; /*headerの横幅がフレームアウトしないように設定*/
+    align-items: center; /*上下中心*/
+    position: fixed;
     z-index: 30;
     background-color: rgb(255, 255, 255);
     box-shadow: 0px 0px 10px rgb(144, 144, 144);
     width: 100%;
-    height: 70px;
+    height: 80px;
     margin-top: 0px;
-    padding-left: 15px;
-    padding-right: 15px;
+    padding: 0 20px;
 }
 .header-logo{
-    align-items: center;/*上下中心*/
     margin: auto 0px;
 }
 .header-logo img{
     width: 130px;
 }
+.header-right{
+    display: flex;
+}
+.header-right .contact-button{
+   align-items: center;
+   display: flex;
+   color: white;
+   background-color: black;
+   border-radius: 50px;
+   height: 40px;
+   padding: 0px 40px;
+   margin: auto 0px;
+   margin-left: 20px;
+}
+.header-right .contact-button p{
+    margin-left: 10px;    
+}
 header ul{
     display:flex;
-    /*text-align: right;*/ /*右揃え*/
     width: auto;
-    height: 40px;
 }
 header ul li{
-    /*display: inline-block;*/
     align-items: center;
-    /*text-align: right;*/ /*右揃え*/
-    margin-left: 30px;
-    margin-right: 30px;
-}
-.contact-button{
-    /*display: inline-block;*/
-    text-align: center;
-    color: white;
-    background-color: black;
-    width: 200px;
-    border-radius: 50px;
-    height: 100%;
-    padding: 0px;
-}
-.contact-button a{
-    margin-left: 30px;
-    margin-right: 30px;
+    margin: 0 30px;
 }
 
 /*home-------------------------------*/
 .home{
-    position: relative;
-    top: -880px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0 7%;
     padding-top:150px;
-    padding-left: 100px;
-    padding-right: 10px;
     margin-bottom: 100px;
 }
 .home .title-disc{
@@ -118,50 +120,190 @@ header ul li{
 }
 
 /*Service-------------------------------*/
-.service-list{
-    display: inline-block;
-    width: 350px;
-    height: 450px;
-    margin-bottom: 20px;
+
+.service{
+    margin-top: 70px;
 }
-.service-list img{
+.service-list{
+    position: relative;
+    top: -30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 330px);
+    grid-row-gap: 50px;
+    grid-column-gap: 20px;
+    justify-content: center;
+    width: 100%;
+    margin: 0px;
+}
+
+.list-item img{
     width: 100%;
 }
-.service-list .title{
+.list-item .title{
     display: flex;
     align-items: center;
     margin-top: 15px;
     margin-bottom: 10px;
 }
-.service-list .title h3{
-    margin: 0px;
+.list-item .title h3{
+    margin: 0px 15px 0px 0px;
 }
 
-.service-list p{
-    margin: 0px;
-}
-
-.trans-button{
-  width: 18px;
-  height: 18px;
-  background: #333;
-  border-radius: 50%;
-  margin-left: 20px;
-}
-.trans-button p{
+.list-item p{
     margin: 0px;
 }
 
 /*Idea-------------------------------*/
+.idea-list{
+    position: relative;
+    top: -50px;
+    display: block;
+}
+.idea-list .idea-item{
+    display: flex;
+    margin-bottom: 30px;
+}
+.idea-image img{
+    width: 250px;
+}
+.idea-disc {
+    margin-left: 30px;
+    align-items: center;
+}
+.idea-disc .sub-title{
+    color: #848484;
+    margin-bottom: 5px;
+}
+.idea-disc .title{
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.idea-disc h3{
+    width: auto;
+    font-size: 25px;
+    margin: 0px 15px 0px 0px;
+}
+.idea-disc p{
+    width: 100%;
+    margin: 0px;
+}
 
 /*About-------------------------------*/
 .about{
     background-color: black;
     color:#ffffff;
+    padding-top: 30px;
+    margin-bottom: 50px;
+}
+.number-black{
+    position: relative;
+    font-size: 150px;
+    font-weight: bold;
+    background: linear-gradient(0deg, #000000 10%, #262626 50%, #ffffff 90%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    z-index: 10; /*重ね順*/
+    margin: 0px;
+}
+.profile{
+    position: relative;
+    top: -40px;
+    display: flex;
+    padding-bottom:50px ;
+}
+.profile-disc{
+    margin-left: 50px;
+}
+.profile-disc p{
+    color: #848484;
+    margin: 0px;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+.profile-disc h3{
+    width: auto;
+    font-size: 25px;
+    margin: 0px;
+    margin-bottom: 10px;
+}
+.profile-disc .social{
+    display: flex;
+    align-items: center;
+}
+.social-item{
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+.social-item p{
+    margin: 0px;
+    margin-left: 10px;
+}
+.profile-disc .social p{
+    color: #ffffff;
+    margin-left: 10px;
 }
 
+/*contact-------------------------------*/
+
+.contact{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0px;
+}
+.contact .contact-button{
+    display: flex;
+    align-items: center;
+    display: flex;
+    font-weight: bold;
+    border-radius: 50px;
+    height: 40px;
+    padding: 0px 40px;
+    margin: auto 0px;
+    margin-left: 20px;
+}
+.contact .black{
+    color: white;
+    background-color: black;
+}
+.contact .white{
+    color: rgb(0, 0, 0);
+    border: 1px solid #000000;
+    background-color: rgb(255, 255, 255);
+}
+.contact .right-item{
+    display: flex;
+}
 /*footer-------------------------------*/
 footer{
     background-color: black;
     color:#ffffff;
+    font-weight: 300;
+    padding: 0px 15%;
+    padding-top: 20px;
+    padding-bottom: 5px;
+}
+footer .menu{
+    display: flex;
+    margin-bottom: 20px;
+}
+footer .menu .image{
+   width:fit-content;
+   margin-right: 250px;
+}
+footer .menu h2{
+    font-size: 15px;
+}
+footer .menu ul{
+    margin: 0px;
+    width: 250px;
+}
+footer .menu li{
+    margin-bottom: 15px;
+    color: #848484;
+}
+footer small{
+    color: #848484;
 }

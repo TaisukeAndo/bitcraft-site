@@ -11,94 +11,96 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <title>bitcraft</title>
   </head>
+  <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script> 
   <script src="https://kit.fontawesome.com/88efd4f5df.js" crossorigin="anonymous"></script>
   <script href="script.js"></script>
   <body>
     <header>
         <a class="header-logo" href="#"><img src="image/bitcraft-logo.png" alt="bitcraft-logo"></a>
-        <ul>
-            <li><a href="#Home">Home<a></li>
-            <li><a href="#Service">Service<a></li>
-            <li><a href="#Idea">Idea<a></li>
-            <li><a href="#Home">About<a></li>
-            <li>
-                <div class="contact-button">
-                    <a href="#Contact">Contact</a>
-                </div>
-            </li>
-        </ul>
+        <div class="header-right">
+            <ul>
+                <li><a href="#Home">Home<a></li>
+                <li><a href="#Service">Service<a></li>
+                <li><a href="#Idea">Idea<a></li>
+                <li><a href="#Home">About<a></li>
+            </ul>
+            <a class="contact-button" href="#Contact">
+                <i class="fa-solid fa-envelope"></i>
+                <p>Contact</p>
+            </a>
+        </div>
     </header>
     <main>
         <div class="c-text js-tick">
-            <div class="c-text__item">011010110110</div>
-            <div class="c-text__item">011010110110</div>
+            <div class="c-text__item">0110101101101011</div>
+            <div class="c-text__item">0110101101101011</div>
         </div>
         <div class="c-text js-tick">
-            <div class="c-text__item2">011010110110</div>
-            <div class="c-text__item2">011010110110</div>
+            <div class="c-text__item2">0110101101101011</div>
+            <div class="c-text__item2">0110101101101011</div>
         </div>   
         <div class="c-text js-tick">
-            <div class="c-text__item">011010110110</div>
-            <div class="c-text__item">011010110110</div>
+            <div class="c-text__item">0110101101101011</div>
+            <div class="c-text__item">0110101101101011</div>
         </div>
         <div class="home">
             <p class="title-disc">My Mission</p>
             <h1 class="main-titile">ITソリューションで、<br>n=1 から<br>幸せにする。</h1>
             <p class="discription">bitcraftは「n=1から幸せにする」をミッションに掲げています。最初から広く汎用性を求めると、誰の幸せにもつながらないことがあります。だからこそ、一人の心からの幸せを大切にし、それが多くの人に愛されるサービスへと広がると信じています。 技術はあくまで手段。お客様の課題を言語化し、最適な技術を選び、開発まで一貫して寄り添いながら、価値あるサービスを提供します。</p>    
         </div>
-        <div class="content">
+        <div class="content service">
             <!--Service-->
             <p class="number-white">001</p>
             <div class="section-title">
                 <h2>Service</h2>
                 <p>要件定義から設計・開発・運用まで、ITソリューションを一貫して提供します。</p>
             </div>
-            <ul>
-                <li class="service-list">
+            <ul class="service-list">
+                <li class="list-item">
                     <div class="image"><img src="image/standby-image.png" alt="イメージ"></div>
                     <div class="title">
                         <h3>UI / UX デザイン</h3>
-                        <a class="trans-button"></a>
+                        <i class="fa-solid fa-circle-chevron-right"></i>
                     </div>
-                    <p>ユーザー視点を重視し、使いやすく魅力的なデザインを提供。直感的な操作性と快適な体験を実現し、Web・アプリの価値を高めます。ユーザビリティ調査から設計まで一貫して対応します。</p>
+                    <p>ユーザー視点を重視し、使いやすく魅力的なデザインを提供。優れた操作性を実現し、Web・アプリの価値を高めます。ユーザビリティ調査から設計まで一貫して対応します。</p>
                 </li>
-                <li class="service-list">
+                <li class="list-item">
                     <div class="service-image"><img src="image/standby-image.png" alt="イメージ"></div>
                     <div class="title">
                         <h3>Webサイト制作</h3>
-                        <a class="trans-button"></a>
+                        <i class="fa-solid fa-circle-chevron-right"></i>
                     </div>
                     <p>企業や個人の目的に合わせたWebサイトを設計・構築。デザイン性と機能性を両立し、SEOやモバイル対応も考慮。要件定義から運用サポートまで幅広く対応します。</p>
                 </li>
-                <li class="service-list">
+                <li class="list-item">
                     <div class="service-image"><img src="image/standby-image.png" alt="イメージ"></div>
                     <div class="title">
                         <h3>システム開発</h3>
-                        <a class="trans-button"></a>
+                        <i class="fa-solid fa-circle-chevron-right"></i>
                     </div>
                     <p>業務効率化や新規サービスの実現に向け、最適なシステムを開発。Webアプリや業務システム、API連携など、要件に応じた柔軟な設計・実装を行います。</p>
                 </li>
-                <li class="service-list">
+                <li class="list-item">
                     <div class="service-image"><img src="image/standby-image.png" alt="イメージ"></div>
                     <div class="title">
                         <h3>3DCG</h3>
-                        <a class="trans-button"></a>
+                        <i class="fa-solid fa-circle-chevron-right"></i>
                     </div>
                     <p>キャラクターモデリングやプロダクトデザインなど、高品質な3DCGを制作。ゲームや映像、VR/ARなど幅広い分野に対応し、視覚的に魅力あるコンテンツを提供します。</p>
                 </li>
-                <li class="service-list">
+                <li class="list-item">
                     <div class="service-image"><img src="image/standby-image.png" alt="イメージ"></div>
                     <div class="title">
                         <h3>教育・講師</h3>
-                        <a class="trans-button"></a>
+                        <i class="fa-solid fa-circle-chevron-right"></i>
                     </div>
                     <p>プログラミングやデザインなど、専門スキルを指導。初心者から実務レベルまで対応し、学習者の目標に合わせたカリキュラムを提供します。企業研修や個別指導も可能です。</p>
                 </li>
-                <li class="service-list">
+                <li class="list-item">
                     <div class="service-image"><img src="image/standby-image.png" alt="イメージ"></div>
                     <div class="title">
                         <h3>マネージャー業務</h3>
-                        <a class="trans-button"></a>
+                        <i class="fa-solid fa-circle-chevron-right"></i>
                     </div>
                     <p>開発プロジェクトの進行管理や品質管理を担当。要件定義からスケジュール調整、チームビルディングまで、円滑なプロジェクト運営をサポートします。</p>
                 </li>
@@ -111,25 +113,25 @@
                 <h2>Idea</h2>
                 <p>事業アイデアをラフ案として作成し、形にするための第一歩をサポート。</p>
             </div>
-            <ul>
-                <li>
-                    <div class="service-image"><img src="image/standby-image.png" alt="イメージ"></div>
-                    <div>
-                        <p>出会いやつながりを求める人のためのどこでも相席アプリ</p>
+            <ul class="idea-list">
+                <li class="idea-item">
+                    <div class="idea-image"><img src="image/standby-image.png" alt="イメージ"></div>
+                    <div class="idea-disc">
+                        <p class="sub-title">出会いやつながりを求める人のためのどこでも相席アプリ</p>
                         <div class="title">
                             <h3>Meet</h3>
-                            <div><p>></p></div>
+                            <i class="fa-solid fa-circle-chevron-right"></i>
                         </div>
                         <p>キャラクターモデリングやプロダクトデザインなど、高品質な3DCGを制作。ゲームや映像、VR/ARなど幅広い分野に対応し、視覚的に魅力あるコンテンツを提供します。キャラクターモデリングやプロダクトデザインなど、高品質な3DCGを制作。ゲームや映像、VR/ARなど幅広い分野に対応し、視覚的に魅力あるコンテンツを提供します。</p>
                     </div>
                 </li>
-                <li>
-                    <div class="service-image"><img src="image/standby-image.png" alt="イメージ"></div>
-                    <div>
-                        <p>出会いやつながりを求める人のためのどこでも相席アプリ</p>
+                <li class="idea-item">
+                    <div class="idea-image"><img src="image/standby-image.png" alt="イメージ"></div>
+                    <div class="idea-disc">
+                        <p class="sub-title">出会いやつながりを求める人のためのどこでも相席アプリ</p>
                         <div class="title">
                             <h3>Rough Letter</h3>
-                            <div><p>></p></div>
+                            <i class="fa-solid fa-circle-chevron-right"></i>
                         </div>
                         <p>キャラクターモデリングやプロダクトデザインなど、高品質な3DCGを制作。ゲームや映像、VR/ARなど幅広い分野に対応し、視覚的に魅力あるコンテンツを提供します。キャラクターモデリングやプロダクトデザインなど、高品質な3DCGを制作。ゲームや映像、VR/ARなど幅広い分野に対応し、視覚的に魅力あるコンテンツを提供します。</p>
                     </div>
@@ -138,78 +140,102 @@
         </div>
         <!--About-->
         <div class="content about">
-            <p class="number-white">011</p>
+            <p class="number-black">011</p>
             <div class="section-title">
                 <h2>About<h2>
                 <p>これまでの経歴やスキル、提供できるサービスについて詳しく紹介します。</p>
             </div>
-            <div>
-                <div class="service-image"><img src="image/standby-image.png" alt="イメージ"></div>
-                <div>
+            <div class="profile">
+                <div class="profile-image"><img src="image/standby-image.png" alt="イメージ"></div>
+                <div class="profile-disc">
                     <p>Ando Tasiuke</p>
                     <h3>安藤 太亮</h3>
                     <p>12歳でプログラミングを学び始め、アルゴリズムやシステム開発に興味を持つ。15歳で競技プログラミングに没頭し、論理的思考や問題解決力を鍛える。16歳で地域課題に取り組むプロジェクトの代表を務め、動画編集やデザインを学びながら、チームでの企画運営を経験。18歳で友人と起業し、システム開発、プログラミング講師、事業責任者を務める。実践を通じて技術力だけでなく、経営やサービス設計の視点も磨く。20歳で個人事業「bitcraft」を開業。システム開発、デザイン、教育を軸に、企業や地域の課題を発見し、最適なソリューションを提供。業界を問わず、多様なニーズに対応し、新たな価値を生み出すことを目指している。</p>
-                    <div>
-                        <div class="social">
-                            <i class="fa-brands fa-instagram"></i>
-                            <p>Instagram</p>
-                        </div>
-                        <div class="social">
-                            <i class="fa-brands fa-square-facebook"></i>
-                            <p>Facebook</p>
-                        </div>
-                        <div class="social">
-                            <i class="fa-brands fa-square-x-twitter"></i>
-                            <p>X(旧Twitter)</p>
-                        </div>
-                    </div>
+                    <ul class="social">
+                        <li>
+                            <a class="social-item" href="#">
+                                <i class="fa-brands fa-instagram"></i>
+                                <p>Instagram</p>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="social-item" href="#">
+                                <i class="fa-brands fa-square-facebook"></i>
+                                <p>Facebook</p>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="social-item" href="#">
+                                <i class="fa-brands fa-square-x-twitter"></i>
+                                <p>X (旧Twitter)</p>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
         <!--Contact-->
-        <div class="content">
-            <p class="number-white">100</p>
-            <div>
+        <div class="content contact">
+            <div class="left-item">
+                <p class="number-white">100</p>
                 <div class="section-title">
                     <h2>Contact<h2>
                     <p>ご相談やお見積もりなど、お気軽にお問い合わせください。迅速に対応します。</p>
                 </div>
-                <div><a>資料請求</a></div>
-                <div><a>お問い合わせ</a></div>
+            </div>
+            <div class="right-item">
+                <a class="contact-button white" href="#Contact">メールを送る</a>
+                <a class="contact-button black" href="#Contact">お問い合わせ</a>
             </div>
         </div>
     </main>
     <footer>
-        <div>
-            <img src="image/bitcraft-logo-white.png" alt="bitcraft-logo">
-            <ul>
-                <li>Site map</li>
-                <li><a Src="#Home">- Home<a></li>
-                <li><a Src="#Service">- Service<a></li>
-                <li><a Src="#Idea">- Idea<a></li>
-                <li><a Src="#About">- About<a></li>
-                <li><a Src="#Contact">- Contact<a></li>
-            </ul>
-            <ul>
-                <li>Social</li>
-                <li>
-                    <i class="fa-brands fa-instagram"></i>
-                    <p>Instagram</p>
-                </li>
-                <li>
-                    <i class="fa-brands fa-square-facebook"></i>
-                    <p>Facebook</p>
-                </li>
-                <li>
-                    <i class="fa-brands fa-square-x-twitter"></i>
-                    <p>X(旧Twitter)</p>
-                </li>
-            </ul>
-            <ul>
-                <li>Tech</li>
-                <li><a Src="#">- Qiita<a></li>
-                <li><a Src="#">- Github<a></li>
-            </ul>
+        <div class="menu">
+            <div class="image">
+                <a href="#">
+                    <img src="image/bitcraft-logo-white.png" alt="bitcraft-logo">
+                </a>
+            </div>
+            <div class="list">
+                <h2>Site map</h2>
+                <ul>
+                    <li><a href="#Home">- Home<a></li>
+                    <li><a href="#Service">- Service<a></li>
+                    <li><a href="#Idea">- Idea<a></li>
+                    <li><a href="#About">- About<a></li>
+                    <li><a href="#Contact">- Contact<a></li>
+                </ul>
+            </div>
+            <div class="list">
+                <h2>Social</h2>
+                <ul>
+                    <li>
+                        <a class="social-item" href="#">
+                            <i class="fa-brands fa-instagram"></i>
+                            <p>Instagram</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="social-item" href="#">
+                            <i class="fa-brands fa-square-facebook"></i>
+                            <p>Facebook</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="social-item" href="#">
+                            <i class="fa-brands fa-square-x-twitter"></i>
+                            <p>X (旧Twitter)</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="list">
+                <h2>Blog</h2>
+                <ul>
+                    <li><a href="#">- Qiita<a></li>
+                    <li><a href="#">- Github<a></li>
+                </ul>
+            </div>
         </div>
         <small>© 2025 bitcraft All Rights Reserved</small>
     </footer>
