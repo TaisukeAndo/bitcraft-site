@@ -319,7 +319,7 @@ footer{
     background-color: black;
     color:#ffffff;
     font-weight: 300;
-    padding: 0 10%;
+    padding: 0 7%;
     padding-top: 20px;
     padding-bottom: 5px;
 }
@@ -336,7 +336,7 @@ footer .menu h2{
 }
 footer .menu ul{
     margin: 0px;
-    width: 250px;
+    width: 300px;
 }
 footer .menu li{
     margin-bottom: 15px;
@@ -392,6 +392,23 @@ footer small{
         color: #848484;
         margin: 0px;
         font-size: 12px;
+    }
+    /*footer*/
+    footer{
+        background-color: black;
+        color:#ffffff;
+        font-weight: 300;
+        padding: 0 5%;
+        padding-top: 20px;
+        padding-bottom: 5px;
+    }
+    footer .menu .image{
+        width:fit-content;
+        margin-right: 120px;
+    }
+    footer .menu ul{
+        margin: 0px;
+        width: 200px;
     }
 }
 
@@ -512,12 +529,29 @@ footer small{
         margin-top: -80px;
         margin-right: 20px;
     }
+    /*footer*/
+    footer .menu .image{
+        width:fit-content;
+        margin-right: 0px;
+        margin-bottom: 30px;
+    }
+    footer .menu{
+        display: block;
+        margin-bottom: 20px;
+    }
+    footer .menu .image{
+       width:fit-content;
+       margin-right: 250px;
+    }
+    footer .menu h2{
+        font-size: 15px;
+    }
 }
 
 @media screen and (max-width: 649px) {
 	/* 480px以下に適用されるCSS（スマホ用） */
     .content{
-        width: 90%;
+        width: 80%;
         /* padding: 0px 15%; */
         padding: 0 10px;
         margin: 0 auto;
@@ -527,12 +561,13 @@ footer small{
         top: 0;
         left: 0;
         padding: 0 5%;
-        padding-top:300px;
+        padding-top:280px;
         margin-bottom: 100px;
     }
     .home h1{
-        font-size:7vw;
-        letter-spacing:3px; /*文字間隔*/
+        font-size:8vw;
+        letter-spacing:2px; /*文字間隔*/
+        line-height:15vw; /*行間隔*/
         margin: 0px;
         margin-top: 20px;
     }
@@ -553,11 +588,11 @@ footer small{
     }
     .list-item{
         /* flex: 0 0 280px;  */
-        margin: 20px 10px;
+        margin: 40px 10px;
     }
     .list-item .service-image{
         border: 0.5px solid #848484;
-        height: 270px;
+        height: 250px;
     }
     /*Idea*/
     .idea{
@@ -565,7 +600,7 @@ footer small{
     }
     .idea-list .idea-item{
         display: block;
-        margin-bottom: 30px;
+        margin-bottom: 40px;
     }
     .idea-image{
         border: 0.5px solid #848484;
@@ -597,7 +632,7 @@ footer small{
     .profile-image{
         border: 0.5px solid #848484;
         width: 100%;
-        height: 270px;
+        height: 250px;
     }
     .profile-disc .social{
         display: block;
