@@ -319,7 +319,6 @@ footer{
     background-color: black;
     color:#ffffff;
     font-weight: 300;
-    padding: 0 7%;
     padding-top: 20px;
     padding-bottom: 5px;
 }
@@ -333,10 +332,11 @@ footer .menu .image{
 }
 footer .menu h2{
     font-size: 15px;
+    margin-bottom: 20px;
 }
 footer .menu ul{
     margin: 0px;
-    width: 300px;
+    width: 250px;
 }
 footer .menu li{
     margin-bottom: 15px;
@@ -398,7 +398,6 @@ footer small{
         background-color: black;
         color:#ffffff;
         font-weight: 300;
-        padding: 0 5%;
         padding-top: 20px;
         padding-bottom: 5px;
     }
@@ -546,12 +545,15 @@ footer small{
     footer .menu h2{
         font-size: 15px;
     }
+    footer .menu .list{
+        margin-bottom: 25px;
+    }
 }
 
 @media screen and (max-width: 649px) {
 	/* 480px以下に適用されるCSS（スマホ用） */
     .content{
-        width: 80%;
+        width: 85%;
         /* padding: 0px 15%; */
         padding: 0 10px;
         margin: 0 auto;
@@ -561,7 +563,7 @@ footer small{
         top: 0;
         left: 0;
         padding: 0 5%;
-        padding-top:280px;
+        padding-top:200px;
         margin-bottom: 100px;
     }
     .home h1{
