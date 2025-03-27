@@ -26,3 +26,15 @@ $(function(){
     return false;
     });
 });
+
+// バーガーメニューのいずれかのボタンを押すと閉じる
+document.addEventListener("DOMContentLoaded", function () {
+    const menuBtn = document.getElementById("menu-btn");
+    const menuLinks = document.querySelectorAll(".menu a");
+
+    menuLinks.forEach(link => {
+        link.addEventListener("click", function () {
+            menuBtn.checked = false; // メニューを閉じる
+        });
+    });
+});

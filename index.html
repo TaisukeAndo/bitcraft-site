@@ -15,7 +15,7 @@
     <meta property="og:title" content="bitcraft | Home">
     <meta property="og:description" content="bitcraftは「n=1から幸せにする」をミッションに掲げています。最初から広く汎用性を求めると、誰の幸せにもつながらないことがあります。だからこそ、一人の心からの幸せを大切にし、それが多くの人に愛されるサービスへと広がると信じています。">
     <meta property="og:url" content="bitcraft.work">
-    <meta property="og:image" content="C:\Users\ando1\Desktop\個人事業\bitcraft-site\image\sns-image.png">
+    <meta property="og:image" content="image\sns-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@kuma_progr">
     <meta name="twitter:creator" content="@kuma_progr">
@@ -37,19 +37,33 @@
   <script src="script.js" defer></script>
   <!-- Body -->
   <body>
+    <!-- <header class="header">
+        <div class="navtext-container">
+          <div class="navtext">company</div>
+        </div>
+        <input type="checkbox" class="menu-btn" id="menu-btn">
+        <label for="menu-btn" class="menu-icon"><span class="navicon"></span></label>
+        <ul class="menu">
+          <li class="top"><a href="#home">home</a></li>
+          <li><a href="#skills">skills</a></li>
+          <li><a href="#projects">projects</a></li>
+          <li><a href="#contact">contact</a></li>
+        </ul>
+    </header> -->
     <header>
         <a class="header-logo" href="#"><img src="image/bitcraft-logo.png" alt="bitcraft-logo"></a>
         <div class="header-right">
-            <ul>
-                <li><a href="#">Home<a></li>
-                <li><a href="#service">Service<a></li>
-                <li><a href="#idea">Idea<a></li>
-                <li><a href="#about">About<a></li>
+            <input type="checkbox" class="menu-btn" id="menu-btn">
+            <label for="menu-btn" class="menu-icon"><span class="navicon"></span></label>
+            <ul class="menu">
+                <li><a class="menu-item" href="#">Home</a></li>
+                <li><a class="menu-item" href="#service">Service</a></li>
+                <li><a class="menu-item" href="#idea">Idea</a></li>
+                <li class="right"><a class="contact-button" href="#contact">
+                    <i class="fa-solid fa-envelope"></i>
+                    <p>Contact</p>
+                </a></li>
             </ul>
-            <a class="contact-button" href="#contact">
-                <i class="fa-solid fa-envelope"></i>
-                <p>Contact</p>
-            </a>
         </div>
     </header>
     <main>
@@ -221,7 +235,7 @@
     </main>
     <!--footer-->
     <footer>
-        <div class="menu content">
+        <div class="footer-menu content">
             <div class="image">
                 <a href="#">
                     <img src="image/bitcraft-logo-white.png" alt="bitcraft-logo">
