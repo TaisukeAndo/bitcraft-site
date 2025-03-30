@@ -338,6 +338,9 @@ footer .footer-menu .image{
    width:fit-content;
    margin-right: 250px;
 }
+footer .footer-menu .image img{
+    width: 130px;
+ }
 footer .footer-menu h2{
     font-size: 15px;
     margin-bottom: 20px;
