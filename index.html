@@ -15,7 +15,7 @@
     <meta property="og:title" content="bitcraft | Home">
     <meta property="og:description" content="bitcraftは「n=1から幸せにする」をミッションに掲げています。最初から広く汎用性を求めると、誰の幸せにもつながらないことがあります。だからこそ、一人の心からの幸せを大切にし、それが多くの人に愛されるサービスへと広がると信じています。">
     <meta property="og:url" content="bitcraft.work">
-    <meta property="og:image" content="image\sns-image.png">
+    <meta property="og:image" content="image/sns-image.png">
     <meta property="fb:app_id" content="App-ID" />
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@kuma_progr">
@@ -24,8 +24,8 @@
     <link rel="icon" type="shortcut icon" href="/image/bitcraft-logo-mini.png">
     <!-- <link rel="apple-touch-icon" sizes="{size}" href="/img/common/apple-touch-icon.png"> -->
     <!-- 設定 -->
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="animation.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/animation.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
@@ -35,9 +35,14 @@
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script> 
   <script src="https://kit.fontawesome.com/88efd4f5df.js" crossorigin="anonymous"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-  <script src="script.js" defer></script>
+  <script src="/js/script.js" defer></script>
   <!-- Body -->
   <body>
+    <!-- loading -->
+    <div class="loading">
+        <img class="loading__logo" src="/image/bitcraft-logo-full.png" alt="bitcraft">
+    </div>
+    <!-- header -->
     <header>
         <a class="header-logo" href="#"><img src="image/bitcraft-logo.png" alt="bitcraft-logo"></a>
         <div class="header-right">
@@ -54,6 +59,7 @@
             </ul>
         </div>
     </header>
+    <!-- main -->
     <main>
         <div class="c-text js-tick">
             <div class="c-text__item">0110101101101011</div>
@@ -267,10 +273,11 @@
                 <ul>
                     <li><a href="https://qiita.com/TaisukeAndo" target="_blank">- Qiita<a></li>
                     <li><a href="https://github.com/TaisukeAndo" target="_blank">- Github<a></li>
+                    <li><a href="https://note.com/a_taisuke" target="_blank">- note<a></li>
                 </ul>
             </div>
         </div>
-        <div class="content policy"><a href="">プライバシーポリシー</a></div>
+        <div class="content policy"><a href="/policy">プライバシーポリシー</a></div>
         <div class="content"><small>© 2025 bitcraft All Rights Reserved</small></div>
     </footer>
   </body>
