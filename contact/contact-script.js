@@ -15,6 +15,12 @@ const form = document.getElementById("contact-form");
       // 成功したと仮定してメッセージ表示（no-corsなので本当の成功判定はできない）
       form.style.display = "none";
       thanks.style.display = "block";
+      
+      // ← ここでトップにスクロール
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth" // スムーズにスクロールする（任意）
+      });
     })
     .catch(() => {
       alert("送信に失敗しました。再度お試しください。");

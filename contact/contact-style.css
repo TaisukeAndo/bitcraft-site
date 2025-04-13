@@ -52,7 +52,7 @@ form{
 .submit{
     display: none;
     margin-top: 150px;
-    height: 500px;
+    height: 600px;
 }
 .submit .title{
     display: flex;
