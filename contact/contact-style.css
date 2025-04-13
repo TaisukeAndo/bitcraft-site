@@ -1,0 +1,133 @@
+.top{
+    position: relative;
+    width: 100%;
+    top: 70px;
+    left: 0;
+    background-color: var(--base-deep-color);
+    color: var(--background-color);
+}
+.top .title{
+    text-shadow: 0px 0px 10px var(--base-color);
+    width:1200px;
+    position: absolute;
+    top: 50%;
+    left:50%;
+    -ms-transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+}
+.top .title-image{
+    height: 300px;
+}
+.top img{
+    object-fit: cover;
+    filter: grayscale(100%);
+    width: 100%;
+    height: 100%;
+}
+form{
+    position: relative;
+    top:100px;
+    height: 1200px;/*仮*/
+    margin-bottom: 100px;
+    padding-bottom: 100px;
+}
+.form-content{
+    margin: 0 auto;
+    margin-top: 30px;
+    width: 700px;
+    text-align: center;
+}
+.form-group{
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+}
+.form-group .title{
+    margin-bottom: 10px;
+}
+.form-group label{
+    text-align: left;
+}
+.form-control{
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;/*paddingやborderもサイズに含める*/
+    height: 50px;
+    width: 100%;
+    background: var(--background-color);
+    font-size: 16px;
+    padding: 10px;
+}
+.form-group textarea{
+    height: 100px;
+}
+.btn{
+    border: none;
+    width: 200px;
+    background-color: var(--base-color);
+    height: 50px;
+    color: var(--background-color);
+    font-size: 16px;
+    font-weight: 400;
+    border-radius: 50px;
+    margin-top: 20px;
+}
+.submit{
+    display: none;
+    margin-top: 150px;
+    height: 500px;
+}
+.submit .title{
+    display: flex;
+    width: fit-content;
+    margin: 0 auto;
+}
+.submit .title h2{
+    font-size: 30px;
+}
+.submit .title i{
+    font-size: 30px;
+    margin: auto 0;
+    margin-right: 20px;
+}
+.submit p{
+    margin-bottom: 50px;
+}
+.submit .button{
+    width: 200px;
+    background-color: var(--base-color);
+    height: 50px;
+    color: var(--background-color);
+    padding: 13px 40px;
+    font-size: 16px;
+    font-weight: 400;
+    border-radius: 50px;
+    margin-top: 50px;
+}
+
+@media screen and (max-width: 1360px) {
+    .top .title{
+        width:850px;
+    }
+}
+@media screen and (max-width: 959px) {
+    .top .title{
+        width:580px;
+    }
+    .form-content{
+        width: 580px;
+    }
+}
+@media screen and (max-width: 649px) {
+    .top .title{
+        width:85%;
+        font-size: 12px;
+    }
+    .form-content{
+        width: 100%;
+    }
+    .body{
+        font-size: 12px;
+    }
+}

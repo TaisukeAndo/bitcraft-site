@@ -12,7 +12,7 @@
     <meta name="format-detection" content="telephone=no,email=no,address=no">
     <!-- SNS向け -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="bitcraft | プライバシーポリシー">
+    <meta property="og:title" content="bitcraft | お問い合わせ">
     <meta property="og:description" content="bitcraftは「n=1から幸せにする」をミッションに掲げています。最初から広く汎用性を求めると、誰の幸せにもつながらないことがあります。だからこそ、一人の心からの幸せを大切にし、それが多くの人に愛されるサービスへと広がると信じています。">
     <meta property="og:url" content="bitcraft.work">
     <meta property="og:image" content="../image/sns-image.png">
@@ -26,17 +26,18 @@
     <!-- 設定 -->
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/animation.css">
-    <link rel="stylesheet" href="privacy-policy-style.css">
+    <link rel="stylesheet" href="contact-style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    <title>プライバシーポリシー</title>
+    <title>お問い合わせ</title>
   </head>
   <!-- Script読み込み -->
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script> 
   <script src="https://kit.fontawesome.com/88efd4f5df.js" crossorigin="anonymous"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
   <script src="../js/script.js" defer></script>
+  <script src="contact-script.js" defer></script>
   <!-- Body -->
   <body>
     <!-- header -->
@@ -49,7 +50,7 @@
                 <li><a class="menu-item" href="../">Home</a></li>
                 <li><a class="menu-item" href="../#service">Service</a></li>
                 <li><a class="menu-item" href="../#idea">Idea</a></li>
-                <li class="right"><a class="contact-button" href="../contact">
+                <li class="right"><a class="contact-button" href="#">
                     <i class="fa-solid fa-envelope"></i>
                     <p>Contact</p>
                 </a></li>
@@ -62,35 +63,95 @@
         <div class="top">
             <div class="title-image"><img src="./img/top-img.jpg"></div>
             <div class="title">
-                <h1>プライバシーポリシー</h1>
+                <h1>お問い合わせ</h1>
                 <p>bitcraft（以下、「当サイト」といいます）は、個人情報の重要性を認識し、以下の方針に基づいて、適切な管理と保護に努めます。</p>
             </div>
         </div>
-        <div class="detail">
-            <div class="content">
-                <h2>1. 個人情報の取得について</h2>
-                <p>当サイトでは、お問い合わせフォームや業務連絡などを通じて、お名前・メールアドレス・その他の連絡先情報を取得する場合があります。取得は適正かつ公正な手段によって行います。</p>
-                <h2>2. 利用目的について</h2>
-                <p>取得した個人情報は、以下の目的の範囲内で利用します。</p>
-                <ul>
-                    <li>お問い合わせへの対応</li>
-                    <li>サービス提供・業務連絡</li>
-                    <li>ご本人確認が必要な場合の対応</li>
-                    <li>その他、上記に付随する目的</li>
-                </ul>
-                <h2>3. 個人情報の第三者提供について</h2>
-                <p>取得した個人情報は、以下の場合を除き、第三者に提供することはありません。</p>
-                <ul>
-                    <li>本人の同意がある場合</li>
-                    <li>法令に基づく場合</li>
-                    <li>業務委託先に必要な範囲で開示する場合（この場合も適切な管理を行います）</li>
-                </ul>
-                <h2>4. 安全管理について</h2>
-                <p>個人情報への不正アクセス・漏洩・改ざん・滅失を防止するために、必要かつ適切な安全管理措置を講じます。</p>
-                <h2>5. 開示・訂正・削除について</h2>
-                <p>ご本人からの個人情報の開示・訂正・削除のご請求には、本人確認のうえ、法令に従って速やかに対応いたします。</p>
-                <h2>6. プライバシーポリシーの変更</h2>
-                <p>本ポリシーは、法令や社会情勢の変化に応じて、予告なく変更されることがあります。最新の内容は常に本ページにてご確認いただけます。</p>
+        <form class="content" id="contact-form">
+            <div class="form-content">
+                <div class="form-group">
+                    <label class='title'>お名前 <span style="color: red;">*</span></label>
+                    <input type="text" id="name" name="entry.1898114013" class="form-control" value="" placeholder=" 例）山田太郎" required/>
+                </div>
+
+                <div class="form-group">
+                    <label class='title'>メールアドレス <span style="color: red;">*</span></label>
+                    <input type="text" id="name" name="entry.2104696287" class="form-control" value="" placeholder=" 例）example@mail.com" required/>
+                </div>
+
+                <div class="form-group">
+                    <label class='title'>ご所属 <span style="color: red;">*</span></label>
+                    <input type="text" id="name" name="entry.1276655808" class="form-control" value="" placeholder=" 例）株式会社〇〇" required/>
+                </div>
+
+                <div class="form-group">
+                    <label label class='title'>お問い合わせ種別 <span style="color: red;">*</span></label>
+                    <label class="check_label">
+                        <input class="radio form-check-input" name="entry.150765991" type="radio" value="システム開発のご相談">
+                        <span class="radio-icon"></span>
+                        システム開発のご相談
+                    </label>
+                    <label class="check_label">
+                        <input class="radio form-check-input" name="entry.150765991" type="radio" value="Webサイト制作のご依頼">
+                        <span class="radio-icon"></span>
+                        Webサイト制作のご依頼
+                    </label>
+                    <label class="check_label">
+                        <input class="radio form-check-input" name="entry.150765991" type="radio" value="UI・UXデザインのご相談">
+                        <span class="radio-icon"></span>
+                        UI・UXデザインのご相談
+                    </label>
+                    <label class="check_label">
+                        <input class="radio form-check-input" name="entry.150765991" type="radio" value="3DCG制作のご相談">
+                        <span class="radio-icon"></span>
+                        3DCG制作のご相談
+                    </label>
+                    <label class="check_label">
+                        <input class="radio form-check-input" name="entry.150765991" type="radio" value="プログラミング・デザイン教育のご依頼">
+                        <span class="radio-icon"></span>
+                        プログラミング・デザイン教育のご依頼
+                    </label>
+                    <label class="check_label">
+                        <input class="radio form-check-input" name="entry.150765991" type="radio" value="プロジェクト管理・マネジメントのご相談">
+                        <span class="radio-icon"></span>
+                        プロジェクト管理・マネジメントのご相談
+                    </label>
+                    <label class="check_label">
+                        <input class="radio form-check-input" name="entry.150765991" type="radio" value="事業アイデア・企画に関するご相談">
+                        <span class="radio-icon"></span>
+                        事業アイデア・企画に関するご相談
+                    </label>
+                    <label class="check_label">
+                        <input class="radio form-check-input" name="entry.150765991" type="radio" value="その他のお問い合わせ">
+                        <span class="radio-icon"></span>
+                        その他のお問い合わせ
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label label class='title'>ご相談内容 <span style="color: red;">*</span></label>
+                    <textarea class="form-control" name="entry.93364843"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label label class='title'>個人情報の取得について <span style="color: red;">*</span></label>
+                    <label class="check_label">
+                        <input class="checkbox form-check-input" name="entry.446305628" type="checkbox" value="プライバシーポリシーに同意します。" required/>
+                        <span class="checkbox-icon"></span>
+                        <a href="../policy/" target="_blank">プライバシーポリシー</a>に同意します。
+                    </label>
+                </div>
+                <input class="btn btn-primary btn-lg btn-block" type="submit" value="送信">
+            </div>
+        </form>
+        <div class="content">
+            <div class="submit form-content" id="thanks-message">
+                <div class="title">
+                    <i class="fa-regular fa-circle-check"></i>
+                    <h2>送信完了</h2>
+                </div>
+                <p>お問い合わせいただきありがとうございます。後日担当者より、メールにて返信いたします。</p>
+                <a class="button" href="../">ホームに戻る</a>
             </div>
         </div>
     </main>
@@ -109,7 +170,7 @@
                     <li><a href="../#service">- Service<a></li>
                     <li><a href="../#idea">- Idea<a></li>
                     <li><a href="../#about">- About<a></li>
-                    <li><a href="../contact">- Contact<a></li>
+                    <li><a href="#">- Contact<a></li>
                 </ul>
             </div>
             <div class="list">
@@ -144,7 +205,7 @@
                 </ul>
             </div>
         </div>
-        <div class="content policy"><a href="">プライバシーポリシー</a></div>
+        <div class="content policy"><a href="../policy/">プライバシーポリシー</a></div>
         <div class="content"><small>© 2025 bitcraft All Rights Reserved</small></div>
     </footer>
   </body>
