@@ -1,0 +1,247 @@
+/* contact-style.css をベースに、セミナー申し込み用に拡張 */
+
+form {
+    margin-top: 120px;
+    margin-bottom: 300px;
+}
+
+.form-content {
+    margin: 0 auto;
+    margin-top: 120px;
+    width: 700px;
+    text-align: center;
+    padding-bottom: 40px;
+    margin-bottom: 100px;
+}
+
+/* ── セクション見出し ── */
+.form-section-title {
+    text-align: left;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #888;
+    text-transform: uppercase;
+    margin: 40px 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.form-section-title:first-of-type {
+    margin-top: 10px;
+}
+
+/* ── フォームグループ ── */
+.form-group {
+    margin-bottom: 28px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group .title {
+    text-align: left;
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+
+.required {
+    color: #e03131;
+    margin-left: 2px;
+}
+
+/* ── テキスト入力 ── */
+.form-control {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    height: 50px;
+    width: 100%;
+    background: var(--background-color);
+    font-size: 15px;
+    padding: 10px;
+    font-family: "Inter";
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #000;
+}
+
+.form-group textarea.form-control {
+    height: 110px;
+    resize: vertical;
+}
+
+/* ── ラジオ・チェックボックス ── */
+.check_label {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    padding: 10px 12px;
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.check_label:hover {
+    background: #f8f8f8;
+    border-color: #ccc;
+}
+
+.form-check-input {
+    display: none;
+}
+
+/* ラジオ */
+.radio-icon {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+    display: inline-block;
+    position: relative;
+    transition: border-color 0.15s;
+}
+
+.radio:checked + .radio-icon {
+    border-color: #000;
+}
+
+.radio:checked + .radio-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: #000;
+    border-radius: 50%;
+}
+
+.radio:checked ~ .check_label,
+input[type="radio"]:checked + .radio-icon {
+    border-color: #000;
+}
+
+/* チェックボックス */
+.checkbox-icon {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ccc;
+    border-radius: 3px;
+    margin-right: 10px;
+    flex-shrink: 0;
+    display: inline-block;
+    position: relative;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.checkbox:checked + .checkbox-icon {
+    border-color: #000;
+    background: #000;
+}
+
+.checkbox:checked + .checkbox-icon::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 4px;
+    width: 5px;
+    height: 9px;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(45deg);
+}
+
+/* ── 送信ボタン ── */
+.btn {
+    border: none;
+    width: 220px;
+    background-color: var(--base-color);
+    height: 52px;
+    color: var(--background-color);
+    font-size: 16px;
+    font-weight: 600;
+    font-family: "Inter";
+    border-radius: 50px;
+    margin-top: 60px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.btn:hover {
+    opacity: 0.75;
+    transform: translateY(-2px);
+}
+
+/* ── 送信完了 ── */
+.submit {
+    display: none;
+    margin-top: 150px;
+    margin-bottom: 150px;
+}
+
+.submit .title {
+    display: flex;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.submit .title h2 {
+    font-size: 30px;
+}
+
+.submit .title i {
+    font-size: 30px;
+    margin: auto 0;
+    margin-right: 20px;
+}
+
+.submit p {
+    margin-bottom: 50px;
+    line-height: 1.8;
+}
+
+.submit .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--base-color);
+    height: 50px;
+    color: var(--background-color);
+    padding: 0 40px;
+    font-size: 16px;
+    font-weight: 400;
+    border-radius: 50px;
+    margin-top: 50px;
+}
+
+/* ── プライバシーポリシーリンク ── */
+.form-group a {
+    color: var(--base-deep-color);
+    text-decoration: underline;
+}
+
+/* ── Responsive ── */
+@media screen and (max-width: 959px) {
+    .form-content {
+        width: 580px;
+    }
+}
+
+@media screen and (max-width: 649px) {
+    .form-content {
+        width: 100%;
+    }
+    .form-section-title {
+        font-size: 12px;
+    }
+}
