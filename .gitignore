@@ -1,1 +1,6 @@
 .DS_Store
+service/seminar/claude-code-1day/img/layout.html
+service/seminar/claude-code-1day/img/speaker_image_cutout.png
+service/seminar/claude-code-1day/img/speaker_image.png
+service/seminar/claude-code-1day/img/batch_generate.py
+service/seminar/claude-code-1day/img/generate_ogp.py
