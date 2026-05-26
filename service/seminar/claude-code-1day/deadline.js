@@ -8,8 +8,8 @@ document.addEventListener("DOMContentLoaded", function() {
     // 開催日の0時0分としてDateオブジェクトを作成
     var eventDate = new Date(eventDateStr + "T00:00:00+09:00");
     
-    // 募集期限は開催日の3日前の23:59:59
-    var deadline = new Date(eventDate.getTime() - 3 * 24 * 60 * 60 * 1000);
+    // 募集期限は開催日の前日の23:59:59
+    var deadline = new Date(eventDate.getTime() - 1 * 24 * 60 * 60 * 1000);
     deadline.setHours(23, 59, 59, 999);
 
     var now = new Date();
