@@ -471,6 +471,138 @@
 }
 
 /* ===========================
+   Speakers
+   =========================== */
+.sd-speakers {
+    background: #fafafa;
+    border-top: 1px solid #f0f0f0;
+}
+
+.sd-speakers__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.sd-speaker-card {
+    display: flex;
+    flex-direction: row;
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+}
+
+.sd-speaker-card:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.sd-speaker-card__photo-wrap {
+    position: relative;
+    flex-shrink: 0;
+    width: 240px;
+    align-self: stretch;
+    margin: 0;
+    background: #f0f0f0;
+    overflow: hidden;
+}
+
+.sd-speaker-card__photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+}
+
+.sd-speaker-card__photo-placeholder {
+    display: none;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    color: #ccc;
+    background: #f5f5f5;
+}
+
+.sd-speaker-card__body {
+    padding: 20px 22px;
+    flex: 1;
+    min-width: 0;
+}
+
+.sd-speaker-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.sd-speaker-card__tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 2px;
+    background: #f0f0f0;
+    color: #555;
+}
+
+.sd-speaker-card__tag--blue {
+    background: #eef4ff;
+    color: #1a3a7a;
+    border: 1px solid #c5d8ff;
+}
+
+.sd-speaker-card__name {
+    font-size: 19px;
+    font-weight: 900;
+    color: #000;
+    margin: 0 0 3px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.sd-speaker-card__kana {
+    font-size: 11px;
+    font-weight: 400;
+    color: #999;
+}
+
+.sd-speaker-card__affil {
+    font-size: 12px;
+    color: #3b7cff;
+    font-weight: 600;
+    margin: 0 0 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.sd-speaker-card__desc {
+    font-size: 13px;
+    line-height: 1.75;
+    color: #444;
+    margin: 0;
+}
+
+@media screen and (max-width: 649px) {
+    .sd-speaker-card {
+        flex-direction: column;
+    }
+    .sd-speaker-card__photo-wrap {
+        width: 100%;
+        height: 180px;
+    }
+    .sd-speaker-card__body {
+        padding: 16px 18px;
+    }
+}
+
+/* ===========================
    Overview Table
    =========================== */
 .sd-overview {
