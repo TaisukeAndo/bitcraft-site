@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 420" width="1440" height="420" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- Background gradient -->
+    <radialGradient id="bgGlow" cx="50%" cy="60%" r="55%">
+      <stop offset="0%" stop-color="#0e1628"/>
+      <stop offset="100%" stop-color="#060810"/>
+    </radialGradient>
+    <!-- Screen glow -->
+    <radialGradient id="screenGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1a3a6a" stop-opacity="0.9"/>
+      <stop offset="60%" stop-color="#0a1830" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#060810" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Shield glow -->
+    <radialGradient id="shieldGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3a5a9a" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#1a2a5a" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Desk surface gradient -->
+    <linearGradient id="deskGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1a28"/>
+      <stop offset="100%" stop-color="#0f0f18"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1440" height="420" fill="url(#bgGlow)"/>
+
+  <!-- Subtle dot grid -->
+  <pattern id="dots" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="20" cy="20" r="0.8" fill="#1a1a2e"/>
+  </pattern>
+  <rect width="1440" height="420" fill="url(#dots)"/>
+
+  <!-- Screen atmosphere glow (centered) -->
+  <ellipse cx="720" cy="240" rx="380" ry="220" fill="url(#screenGlow)"/>
+
+  <!-- Desk surface -->
+  <rect x="0" y="330" width="1440" height="90" fill="url(#deskGrad)"/>
+  <!-- Desk edge highlight -->
+  <line x1="0" y1="330" x2="1440" y2="330" stroke="#252535" stroke-width="1.5"/>
+  <!-- Desk surface reflection line -->
+  <line x1="0" y1="336" x2="1440" y2="336" stroke="#1a1a28" stroke-width="0.5" opacity="0.5"/>
+
+  <!-- === Laptop === -->
+  <!-- Keyboard base (bottom part) -->
+  <rect x="520" y="312" width="400" height="22" rx="4" fill="#141420" stroke="#222232" stroke-width="1"/>
+  <!-- Keyboard detail rows -->
+  <rect x="532" y="317" width="376" height="4" rx="1" fill="#0e0e1a"/>
+  <rect x="532" y="325" width="376" height="4" rx="1" fill="#0e0e1a"/>
+  <!-- Trackpad -->
+  <rect x="656" y="320" width="128" height="8" rx="2" fill="#111120" stroke="#1e1e30" stroke-width="0.5"/>
+
+  <!-- Screen hinge -->
+  <rect x="535" y="306" width="370" height="6" rx="2" fill="#111118"/>
+
+  <!-- Screen outer frame -->
+  <rect x="530" y="90" width="380" height="220" rx="6" fill="#0d0d18" stroke="#1e1e2e" stroke-width="1.5"/>
+  <!-- Screen bezel (inner) -->
+  <rect x="536" y="96" width="368" height="208" rx="4" fill="#070710"/>
+
+  <!-- Screen content glow (atmosphere) -->
+  <rect x="536" y="96" width="368" height="208" rx="4" fill="url(#screenGlow)" opacity="0.8"/>
+
+  <!-- Shield glow on screen -->
+  <ellipse cx="720" cy="200" rx="90" ry="80" fill="url(#shieldGlow)"/>
+
+  <!-- Shield icon on screen -->
+  <path d="M720,135 L763,158 L763,208 Q763,248 720,265 Q677,248 677,208 L677,158 Z"
+        fill="none" stroke="#3a5a9a" stroke-width="2" opacity="0.8"/>
+  <path d="M720,145 L755,165 L755,210 Q755,243 720,257 Q685,243 685,210 L685,165 Z"
+        fill="#0a1525" stroke="#2a4a7a" stroke-width="1" opacity="0.6"/>
+  <!-- Shield check mark -->
+  <path d="M703,200 L714,215 L738,185"
+        fill="none" stroke="#5a8ae0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+
+  <!-- Screen scan line animation hint (static) -->
+  <line x1="536" y1="185" x2="904" y2="185" stroke="#1a2a4a" stroke-width="0.8" opacity="0.5"/>
+
+  <!-- Screen text lines (blurred/abstract) -->
+  <rect x="560" y="118" width="80" height="5" rx="1" fill="#1a2a4a" opacity="0.5"/>
+  <rect x="560" y="128" width="55" height="4" rx="1" fill="#1a2a4a" opacity="0.4"/>
+  <rect x="800" y="118" width="80" height="5" rx="1" fill="#1a2a4a" opacity="0.5"/>
+  <rect x="800" y="128" width="55" height="4" rx="1" fill="#1a2a4a" opacity="0.4"/>
+
+  <!-- Camera indicator -->
+  <circle cx="720" cy="88" r="3" fill="#111118" stroke="#1e1e2e" stroke-width="0.5"/>
+
+  <!-- === Peripheral items on desk (left) === -->
+  <!-- Coffee mug silhouette -->
+  <rect x="390" y="294" width="34" height="38" rx="3" fill="#0e0e1a" stroke="#1e1e2e" stroke-width="1"/>
+  <!-- Mug handle -->
+  <path d="M424,302 Q438,302 438,312 Q438,322 424,322" fill="none" stroke="#1e1e2e" stroke-width="1"/>
+  <!-- Mug steam -->
+  <path d="M400,290 Q402,282 400,275" fill="none" stroke="#1a1a2a" stroke-width="1" opacity="0.4"/>
+  <path d="M408,290 Q410,280 408,272" fill="none" stroke="#1a1a2a" stroke-width="1" opacity="0.4"/>
+
+  <!-- Notebook/notepad -->
+  <rect x="454" y="300" width="56" height="36" rx="2" fill="#0c0c18" stroke="#1e1e2e" stroke-width="1"/>
+  <line x1="458" y1="308" x2="506" y2="308" stroke="#1a1a28" stroke-width="0.8"/>
+  <line x1="458" y1="315" x2="506" y2="315" stroke="#1a1a28" stroke-width="0.8"/>
+  <line x1="458" y1="322" x2="490" y2="322" stroke="#1a1a28" stroke-width="0.8"/>
+
+  <!-- Pen -->
+  <rect x="446" y="298" width="6" height="42" rx="2" fill="#151520" stroke="#222230" stroke-width="0.8"/>
+  <polygon points="446,340 452,340 449,348" fill="#101018"/>
+
+  <!-- === Peripheral items on desk (right) === -->
+  <!-- Smartphone -->
+  <rect x="940" y="292" width="28" height="48" rx="4" fill="#0d0d1a" stroke="#1e1e2e" stroke-width="1"/>
+  <rect x="943" y="296" width="22" height="36" rx="2" fill="#070710"/>
+  <!-- Phone screen faint glow -->
+  <rect x="943" y="296" width="22" height="36" rx="2" fill="#0a1525" opacity="0.5"/>
+  <!-- Phone home indicator -->
+  <line x1="952" y1="336" x2="959" y2="336" stroke="#1e1e2e" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Small plant silhouette -->
+  <rect x="992" y="300" width="26" height="32" rx="2" fill="#0c0c16" stroke="#1a1a28" stroke-width="1"/>
+  <!-- Plant leaves -->
+  <ellipse cx="1005" cy="296" rx="12" ry="10" fill="#0d0d1a" stroke="#1a1a28" stroke-width="1"/>
+  <ellipse cx="998" cy="290" rx="8" ry="9" fill="#0e0e1c" stroke="#1a1a28" stroke-width="1"/>
+  <ellipse cx="1012" cy="290" rx="8" ry="9" fill="#0e0e1c" stroke="#1a1a28" stroke-width="1"/>
+  <line x1="1005" y1="300" x2="1005" y2="290" stroke="#151520" stroke-width="1"/>
+
+  <!-- === Wall / background window light === -->
+  <!-- Left ambient light -->
+  <rect x="0" y="0" width="320" height="280" fill="url(#bgGlow)" opacity="0.3"/>
+  <line x1="320" y1="0" x2="320" y2="330" stroke="#12122a" stroke-width="1" opacity="0.3"/>
+
+  <!-- Right ambient -->
+  <rect x="1120" y="0" width="320" height="280" fill="url(#bgGlow)" opacity="0.3"/>
+  <line x1="1120" y1="0" x2="1120" y2="330" stroke="#12122a" stroke-width="1" opacity="0.3"/>
+
+  <!-- Subtle frame lines on wall -->
+  <rect x="160" y="60" width="120" height="180" rx="2" fill="none" stroke="#111125" stroke-width="1" opacity="0.5"/>
+  <rect x="1160" y="60" width="120" height="180" rx="2" fill="none" stroke="#111125" stroke-width="1" opacity="0.5"/>
+</svg>

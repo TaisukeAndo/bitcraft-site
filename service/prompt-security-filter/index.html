@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <meta name="description" content="Prompt Security Filterは、ChatGPT・Claude・GeminiなどのAIサービスへ送るプロンプトに含まれる個人情報・機密情報をローカルで自動検知するセキュリティツールです。データは社外に出ません。">
+    <meta name="keywords" content="bitcraft,AI,セキュリティ,情報漏洩,プロンプト,個人情報検知,Prompt Security Filter">
+    <meta name="format-detection" content="telephone=no,email=no,address=no">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Prompt Security Filter | bitcraft">
+    <meta property="og:description" content="AIへのプロンプトに含まれる個人情報・機密情報をローカルで自動検知。ChatGPT・Claude・Gemini等の主要AIサービスに対応し、情報漏洩リスクをゼロに近づけます。">
+    <meta property="og:url" content="bitcraft.work/service/prompt-security-filter">
+    <meta property="og:image" content="../../image/sns-image.png">
+    <meta property="fb:app_id" content="1382898935938867" />
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@kuma_progr">
+    <meta name="twitter:creator" content="@kuma_progr">
+    <link rel="icon" type="shortcut icon" href="../../image/bitcraft-logo-mini.png">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/subpage-style.css">
+    <link rel="stylesheet" href="../../css/animation.css">
+    <link rel="stylesheet" href="prompt-security-filter-style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <title>Prompt Security Filter | bitcraft</title>
+  </head>
+  <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+  <script src="https://kit.fontawesome.com/88efd4f5df.js" crossorigin="anonymous"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <script src="../../js/script.js" defer></script>
+  <body>
+    <!-- ヘッダー -->
+    <header>
+        <a class="header-logo" href="../../"><img src="../../image/bitcraft-logo.png" alt="bitcraft-logo"></a>
+        <div class="header-right">
+            <input type="checkbox" class="menu-btn" id="menu-btn">
+            <label for="menu-btn" class="menu-icon"><span class="navicon"></span></label>
+            <ul class="menu">
+                <li><a class="menu-item" href="../../">Home</a></li>
+                <li><a class="menu-item" href="../../#service">Service</a></li>
+                <li><a class="menu-item" href="../../#idea">Idea</a></li>
+                <li class="right"><a class="contact-button" href="../../contact">
+                    <i class="fa-solid fa-envelope"></i>
+                    <p>Contact</p>
+                </a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- ヒーロー -->
+        <div class="top">
+            <div class="title-image"><img src="img/hero-bg.svg" alt="Prompt Security Filter"></div>
+            <div class="title">
+                <h1>Prompt Security Filter</h1>
+                <p>AIへの情報漏洩を、ローカルで検知・防止する。</p>
+            </div>
+        </div>
+
+        <!-- サービス概要 -->
+        <div class="apg-lead-section">
+            <div class="content">
+                <div class="apg-lead-inner">
+                    <div class="apg-lead-text">
+                        <p class="apg-section-label">Overview</p>
+                        <h2 class="apg-catch">ChatGPT・Claude・Geminiへのプロンプトに、<br>個人情報や機密情報が含まれていませんか？</h2>
+                        <p class="apg-desc">Prompt Security Filter は、主要AIサービスへ送るプロンプトや画像に個人情報・機密情報が含まれていないかをリアルタイムで検知するセキュリティツールです。すべての検知処理は各PCのローカル環境内で完結するため、検知データがクラウドに送信されることはありません。Chrome拡張機能とローカルプロキシのハイブリッド構成により、WebブラウザからCLIツールまで幅広く対応します。</p>
+                    </div>
+                    <div class="apg-lead-image">
+                        <img src="img/overview-illustration.svg" alt="Prompt Security Filterの仕組み">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 課題 -->
+        <div class="apg-problem-section">
+            <div class="content">
+                <p class="apg-section-label">Problem</p>
+                <div class="apg-section-title">
+                    <h2>こんなお悩みはありませんか？</h2>
+                    <p>AI利用が広がるほど、情報漏洩のリスクは増加します。</p>
+                </div>
+                <div class="apg-problem-grid">
+                    <div class="apg-problem-card">
+                        <p class="apg-problem-num">01</p>
+                        <h3>個人情報の<br>意図しない送信</h3>
+                        <p>社員が顧客の氏名・住所・電話番号をAIに貼り付けてしまった事例が後を絶ちません。</p>
+                    </div>
+                    <div class="apg-problem-card">
+                        <p class="apg-problem-num">02</p>
+                        <h3>社内機密情報の<br>流出リスク</h3>
+                        <p>未発表のプロジェクト名や顧客情報、財務データをChatGPTへ送信してしまうリスクがあります。</p>
+                    </div>
+                    <div class="apg-problem-card">
+                        <p class="apg-problem-num">03</p>
+                        <h3>認証情報・APIキーの<br>誤入力</h3>
+                        <p>デバッグ目的でAPIキーやパスワードをAIに貼り付け、意図せず外部に送信してしまうケースがあります。</p>
+                    </div>
+                    <div class="apg-problem-card">
+                        <p class="apg-problem-num">04</p>
+                        <h3>ポリシー遵守状況の<br>把握が困難</h3>
+                        <p>AI利用規程を整備しても、各社員が実際に守っているかどうかの確認が難しい状況です。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 検知機能 -->
+        <div class="apg-features-section">
+            <div class="content">
+                <p class="apg-section-label">Features</p>
+                <div class="apg-section-title">
+                    <h2>主な検知機能</h2>
+                    <p>多角的な検知ロジックで、あらゆる情報漏洩パターンに対応します。</p>
+                </div>
+                <div class="apg-features-grid">
+                    <div class="apg-feature-item">
+                        <div class="apg-feature-icon"><i class="fa-solid fa-user-shield"></i></div>
+                        <h3>個人情報（PII）検知</h3>
+                        <p>氏名・住所・電話番号・メールアドレスなどの個人情報を、固有表現認識（NER）と正規表現の組み合わせで検知します。</p>
+                        <span class="apg-feature-badge">正規表現 + NER</span>
+                    </div>
+                    <div class="apg-feature-item">
+                        <div class="apg-feature-icon"><i class="fa-solid fa-credit-card"></i></div>
+                        <h3>金融情報検知</h3>
+                        <p>クレジットカード番号・銀行口座番号をLuhnアルゴリズムと正規表現で検知します。誤検知を抑えた高精度な判定が可能です。</p>
+                        <span class="apg-feature-badge">Luhn アルゴリズム</span>
+                    </div>
+                    <div class="apg-feature-item">
+                        <div class="apg-feature-icon"><i class="fa-solid fa-key"></i></div>
+                        <h3>認証情報・APIキー検知</h3>
+                        <p>AWS・GitHub・Slack・OpenAIなどの主要サービスのAPIキー形式を網羅したパターンマッチングで、認証情報の送信を防ぎます。</p>
+                        <span class="apg-feature-badge">パターンマッチ</span>
+                    </div>
+                    <div class="apg-feature-item">
+                        <div class="apg-feature-icon"><i class="fa-solid fa-building-lock"></i></div>
+                        <h3>社内機密辞書</h3>
+                        <p>未発表プロジェクト名・顧客名・内部コードなど、組織固有の機密ワードをカスタム辞書として登録・管理できます。</p>
+                        <span class="apg-feature-badge">カスタム辞書</span>
+                    </div>
+                    <div class="apg-feature-item">
+                        <div class="apg-feature-icon"><i class="fa-solid fa-laptop-code"></i></div>
+                        <h3>完全ローカル処理</h3>
+                        <p>すべての検知処理は各PCのローカル環境内で完結します。検知データが社外に送信されることは一切ありません。</p>
+                        <span class="apg-feature-badge">オフライン対応</span>
+                    </div>
+                    <div class="apg-feature-item">
+                        <div class="apg-feature-icon"><i class="fa-solid fa-image"></i></div>
+                        <h3>画像OCR検査（予定）</h3>
+                        <p>書類・スクリーンショットなどの画像を添付した際も、OCRでテキストを抽出して同一の検知ロジックを適用します。</p>
+                        <span class="apg-feature-badge">Tesseract OCR</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 導入パッケージ -->
+        <div class="apg-arch-section">
+            <div class="content">
+                <p class="apg-section-label">Architecture</p>
+                <div class="apg-section-title">
+                    <h2>導入パッケージ</h2>
+                    <p>小さく始めて確実に拡張できる、2つのパッケージをご用意しています。</p>
+                </div>
+                <div class="apg-arch-packages">
+                    <div class="apg-package">
+                        <span class="apg-package-badge">スタンダード</span>
+                        <h3>Chrome 拡張機能パッケージ</h3>
+                        <p class="apg-package-price-note">Web上のAIツールを対象としたスタートプラン</p>
+                        <p class="apg-package-desc">まずWebブラウザ上のAIツールへの情報漏洩をカバーするスタートプランです。インストールは拡張機能の追加のみで完結し、データはブラウザ外に出ません。</p>
+                        <ul class="apg-package-checklist">
+                            <li>ChatGPT（Web）に対応</li>
+                            <li>Claude.ai（Web）に対応</li>
+                            <li>Gemini（Web）に対応</li>
+                            <li>フォーム送信を一時停止して検査</li>
+                            <li>検知時に警告ダイアログを表示</li>
+                            <li>ローカルモデル（ONNX / TF.js）で処理</li>
+                        </ul>
+                    </div>
+                    <div class="apg-package apg-package--pro">
+                        <span class="apg-package-badge">プロ</span>
+                        <h3>ハイブリッドパッケージ</h3>
+                        <p class="apg-package-price-note">CLI・APIツールまで含めた完全カバープラン</p>
+                        <p class="apg-package-desc">スタンダードの全機能に加え、ローカルプロキシを組み合わせることでCLIツール・API呼び出しも一元管理できるプランです。</p>
+                        <ul class="apg-package-checklist">
+                            <li>スタンダードの全機能を含む</li>
+                            <li>Claude Code（CLI）にも対応</li>
+                            <li>API直叩きスクリプトにも対応</li>
+                            <li>spaCy / presidioによる高精度検知</li>
+                            <li>検知ログの記録・レポート機能</li>
+                            <li>社内PC展開の自動化スクリプト付属</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 対応ツール一覧 -->
+        <div class="apg-coverage-section">
+            <div class="content">
+                <p class="apg-section-label">Coverage</p>
+                <div class="apg-section-title">
+                    <h2>対応ツール一覧</h2>
+                    <p>パッケージごとにカバー範囲が異なります。</p>
+                </div>
+                <div class="apg-table-wrap">
+                    <table class="apg-table">
+                        <thead>
+                            <tr>
+                                <th>ツール・環境</th>
+                                <th>スタンダード<br>（Chrome拡張）</th>
+                                <th>プロ<br>（ハイブリッド）</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ChatGPT（Web）</td>
+                                <td class="apg-ok">◯</td>
+                                <td class="apg-ok">◯</td>
+                            </tr>
+                            <tr>
+                                <td>Claude.ai（Web）</td>
+                                <td class="apg-ok">◯</td>
+                                <td class="apg-ok">◯</td>
+                            </tr>
+                            <tr>
+                                <td>Gemini（Web）</td>
+                                <td class="apg-ok">◯</td>
+                                <td class="apg-ok">◯</td>
+                            </tr>
+                            <tr>
+                                <td>Claude Code（CLI）</td>
+                                <td class="apg-ng">✕</td>
+                                <td class="apg-ok">◯</td>
+                            </tr>
+                            <tr>
+                                <td>API 直叩きスクリプト</td>
+                                <td class="apg-ng">✕</td>
+                                <td class="apg-ok">◯</td>
+                            </tr>
+                            <tr>
+                                <td>画像 OCR 検査</td>
+                                <td class="apg-wip">準備中</td>
+                                <td class="apg-wip">準備中</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- お問い合わせ -->
+        <div class="apg-cta-section">
+            <div class="content">
+                <p class="apg-section-label">Contact</p>
+                <h2 class="apg-catch">導入のご相談は<br>お気軽にどうぞ。</h2>
+                <p class="apg-desc">要件や規模に合わせた導入プランのご提案・お見積もりを承ります。<br>まずはお気軽にお問い合わせください。</p>
+                <div class="apg-cta-buttons">
+                    <a class="apg-btn apg-btn--white" href="../../contact">
+                        <i class="fa-solid fa-envelope"></i>
+                        お問い合わせフォーム
+                    </a>
+                    <a class="apg-btn apg-btn--outline" href="mailto:ando1202taisuke@gmail.com">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        メールを送る
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer>
+        <div class="footer-menu content">
+            <div class="image">
+                <a href="../../">
+                    <img src="../../image/bitcraft-logo-white.png" alt="bitcraft-logo">
+                </a>
+            </div>
+            <div class="list">
+                <h2>Site map</h2>
+                <ul>
+                    <li><a href="../../">- Home</a></li>
+                    <li><a href="../../#service">- Service</a></li>
+                    <li><a href="../../#idea">- Idea</a></li>
+                    <li><a href="../../#about">- About</a></li>
+                    <li><a href="../../contact">- Contact</a></li>
+                </ul>
+            </div>
+            <div class="list">
+                <h2>Social</h2>
+                <ul>
+                    <li>
+                        <a class="social-item" href="https://www.instagram.com/ta.__.ch/" target="_blank">
+                            <i class="fa-brands fa-instagram"></i>
+                            <p>Instagram</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="social-item" href="https://www.facebook.com/profile.php?id=100053394909552" target="_blank">
+                            <i class="fa-brands fa-square-facebook"></i>
+                            <p>Facebook</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="social-item" href="https://x.com/kuma_progr" target="_blank">
+                            <i class="fa-brands fa-square-x-twitter"></i>
+                            <p>X (旧Twitter)</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="list">
+                <h2>Blog</h2>
+                <ul>
+                    <li><a href="https://qiita.com/TaisukeAndo" target="_blank">- Qiita</a></li>
+                    <li><a href="https://github.com/TaisukeAndo" target="_blank">- Github</a></li>
+                    <li><a href="https://note.com/a_taisuke" target="_blank">- note</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="content policy"><a href="../../policy/">プライバシーポリシー</a></div>
+        <div class="content"><small>© 2025 bitcraft All Rights Reserved</small></div>
+    </footer>
+  </body>
+</html>

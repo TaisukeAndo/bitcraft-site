@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 460" width="500" height="460">
+  <!-- Transparent background -->
+
+  <!-- ========== LEFT: Incoming data items ========== -->
+
+  <!-- Dashed flow lines: items → shield -->
+  <line x1="128" y1="110" x2="172" y2="170" stroke="#ccc" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="128" y1="232" x2="172" y2="232" stroke="#ccc" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="128" y1="354" x2="172" y2="295" stroke="#ccc" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <!-- arrowheads -->
+  <polygon points="172,170 164,162 167,174" fill="#ccc"/>
+  <polygon points="172,232 162,226 163,238" fill="#ccc"/>
+  <polygon points="172,295 164,288 167,300" fill="#ccc"/>
+
+  <!-- Item 1: Person / PII -->
+  <g transform="translate(28, 82)">
+    <rect x="0" y="0" width="100" height="60" rx="4" fill="#fff" stroke="#ddd" stroke-width="1.2"/>
+    <!-- Head -->
+    <circle cx="30" cy="20" r="9" fill="none" stroke="#333" stroke-width="1.5"/>
+    <!-- Body -->
+    <path d="M16,48 Q16,38 30,38 Q44,38 44,48" fill="none" stroke="#333" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Text label -->
+    <text x="55" y="26" font-family="Inter,sans-serif" font-size="10" fill="#555">個人</text>
+    <text x="55" y="40" font-family="Inter,sans-serif" font-size="10" fill="#555">情報</text>
+    <!-- Warning badge -->
+    <circle cx="90" cy="10" r="9" fill="#1a1a1a"/>
+    <text x="90" y="15" text-anchor="middle" font-family="monospace" font-size="10" fill="#fff" font-weight="bold">!</text>
+  </g>
+
+  <!-- Item 2: Credit card / Financial -->
+  <g transform="translate(28, 202)">
+    <rect x="0" y="0" width="100" height="60" rx="4" fill="#fff" stroke="#ddd" stroke-width="1.2"/>
+    <!-- Card shape -->
+    <rect x="8" y="12" width="44" height="28" rx="3" fill="none" stroke="#333" stroke-width="1.5"/>
+    <line x1="8" y1="22" x2="52" y2="22" stroke="#333" stroke-width="1.5"/>
+    <rect x="12" y="27" width="12" height="8" rx="1" fill="#333"/>
+    <!-- Text label -->
+    <text x="60" y="26" font-family="Inter,sans-serif" font-size="10" fill="#555">金融</text>
+    <text x="60" y="40" font-family="Inter,sans-serif" font-size="10" fill="#555">情報</text>
+    <!-- Warning badge -->
+    <circle cx="90" cy="10" r="9" fill="#1a1a1a"/>
+    <text x="90" y="15" text-anchor="middle" font-family="monospace" font-size="10" fill="#fff" font-weight="bold">!</text>
+  </g>
+
+  <!-- Item 3: Key / Credentials -->
+  <g transform="translate(28, 322)">
+    <rect x="0" y="0" width="100" height="60" rx="4" fill="#fff" stroke="#ddd" stroke-width="1.2"/>
+    <!-- Key shape -->
+    <circle cx="22" cy="22" r="11" fill="none" stroke="#333" stroke-width="1.5"/>
+    <circle cx="22" cy="22" r="5" fill="none" stroke="#333" stroke-width="1.5"/>
+    <line x1="32" y1="28" x2="54" y2="40" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+    <line x1="46" y1="37" x2="46" y2="47" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+    <!-- Text label -->
+    <text x="60" y="22" font-family="Inter,sans-serif" font-size="10" fill="#555">認証</text>
+    <text x="60" y="36" font-family="Inter,sans-serif" font-size="10" fill="#555">情報・</text>
+    <text x="60" y="50" font-family="Inter,sans-serif" font-size="10" fill="#555">APIキー</text>
+    <!-- Warning badge -->
+    <circle cx="90" cy="10" r="9" fill="#1a1a1a"/>
+    <text x="90" y="15" text-anchor="middle" font-family="monospace" font-size="10" fill="#fff" font-weight="bold">!</text>
+  </g>
+
+  <!-- ========== CENTER: PSF Shield ========== -->
+  <!-- Shield outer -->
+  <path d="M250,30 L330,68 L330,240 Q330,345 250,378 Q170,345 170,240 L170,68 Z"
+        fill="#f9f9f9" stroke="#1a1a1a" stroke-width="2"/>
+  <!-- Shield inner highlight -->
+  <path d="M250,50 L315,83 L315,242 Q315,334 250,362 Q185,334 185,242 L185,83 Z"
+        fill="#fff" stroke="#eee" stroke-width="1"/>
+
+  <!-- PSF text -->
+  <text x="250" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#aaa" letter-spacing="2" font-weight="600">PROMPT</text>
+  <text x="250" y="174" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#aaa" letter-spacing="2" font-weight="600">SECURITY</text>
+  <text x="250" y="193" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#aaa" letter-spacing="2" font-weight="600">FILTER</text>
+
+  <!-- Scan line horizontal -->
+  <line x1="192" y1="215" x2="308" y2="215" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="3,2"/>
+
+  <!-- Check mark -->
+  <path d="M222,260 L242,285 L282,235"
+        fill="none" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- ========== RIGHT: Safe AI connections ========== -->
+
+  <!-- Solid flow lines: shield → items -->
+  <line x1="330" y1="170" x2="374" y2="120" stroke="#666" stroke-width="1.5"/>
+  <line x1="330" y1="232" x2="374" y2="232" stroke="#666" stroke-width="1.5"/>
+  <line x1="330" y1="295" x2="374" y2="342" stroke="#666" stroke-width="1.5"/>
+  <!-- arrowheads -->
+  <polygon points="374,120 366,128 378,131" fill="#666"/>
+  <polygon points="374,232 363,226 363,238" fill="#666"/>
+  <polygon points="374,342 366,333 378,333" fill="#666"/>
+
+  <!-- AI 1: ChatGPT -->
+  <circle cx="415" cy="110" r="36" fill="#f5f5f5" stroke="#ddd" stroke-width="1.2"/>
+  <text x="415" y="104" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#333" font-weight="600">Chat</text>
+  <text x="415" y="118" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#333" font-weight="600">GPT</text>
+  <!-- safe check -->
+  <circle cx="444" cy="82" r="10" fill="#1a1a1a"/>
+  <path d="M438,82 L442,87 L451,77" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- AI 2: Claude -->
+  <circle cx="420" cy="232" r="36" fill="#f5f5f5" stroke="#ddd" stroke-width="1.2"/>
+  <text x="420" y="236" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#333" font-weight="600">Claude</text>
+  <!-- safe check -->
+  <circle cx="449" cy="204" r="10" fill="#1a1a1a"/>
+  <path d="M443,204 L447,209 L456,199" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- AI 3: Gemini -->
+  <circle cx="415" cy="354" r="36" fill="#f5f5f5" stroke="#ddd" stroke-width="1.2"/>
+  <text x="415" y="358" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#333" font-weight="600">Gemini</text>
+  <!-- safe check -->
+  <circle cx="444" cy="326" r="10" fill="#1a1a1a"/>
+  <path d="M438,326 L442,331 L451,321" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Bottom label -->
+  <text x="250" y="430" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#bbb" letter-spacing="1">全処理はローカル環境内で完結</text>
+  <line x1="145" y1="422" x2="240" y2="422" stroke="#ddd" stroke-width="1"/>
+  <line x1="260" y1="422" x2="355" y2="422" stroke="#ddd" stroke-width="1"/>
+</svg>

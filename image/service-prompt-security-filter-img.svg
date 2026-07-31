@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 247" width="400" height="247">
+  <rect width="400" height="247" fill="#0a0a0f"/>
+  <defs>
+    <pattern id="gridCard" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#141420" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="247" fill="url(#gridCard)"/>
+
+  <!-- Binary stream left -->
+  <text font-family="monospace" font-size="10" fill="#181828">
+    <tspan x="10" y="30">01101011 01101011</tspan>
+    <tspan x="10" dy="18">10110110 11010110</tspan>
+    <tspan x="10" dy="18">01101011 01101011</tspan>
+    <tspan x="10" dy="18">11010101 10110101</tspan>
+    <tspan x="10" dy="18">01101011 01101011</tspan>
+    <tspan x="10" dy="18">10110101 11010110</tspan>
+    <tspan x="10" dy="18">01101011 01101011</tspan>
+    <tspan x="10" dy="18">11010110 10110110</tspan>
+  </text>
+
+  <!-- Binary stream right -->
+  <text font-family="monospace" font-size="10" fill="#181828">
+    <tspan x="230" y="30">01101011 01101011</tspan>
+    <tspan x="230" dy="18">10110110 11010110</tspan>
+    <tspan x="230" dy="18">01101011 01101011</tspan>
+    <tspan x="230" dy="18">11010101 10110101</tspan>
+    <tspan x="230" dy="18">01101011 01101011</tspan>
+    <tspan x="230" dy="18">10110101 11010110</tspan>
+    <tspan x="230" dy="18">01101011 01101011</tspan>
+    <tspan x="230" dy="18">11010110 10110110</tspan>
+  </text>
+
+  <!-- Shield outline -->
+  <path d="M200,60 L252,85 L252,145 Q252,190 200,210 Q148,190 148,145 L148,85 Z"
+        fill="none" stroke="#3a3a5a" stroke-width="2"/>
+  <!-- Shield inner fill subtle -->
+  <path d="M200,68 L244,90 L244,148 Q244,186 200,204 Q156,186 156,148 L156,90 Z"
+        fill="#0f0f1e" stroke="none"/>
+
+  <!-- Check mark inside shield -->
+  <path d="M180,138 L194,156 L224,118"
+        fill="none" stroke="#4a4a7a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Scan lines -->
+  <line x1="130" y1="90" x2="148" y2="90" stroke="#2a2a4a" stroke-width="1"/>
+  <line x1="252" y1="90" x2="270" y2="90" stroke="#2a2a4a" stroke-width="1"/>
+  <line x1="130" y1="140" x2="148" y2="140" stroke="#2a2a4a" stroke-width="1"/>
+  <line x1="252" y1="140" x2="270" y2="140" stroke="#2a2a4a" stroke-width="1"/>
+  <line x1="148" y1="200" x2="148" y2="220" stroke="#2a2a4a" stroke-width="1"/>
+  <line x1="252" y1="200" x2="252" y2="220" stroke="#2a2a4a" stroke-width="1"/>
+
+  <!-- Label -->
+  <text x="200" y="232" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#3a3a5a" letter-spacing="3">PROMPT SECURITY FILTER</text>
+</svg>

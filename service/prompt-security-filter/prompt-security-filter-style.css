@@ -1,0 +1,457 @@
+/* ===========================
+   Prompt Security Filter — Page Styles
+   =========================== */
+
+/* ===========================
+   Lead / Overview Section
+   =========================== */
+.apg-lead-section {
+    padding: 100px 0 90px;
+    background: #fff;
+}
+
+.apg-lead-inner {
+    display: flex;
+    align-items: center;
+    gap: 70px;
+}
+
+.apg-lead-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.apg-lead-image {
+    flex: 0 0 460px;
+    width: 460px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.apg-lead-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.apg-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #aaa;
+    margin: 0 0 20px;
+    text-transform: uppercase;
+}
+
+.apg-catch {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.55;
+    margin: 0 0 28px;
+    color: #000;
+}
+
+.apg-desc {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 2;
+    color: #444;
+    margin: 0;
+}
+
+/* ===========================
+   Problem Section
+   =========================== */
+.apg-problem-section {
+    padding: 90px 0 100px;
+    background: #000;
+    color: #fff;
+}
+
+.apg-problem-section .apg-section-label {
+    color: #444;
+}
+
+.apg-problem-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-top: 50px;
+}
+
+.apg-problem-card {
+    border: 1px solid #1a1a1a;
+    padding: 30px 26px;
+    background: #080808;
+}
+
+.apg-problem-card .apg-problem-num {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1e1e1e;
+    margin: 0 0 18px;
+    line-height: 1;
+}
+
+.apg-problem-card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: #fff;
+    line-height: 1.6;
+}
+
+.apg-problem-card p {
+    font-size: 13px;
+    font-weight: 300;
+    color: #555;
+    margin: 0;
+    line-height: 1.9;
+}
+
+/* ===========================
+   Section title
+   =========================== */
+.apg-section-title {
+    margin-bottom: 0;
+}
+
+.apg-section-title h2 {
+    font-size: 38px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: #000;
+}
+
+.apg-problem-section .apg-section-title h2 {
+    color: #fff;
+}
+
+.apg-section-title p {
+    font-size: 15px;
+    font-weight: 300;
+    color: #666;
+    margin: 0;
+}
+
+.apg-problem-section .apg-section-title p {
+    color: #555;
+}
+
+/* ===========================
+   Features Section
+   =========================== */
+.apg-features-section {
+    padding: 90px 0 100px;
+    background: #fff;
+}
+
+.apg-features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin-top: 50px;
+    border: 1px solid #e8e8e8;
+}
+
+.apg-feature-item {
+    padding: 36px 30px;
+    border-right: 1px solid #e8e8e8;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.apg-feature-item:nth-child(3n) {
+    border-right: none;
+}
+
+.apg-feature-item:nth-last-child(-n+3):nth-child(3n+1),
+.apg-feature-item:nth-last-child(-n+3):nth-child(3n+1) ~ .apg-feature-item {
+    border-bottom: none;
+}
+
+.apg-feature-icon {
+    font-size: 22px;
+    margin-bottom: 16px;
+    color: #000;
+}
+
+.apg-feature-item h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 10px;
+    color: #000;
+}
+
+.apg-feature-item p {
+    font-size: 13px;
+    font-weight: 300;
+    color: #555;
+    margin: 0;
+    line-height: 1.9;
+}
+
+.apg-feature-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #999;
+    border: 1px solid #e0e0e0;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-top: 12px;
+    font-family: monospace;
+}
+
+/* ===========================
+   Package / Architecture Section
+   =========================== */
+.apg-arch-section {
+    padding: 90px 0 100px;
+    background: #f5f5f5;
+}
+
+.apg-arch-section .apg-section-title h2 {
+    color: #000;
+}
+
+.apg-arch-section .apg-section-title p {
+    color: #666;
+}
+
+.apg-arch-packages {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-top: 50px;
+}
+
+.apg-package {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    padding: 36px 32px;
+}
+
+.apg-package--pro {
+    border-color: #000;
+}
+
+.apg-package-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #999;
+    border: 1px solid #ddd;
+    padding: 3px 12px;
+    display: inline-block;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+}
+
+.apg-package--pro .apg-package-badge {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+}
+
+.apg-package h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: #000;
+}
+
+.apg-package-price-note {
+    font-size: 13px;
+    font-weight: 300;
+    color: #999;
+    margin: 0 0 20px;
+}
+
+.apg-package-desc {
+    font-size: 14px;
+    font-weight: 300;
+    color: #555;
+    margin: 0 0 24px;
+    line-height: 1.9;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #ebebeb;
+}
+
+.apg-package-checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.apg-package-checklist li {
+    font-size: 13px;
+    color: #333;
+    padding: 9px 0;
+    border-bottom: 1px solid #f5f5f5;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-weight: 300;
+}
+
+.apg-package-checklist li:last-child {
+    border-bottom: none;
+}
+
+.apg-package-checklist li::before {
+    content: "—";
+    color: #bbb;
+    flex-shrink: 0;
+}
+
+/* ===========================
+   Coverage Table Section
+   =========================== */
+.apg-coverage-section {
+    padding: 90px 0 100px;
+    background: #fff;
+}
+
+.apg-table-wrap {
+    margin-top: 50px;
+    overflow-x: auto;
+}
+
+.apg-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.apg-table thead tr {
+    border-bottom: 2px solid #000;
+}
+
+.apg-table thead th {
+    padding: 16px 24px;
+    text-align: left;
+    font-weight: 700;
+    color: #000;
+    font-size: 14px;
+}
+
+.apg-table thead th:not(:first-child) {
+    text-align: center;
+}
+
+.apg-table tbody tr {
+    border-bottom: 1px solid #eee;
+}
+
+.apg-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.apg-table td {
+    padding: 18px 24px;
+    color: #333;
+    font-weight: 300;
+}
+
+.apg-table td:not(:first-child) {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.apg-table .apg-ok  { color: #000; }
+.apg-table .apg-ng  { color: #ccc; }
+.apg-table .apg-wip { color: #999; font-size: 12px; font-weight: 400; }
+
+/* ===========================
+   CTA Section — background image
+   =========================== */
+.apg-cta-section {
+    position: relative;
+    padding: 100px 0 110px;
+    color: #fff;
+    text-align: center;
+    background-image: url('./img/contact-bg.svg');
+    background-size: cover;
+    background-position: center center;
+    background-color: #060810;
+}
+
+.apg-cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 6, 18, 0.65);
+    z-index: 0;
+}
+
+.apg-cta-section > * {
+    position: relative;
+    z-index: 1;
+}
+
+.apg-cta-section .apg-section-label { color: #444; }
+.apg-cta-section .apg-catch         { color: #fff; margin-bottom: 18px; }
+.apg-cta-section .apg-desc          { color: #888; margin: 0 auto 48px; text-align: center; }
+
+.apg-cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.apg-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 50px;
+    height: 50px;
+    padding: 0 42px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+    color: inherit;
+}
+
+.apg-btn:hover          { opacity: 0.8; }
+.apg-btn--white         { background: #fff; color: #000; }
+.apg-btn--outline       { background: transparent; color: #fff; border: 1px solid #444; }
+
+/* ===========================
+   Responsive
+   =========================== */
+@media screen and (max-width: 1360px) {
+    .apg-lead-inner  { gap: 50px; }
+    .apg-lead-image  { flex: 0 0 360px; width: 360px; }
+    .apg-problem-grid { grid-template-columns: repeat(2, 1fr); }
+    .apg-features-grid { grid-template-columns: repeat(2, 1fr); }
+    .apg-feature-item:nth-child(3n) { border-right: 1px solid #e8e8e8; }
+    .apg-feature-item:nth-child(2n) { border-right: none; }
+}
+
+@media screen and (max-width: 959px) {
+    .apg-lead-section  { padding: 80px 0 70px; }
+    .apg-lead-inner    { flex-direction: column; gap: 40px; }
+    .apg-lead-image    { flex: unset; width: 100%; max-width: 480px; }
+    .apg-catch         { font-size: 24px; }
+    .apg-arch-packages { grid-template-columns: 1fr; }
+    .apg-problem-grid  { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media screen and (max-width: 649px) {
+    .apg-lead-section, .apg-problem-section,
+    .apg-features-section, .apg-arch-section,
+    .apg-coverage-section { padding: 60px 0 70px; }
+    .apg-cta-section   { padding: 70px 0 80px; }
+    .apg-catch         { font-size: 20px; }
+    .apg-section-title h2 { font-size: 28px; }
+    .apg-problem-grid  { grid-template-columns: 1fr; }
+    .apg-features-grid { grid-template-columns: 1fr; }
+    .apg-feature-item  { border-right: none !important; }
+    .apg-cta-buttons   { flex-direction: column; align-items: center; }
+    .apg-table         { font-size: 12px; }
+    .apg-table td, .apg-table thead th { padding: 14px 10px; }
+}
