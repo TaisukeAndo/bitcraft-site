@@ -94,6 +94,8 @@ cp -r service/seminar/claude-code-1day service/seminar/<slug>
 
 `<head>` の `description`・`event-date`・`<title>`、本文の見出し・締切メッセージの日付を更新する。
 
+申込完了後にGAS(Google Apps Script)経由で自動返信メールを送りたい場合は、このSkillの範囲外なので `add-form` Skillに従う（entry ID対応とGAS自動返信は疎結合な別の仕組みなので、このステップではGoogleフォーム未接続のプレースホルダーのまま進めてよい）。
+
 フォーム項目については [[references/google-form-fields.md]] を読み、ユーザーに送信先（GoogleフォームのURLと各質問の `entry.xxxxx` ID）を確認する。まだフォームが無い場合は、そのファイルに書いてある案内どおりプレースホルダーのまま進めてよい（ただし `apply-script.js` の `GOOGLE_FORM_URL` にはっきり分かるダミー値を入れ、ユーザーへの最終報告で「フォーム未接続」であることを明言する）。
 
 #### 3-A-4. OGP画像（`sns-image.png`）を生成する

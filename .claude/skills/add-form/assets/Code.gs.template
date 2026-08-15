@@ -1,0 +1,77 @@
+/**
+ * GAS自動返信テンプレート
+ *
+ * 使い方:
+ *   1. このファイルをコピーして、フォームごとの `gas/Code.gs` として保存する
+ *   2. 下の CONFIG を書き換える（質問タイトルはGoogleフォームの表記と一字一句揃える）
+ *   3. buildBody() を、そのフォーム専用の本文に書き換える
+ *   4. .claude/skills/add-form/references/gas-setup.md の手順で
+ *      回答先スプレッドシートの Apps Script エディタに貼り付け、
+ *      onFormSubmit トリガー（イベント元: スプレッドシート / 種類: フォーム送信時）を設定する
+ *
+ * 注意:
+ *   - ここに実在の口座番号・電話番号などの機微情報を書く場合は、
+ *     ユーザーから明示された値だけを使うこと。不明な項目は
+ *     プレースホルダー（例: 【振込先情報をここに記載】）のまま残し、
+ *     もっともらしい値をでっち上げない。
+ */
+
+const CONFIG = {
+  // 送信先メールアドレスが入っている質問のタイトル（Googleフォームの表記と完全一致させる）
+  EMAIL_FIELD: "メールアドレス",
+  // 本文の宛名に使う質問タイトル。無ければ DEFAULT_NAME を使う
+  NAME_FIELD: "お名前",
+  DEFAULT_NAME: "お客様",
+  // 自動返信メールの件名
+  SUBJECT: "【bitcraft】お申し込みありがとうございます",
+  // CC先。複数はカンマ区切り。不要なら空文字 ""
+  CC: "",
+  // 差出人の表示名（送信元アドレス自体は、このスクリプトを承認したGoogleアカウントになる）
+  SENDER_NAME: "bitcraft",
+};
+
+function onFormSubmit(e) {
+  const namedValues = e.namedValues; // { "質問タイトル": ["回答"], ... }
+
+  const email = getAnswer(namedValues, CONFIG.EMAIL_FIELD);
+  if (!email) {
+    // 質問タイトルの表記ゆれ等で回答が拾えなかったケース。黙って握りつぶさずログに残す。
+    console.error(
+      "宛先メールアドレスを取得できませんでした。質問タイトル『" +
+        CONFIG.EMAIL_FIELD +
+        "』がフォームの実際の質問文と一致しているか確認してください。namedValues=" +
+        JSON.stringify(namedValues)
+    );
+    return;
+  }
+
+  const name = getAnswer(namedValues, CONFIG.NAME_FIELD) || CONFIG.DEFAULT_NAME;
+  const body = buildBody(name, namedValues);
+
+  const options = { name: CONFIG.SENDER_NAME };
+  if (CONFIG.CC) options.cc = CONFIG.CC;
+
+  MailApp.sendEmail(email, CONFIG.SUBJECT, body, options);
+}
+
+function getAnswer(namedValues, title) {
+  const v = namedValues[title];
+  return v && v[0] ? String(v[0]).trim() : "";
+}
+
+/**
+ * 本文はフォームごとに書き換える。namedValues を使えば他の回答も差し込める
+ * （例: getAnswer(namedValues, "参加希望日")）。
+ */
+function buildBody(name, namedValues) {
+  return [
+    name + " 様",
+    "",
+    "この度はお申し込みいただき、誠にありがとうございます。",
+    "以下の内容で受け付けいたしました。",
+    "",
+    "ご不明な点がございましたら、本メールに直接ご返信ください。",
+    "",
+    "bitcraft",
+  ].join("\n");
+}
