@@ -1,0 +1,27 @@
+{
+  "text": {
+    "SMALL_DESC": "AIエージェント構築 × 業務効率化 1Dayセミナー",
+    "TITLE_LINE_1": "AIを「使う」から、",
+    "TITLE_LINE_2": "AIに「任せる」へ。",
+    "SUB_DESC_LINE_1": "チャットに質問するだけで止まっているなら、次のステップへ。",
+    "SUB_DESC_LINE_2": "AIエージェントを構築し、定常業務を動かす仕組みを1日で。",
+    "DATE_MAIN": "09/19",
+    "DATE_SUB": "(土)",
+    "TIME_RANGE": "10:00 - 17:00",
+    "VENUE": "鳥取市（SANDBOX TOTTORI）",
+    "SPEAKER_COMPANY": "bitcraft",
+    "SPEAKER_ROLE": "代表 / 講師",
+    "SPEAKER_NAME_RUBY": "あんどう たいすけ",
+    "SPEAKER_NAME": "安藤 太亮"
+  },
+  "color": {
+    "BG_NAVY": "#0a4d68",
+    "ACCENT_BLUE": "#4fd8ec",
+    "TEXT_NAVY": "#0a4d68",
+    "TEXT_WHITE": "#ffffff"
+  },
+  "media": {
+    "SPEAKER_IMAGE_URL": "https://drive.google.com/uc?export=download&id=1g-PChIKpiZZj5IOq-G9o5-ciSUDwHJKZ",
+    "PARTNER_LOGO_IMAGE": "session_logo.png"
+  }
+}

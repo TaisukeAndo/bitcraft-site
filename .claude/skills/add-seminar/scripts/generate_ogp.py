@@ -95,13 +95,40 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             z-index: 1;
         }
 
-        /* Top Left Logo */
-        .logo {
+        /* Top Left Logo (+ 任意の共催ロゴ。例: "bitcraft × SESSION") */
+        .logo-row {
             position: absolute;
             top: 40px;
             left: 50px;
-            height: 36px;
+            height: 52px;
             z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .logo-row .logo {
+            height: 36px;
+            display: block;
+        }
+        .logo-row .logo-x {
+            color: __TEXT_WHITE__;
+            font-size: 24px;
+            font-weight: 900;
+            line-height: 1;
+        }
+        .logo-row .partner-badge {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 8px 18px;
+            height: 52px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+        }
+        .logo-row .partner-badge img {
+            height: 100%;
+            width: auto;
+            display: block;
         }
 
         /* Small description */
@@ -286,7 +313,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <div class="ai-bg"></div>
         <div class="bg-lines"></div>
 
-        <img src="__LOGO_IMAGE__" class="logo" onerror="this.style.display='none'">
+        <div class="logo-row">
+            <img src="__LOGO_IMAGE__" class="logo" onerror="this.style.display='none'">__PARTNER_LOGO_BLOCK__
+        </div>
 
         <div class="small-desc">__SMALL_DESC__</div>
 
@@ -394,6 +423,19 @@ def ensure_speaker_cutout(outdir: Path, media: dict, speaker_cutout_arg: str | N
 
 def create_layout_html(outdir: Path, text: dict, color: dict, media: dict) -> Path:
     html = HTML_TEMPLATE
+
+    # 共催ロゴ（例: "bitcraft × SESSION"）は media.PARTNER_LOGO_IMAGE がある場合だけ、
+    # 「×」＋白バッジに入れたロゴ画像として差し込む。無ければ空文字列でbitcraftロゴ単体のまま。
+    partner_logo = media.get("PARTNER_LOGO_IMAGE", "")
+    if partner_logo:
+        partner_block = (
+            '<span class="logo-x">×</span>'
+            f'<span class="partner-badge"><img src="{partner_logo}"></span>'
+        )
+    else:
+        partner_block = ""
+    html = html.replace("__PARTNER_LOGO_BLOCK__", partner_block)
+
     for key, val in text.items():
         html = html.replace(f"__{key}__", val)
     for key, val in color.items():
