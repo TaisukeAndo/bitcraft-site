@@ -1,7 +1,7 @@
 .DS_Store
-service/seminar/claude-code-1day/img/layout.html
-service/seminar/claude-code-1day/img/speaker_image_cutout.png
-service/seminar/claude-code-1day/img/speaker_image.png
-service/seminar/claude-code-1day/img/batch_generate.py
-service/seminar/claude-code-1day/img/generate_ogp.py
+# OGP画像生成（.claude/skills/add-seminar/scripts/generate_ogp.py）の中間生成物。
+# 最終出力の sns-image.png / past-seminar-*.png はコミット対象。
+service/seminar/**/img/layout.html
+service/seminar/**/img/speaker_image_cutout.png
+service/seminar/**/img/speaker_image.png
 tmp/

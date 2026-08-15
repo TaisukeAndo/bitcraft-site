@@ -68,11 +68,11 @@ date +%F
 cp -r service/seminar/claude-code-1day service/seminar/<slug>
 ```
 
-このコマンドで `index.html`（詳細ページ）、`seminar-detail-style.css`、`deadline.js`、`apply/`（`index.html`・`apply-script.js`・`apply-style.css`）、`img/`（生成スクリプトや過去の講師写真を含む）が一式コピーされる。
+このコマンドで `index.html`（詳細ページ）、`seminar-detail-style.css`、`deadline.js`、`apply/`（`index.html`・`apply-script.js`・`apply-style.css`）、`img/`（過去の講師写真とOGP設定ファイルを含む）が一式コピーされる。
 
 - `seminar-detail-style.css` と `apply-style.css` と `deadline.js` は中身がセミナー固有の文言に依存しないので、**基本的にそのまま流用でき、書き換え不要**。クラス名は `sd-`（詳細ページ）・`seminar-card`（一覧）・`form-control`（申込フォーム）というプレフィックスで統一されており、新しい見た目が必要な場合だけCSSに手を加える。
 - `img/` の中の `speaker_ando.jpg` や `speaker_matsuishi.png` は、同じ講師が再登壇するなら消さずに使い回す。別の講師なら差し替える（写真が無ければ `sd-speaker-card__photo-placeholder` のアイコン表示にフォールバックする作りなので、写真無しでも壊れない）。
-- `img/generate_ogp.py` と `img/batch_generate.py` はOGP画像生成用（ステップ3-A-4で使う）。`img/layout.html` は生成スクリプトが毎回上書きする作業ファイルなので気にしなくてよい。
+- `img/ogp-config.json` はOGP画像生成用の設定ファイル（コピー元 `claude-code-1day` の内容が入ったまま）で、ステップ3-A-4で新セミナーの内容に書き換えてから使う。生成スクリプト自体は `.claude/skills/add-seminar/scripts/generate_ogp.py` に一本化されており、各セミナーフォルダには複製されない（後述）。
 
 #### 3-A-2. 詳細ページ（`<slug>/index.html`）を書き換える
 
@@ -98,14 +98,16 @@ cp -r service/seminar/claude-code-1day service/seminar/<slug>
 
 #### 3-A-4. OGP画像（`sns-image.png`）を生成する
 
-`<slug>/img/generate_ogp.py` はテンプレートからコピーされてきたものなので、中の `CONFIG_TEXT`（タイトル・日付・会場・講師名など）と `CONFIG_COLOR`（アクセントカラー。既存3色 `#0f2442`紺・`#1a0b2e`紫・`#0a2e15`緑・`#111111`黒 と被らない新しい色を選ぶ）を新セミナーの内容に書き換えてから実行する:
+`<slug>/img/ogp-config.json` はテンプレートからコピーされてきたものなので、中の `text`（タイトル・日付・会場・講師名など）と `color`（アクセントカラー。既存3色 `#0f2442`紺・`#1a0b2e`紫・`#0a2e15`緑・`#111111`黒 と被らない新しい色を選ぶ）を新セミナーの内容に書き換えてから、共有スクリプトを実行する:
 
 ```bash
-cd service/seminar/<slug>/img && python3 generate_ogp.py
+python3 .claude/skills/add-seminar/scripts/generate_ogp.py --config service/seminar/<slug>/img/ogp-config.json
 ```
 
-このスクリプトは **ヘッドレスChrome・Pillow・rembg（講師写真の背景除去）に依存し、`generate_ogp.py` 内のロゴ画像パスは実行者のローカル絶対パスがハードコードされている**。環境にこれらが無ければ失敗するので、失敗した場合は無理に直そうとせず次のいずれかで代替する:
-- 同じ講師なら既存の `speaker_image_cutout.png` を流用して見た目だけ差分適用する
+生成スクリプトは各セミナーフォルダに複製せず `.claude/skills/add-seminar/scripts/generate_ogp.py` に1本化されている（以前は `img/` 配下にスクリプト自体をコピーしてConfigを直接書き換える方式だったが、スクリプトがコピーのたびに複製されるうえ `.gitignore` 対象でリポジトリに残らなかったため、設定だけをJSONとして各セミナーに残す形に変えた）。`--outdir` を省略すると `--config` と同じディレクトリに `sns-image.png` を出力する。講師写真は初回のみ `ogp-config.json` の `media.SPEAKER_IMAGE_URL` からダウンロード＋背景除去されるが、同じ講師で既に別セミナーの切り抜き画像があるなら `--speaker-cutout <既存のspeaker_image_cutout.pngへのパス>` を渡して使い回せる（ダウンロード・背景除去をスキップできる）。
+
+このスクリプトは **ヘッドレスChrome・Pillow・rembg（講師写真の背景除去）に依存する**。環境にこれらが無ければ失敗するので、失敗した場合は無理に直そうとせず次のいずれかで代替する:
+- 同じ講師なら既存の `speaker_image_cutout.png` を `--speaker-cutout` で流用して見た目だけ差分適用する
 - それも難しければ `sns-image.png` の生成だけユーザーに依頼し、他の作業は止めずに進める
 
 画像生成の失敗はサイト全体を止めるほどのブロッカーではない（`<img>` タグが壊れるだけで、OGP以外のページ機能には影響しない）ので、深追いしすぎないこと。
@@ -114,7 +116,15 @@ cd service/seminar/<slug>/img && python3 generate_ogp.py
 
 ユーザーが「先月やったセミナーを過去実績として載せたい」のように、既に終わったイベントの記録目的で依頼してきた場合は、3-Aのフル scaffold は不要。既存の3件の過去セミナー（`past-seminar-lp.png` 等）と同じ軽量パターンに合わせる:
 
-1. `service/seminar/claude-code-1day/img/batch_generate.py` の `CONFIGS` 配列の書き方を参考に、新しい1件分の設定（タイトル・日付・会場・アクセントカラー）を作り、`service/seminar/img/past-seminar-<slug>.png` を生成する
+1. `service/seminar/claude-code-1day/img/ogp-config.json` を参考に、新しい1件分の設定（タイトル・日付・会場・アクセントカラー）を持つ一時的なJSONファイルを作り（詳細ページ用フォルダは作らないので、スクラッチ領域に置いてよい）、共有スクリプトで `service/seminar/img/` に直接出力する:
+   ```bash
+   python3 .claude/skills/add-seminar/scripts/generate_ogp.py \
+     --config <一時configのパス> \
+     --outdir service/seminar/img \
+     --out-name past-seminar-<slug>.png \
+     --speaker-cutout service/seminar/claude-code-1day/img/speaker_image_cutout.png
+   ```
+   `--speaker-cutout` は同じ講師（通常は安藤太亮）の切り抜き画像を使い回すためのもので、既存セミナーのどれか（例: `claude-code-1day`）の `img/speaker_image_cutout.png` を指せばダウンロード・背景除去をスキップできる。講師が異なる場合は configの `media.SPEAKER_IMAGE_URL` を設定して `--speaker-cutout` を省略する。
 2. `service/seminar/index.html` の「過去に開催したセミナー」の `<ul>` に、日付が新しい順になる位置へ `<li class="seminar-card seminar-card--past">` を追加する（既存の3件と同じ構造。`<a>` に `href` は付けない）
 
 ## ステップ4: 一覧ページに新規カードを追加する（3-Aのケース）
