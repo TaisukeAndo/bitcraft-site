@@ -1,0 +1,26 @@
+{
+  "text": {
+    "SMALL_DESC": "実践・業務自動化を目指す1Dayセミナー",
+    "TITLE_LINE_1": "AIに「仕事を渡せる人」に、",
+    "TITLE_LINE_2": "今日なる。",
+    "SUB_DESC_LINE_1": "ChatGPTに質問するだけで止まっているなら、次のステップへ。",
+    "SUB_DESC_LINE_2": "指示するだけで定常業務が動き続ける仕組みを1日で作り上げる。",
+    "DATE_MAIN": "06/14",
+    "DATE_SUB": "(日)",
+    "TIME_RANGE": "10:00 - 17:00",
+    "VENUE": "松江市内",
+    "SPEAKER_COMPANY": "bitcraft",
+    "SPEAKER_ROLE": "代表 / 講師",
+    "SPEAKER_NAME_RUBY": "あんどう たいすけ",
+    "SPEAKER_NAME": "安藤 太亮"
+  },
+  "color": {
+    "BG_NAVY": "#0f2442",
+    "ACCENT_BLUE": "#00a3ff",
+    "TEXT_NAVY": "#0f2442",
+    "TEXT_WHITE": "#ffffff"
+  },
+  "media": {
+    "SPEAKER_IMAGE_URL": "https://drive.google.com/uc?export=download&id=1g-PChIKpiZZj5IOq-G9o5-ciSUDwHJKZ"
+  }
+}
