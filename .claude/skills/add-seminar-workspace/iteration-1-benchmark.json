@@ -1,0 +1,354 @@
+{
+  "metadata": {
+    "skill_name": "add-seminar",
+    "skill_path": "/Users/ando/Desktop/bitcraft-site/.claude/skills/add-seminar",
+    "executor_model": "claude-sonnet-5",
+    "analyzer_model": "claude-sonnet-5",
+    "timestamp": "2026-07-31T00:00:00Z",
+    "evals_run": [
+      1,
+      2,
+      3
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "eval-1-full-scaffold",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 427.7,
+        "tokens": 114708,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "新しいセミナー用の詳細ページ(index.html)が作成されている",
+          "passed": true,
+          "evidence": "検出フォルダ: ['ai-meeting-minutes']"
+        },
+        {
+          "text": "新しいセミナー用の申込ページ(apply/index.html)が作成されている",
+          "passed": true,
+          "evidence": "ai-meeting-minutes/apply/index.html の有無"
+        },
+        {
+          "text": "詳細ページのevent-dateが2026-09-12になっている",
+          "passed": true,
+          "evidence": "検出された値: '2026-09-12'"
+        },
+        {
+          "text": "詳細ページと申込ページのevent-dateが一致している",
+          "passed": true,
+          "evidence": "detail='2026-09-12', apply='2026-09-12'"
+        },
+        {
+          "text": "一覧ページに新セミナーへのカードリンクが追加されている",
+          "passed": true,
+          "evidence": "href=\"./ai-meeting-minutes/\" の有無"
+        },
+        {
+          "text": "既存のclaude-code-1dayセミナーが「過去開催」側に移動している(受付中バッジが残っていない)",
+          "passed": true,
+          "evidence": "claude-code-1dayに紐づく「受付中」バッジは見つかりませんでした"
+        },
+        {
+          "text": "新しいセミナーのページにコピー元(Claude Code関連)の文言が残っていない",
+          "passed": true,
+          "evidence": "該当なし"
+        },
+        {
+          "text": "Googleフォーム未接続であることが分かる状態になっている(元セミナーのフォームURLを黙って使い回していない)",
+          "passed": true,
+          "evidence": "元セミナーとは異なるURL/プレースホルダーになっています"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "eval-1-full-scaffold",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 862.4,
+        "tokens": 142549,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "新しいセミナー用の詳細ページ(index.html)が作成されている",
+          "passed": true,
+          "evidence": "検出フォルダ: ['ai-minutes-workshop']"
+        },
+        {
+          "text": "新しいセミナー用の申込ページ(apply/index.html)が作成されている",
+          "passed": true,
+          "evidence": "ai-minutes-workshop/apply/index.html の有無"
+        },
+        {
+          "text": "詳細ページのevent-dateが2026-09-12になっている",
+          "passed": true,
+          "evidence": "検出された値: '2026-09-12'"
+        },
+        {
+          "text": "詳細ページと申込ページのevent-dateが一致している",
+          "passed": true,
+          "evidence": "detail='2026-09-12', apply='2026-09-12'"
+        },
+        {
+          "text": "一覧ページに新セミナーへのカードリンクが追加されている",
+          "passed": true,
+          "evidence": "href=\"./ai-minutes-workshop/\" の有無"
+        },
+        {
+          "text": "既存のclaude-code-1dayセミナーが「過去開催」側に移動している(受付中バッジが残っていない)",
+          "passed": true,
+          "evidence": "claude-code-1dayに紐づく「受付中」バッジは見つかりませんでした"
+        },
+        {
+          "text": "新しいセミナーのページにコピー元(Claude Code関連)の文言が残っていない",
+          "passed": true,
+          "evidence": "該当なし"
+        },
+        {
+          "text": "Googleフォーム未接続であることが分かる状態になっている(元セミナーのフォームURLを黙って使い回していない)",
+          "passed": true,
+          "evidence": "元セミナーとは異なるURL/プレースホルダーになっています"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "eval-2-past-only",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 275.8,
+        "tokens": 75594,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "一覧ページの過去開催セクションに「経理DX入門セミナー」のカードが追加されている",
+          "passed": true,
+          "evidence": "テキストの検出結果"
+        },
+        {
+          "text": "参加費(12,000円)と定員(25名)がカードに反映されている",
+          "passed": true,
+          "evidence": "price_ok=True, capacity_ok=True"
+        },
+        {
+          "text": "新しい詳細ページ用フォルダが作成されていない(過剰生成していない)",
+          "passed": true,
+          "evidence": "検出された新規フォルダ: []"
+        },
+        {
+          "text": "新しい申込ページ用フォルダが作成されていない",
+          "passed": true,
+          "evidence": "apply created: False"
+        },
+        {
+          "text": "カードのバッジが過去開催であることを示す表現(「終了」等)になっている",
+          "passed": true,
+          "evidence": "カード周辺のバッジ表記を確認"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "eval-2-past-only",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 255.6,
+        "tokens": 73684,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "一覧ページの過去開催セクションに「経理DX入門セミナー」のカードが追加されている",
+          "passed": true,
+          "evidence": "テキストの検出結果"
+        },
+        {
+          "text": "参加費(12,000円)と定員(25名)がカードに反映されている",
+          "passed": true,
+          "evidence": "price_ok=True, capacity_ok=True"
+        },
+        {
+          "text": "新しい詳細ページ用フォルダが作成されていない(過剰生成していない)",
+          "passed": true,
+          "evidence": "検出された新規フォルダ: []"
+        },
+        {
+          "text": "新しい申込ページ用フォルダが作成されていない",
+          "passed": true,
+          "evidence": "apply created: False"
+        },
+        {
+          "text": "カードのバッジが過去開催であることを示す表現(「終了」等)になっている",
+          "passed": true,
+          "evidence": "カード周辺のバッジ表記を確認"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "eval-3-ambiguous",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 65.2,
+        "tokens": 137341,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "何らかのセミナー詳細ページ(index.html)が新規作成されている",
+          "passed": true,
+          "evidence": "検出フォルダ: ['design-thinking-workshop']"
+        },
+        {
+          "text": "一覧ページが更新され、新セミナーへの参照がある",
+          "passed": true,
+          "evidence": "linked=True"
+        },
+        {
+          "text": "開催日が「来年3月」相当(2027年3月)の日付になっている、または未確定である旨が明記されている",
+          "passed": true,
+          "evidence": "event-date='2027-03-20'"
+        },
+        {
+          "text": "未確定情報がプレースホルダー/TODOとして明示されており、断定的な作り込みをしていない",
+          "passed": true,
+          "evidence": "placeholder_markers=True"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "eval-3-ambiguous",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 125.4,
+        "tokens": 122335,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "何らかのセミナー詳細ページ(index.html)が新規作成されている",
+          "passed": true,
+          "evidence": "検出フォルダ: ['design-thinking-workshop']"
+        },
+        {
+          "text": "一覧ページが更新され、新セミナーへの参照がある",
+          "passed": true,
+          "evidence": "linked=True"
+        },
+        {
+          "text": "開催日が「来年3月」相当(2027年3月)の日付になっている、または未確定である旨が明記されている",
+          "passed": true,
+          "evidence": "event-date='2027-03-13'"
+        },
+        {
+          "text": "未確定情報がプレースホルダー/TODOとして明示されており、断定的な作り込みをしていない",
+          "passed": true,
+          "evidence": "placeholder_markers=True"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 256.2333,
+        "stddev": 182.0404,
+        "min": 65.2,
+        "max": 427.7
+      },
+      "tokens": {
+        "mean": 109214.3333,
+        "stddev": 31237.9302,
+        "min": 75594,
+        "max": 137341
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 414.4667,
+        "stddev": 393.3462,
+        "min": 125.4,
+        "max": 862.4
+      },
+      "tokens": {
+        "mean": 112856.0,
+        "stddev": 35397.5372,
+        "min": 73684,
+        "max": 142549
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.00",
+      "time_seconds": "-158.2",
+      "tokens": "-3642"
+    }
+  },
+  "notes": [
+    "全アサーションが with_skill / without_skill の両方で100%成功しており、機械的に検証可能な観点だけでは差がつかなかった。これは今回の3タスクがベースラインのClaude(スキル無し)でもclaude-code-1dayの実例を読めば大筋を再現できるほど手がかりが豊富だったため。",
+    "Eval1(フルscaffold)ではトークン数・実行時間ともにwith_skillの方が少なく済んだ(スキルが調査・判断の手戻りを減らした可能性がある)。Eval2/3では両者ほぼ同等かbaselineがやや高コスト。",
+    "OGP画像生成(generate_ogp.py)はwith_skill/baselineの両方で試行され、Eval1/Eval3では成功、Eval3のbaselineはrembg依存を避けて簡易版に変更するなど異なるアプローチを取っていた — 生成方法の一貫性は定量評価では見えないため、目視レビューが重要。",
+    "定量アサーションが天井(100%)に張り付いているため、次回イテレーションではより厳しい/差がつきやすいアサーション(例: CSS/JSを不必要に書き換えていないか、Googleフォームのentry ID対応表の質、FAQ/VOICESの内容がテーマに即しているか)を追加することを検討する価値がある。"
+  ]
+}

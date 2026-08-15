@@ -1,0 +1,77 @@
+セミナー追加作業サマリー: 生成AI議事録自動化ワークショップ (slug: ai-meeting-minutes)
+今日の日付（date +%F で確認）: 2026-07-31
+新セミナー開催日: 2026-09-12（今日より未来のため、3-A: フル scaffold 生成のフローで対応）
+
+## 1. 既存の「開催予定」セミナーの過去移動（Skillステップ2）
+既存の claude-code-1day セミナーは event-date meta が 2026-06-14 で、今日（2026-07-31）より前のため、
+「開催予定」から「過去に開催したセミナー」セクションへ移動した。
+
+- service/seminar/index.html （修正）
+  - claude-code-1day のカードを「過去に開催したセミナー」の先頭に移動
+    - class に seminar-card--past を追加
+    - バッジを「受付中」→「終了」(seminar-card-badge--past) に変更
+    - 残席表示 (seminar-seats-left) を削除（定員表示は残す）
+    - 画像・リンクは既存の詳細ページ (./claude-code-1day/img/sns-image.png, href="./claude-code-1day/") をそのまま流用
+  - 「開催予定のセミナー」に新規セミナー（ai-meeting-minutes）のカードを追加
+
+## 2. 新規セミナーフォルダの生成（Skillステップ3-A）
+service/seminar/claude-code-1day/ を service/seminar/ai-meeting-minutes/ にコピーし、全セクションを新セミナー内容に書き換えた。
+
+新規作成・編集したファイル:
+- service/seminar/ai-meeting-minutes/index.html （新規、詳細ページ）
+  - HERO/TARGET/BENEFITS/TIMELINE/VOICES/SPEAKERS/OVERVIEW/FAQ/CTA 全セクションを
+    「生成AI議事録自動化ワークショップ」の内容に書き換え
+  - event-date meta = 2026-09-12
+  - 講師は安藤太亮（bitcraft代表）のみ（共同講師の松石氏カードは削除）
+  - 会場はオンライン開催（Zoom）のため、Googleマップiframeは削除しテキスト案内に変更
+  - VOICES セクションは開催実績が無いためプレースホルダー文言に差し替え
+- service/seminar/ai-meeting-minutes/apply/index.html （新規、申込フォームページ）
+  - タイトル・description・event-date (2026-09-12)・締切日（9月11日）を更新
+  - フォーム項目は「基本情報」「会議・議事録の現状」「業務・ツール環境」「セミナーへの期待」
+    「同意」の構成に作り直し（Claude Code固有の項目は本テーマに合わせて総入れ替え）
+  - entry.xxxxxxxxx の各IDは既存フォームのIDをそのまま流用（フォーム未作成のため、
+    後日Googleフォーム作成後にIDのみ差し替えれば済むようにするため）
+- service/seminar/ai-meeting-minutes/apply/apply-script.js （新規、コピー後に編集）
+  - GOOGLE_FORM_URL を "TODO: Googleフォームの formResponse URL をここに設定してください" という
+    明示的なプレースホルダーに変更（Googleフォーム未作成のため。ユーザーへの報告事項）
+- service/seminar/ai-meeting-minutes/apply/apply-style.css （新規、テンプレートから無編集でコピー）
+- service/seminar/ai-meeting-minutes/deadline.js （新規、テンプレートから無編集でコピー）
+- service/seminar/ai-meeting-minutes/seminar-detail-style.css （新規、テンプレートから無編集でコピー）
+- service/seminar/ai-meeting-minutes/img/generate_ogp.py （新規、コピー後にCONFIG_TEXT/CONFIG_COLORを編集）
+  - タイトル・日付・時間・会場・SMALL_DESC等を新セミナー内容に変更
+  - アクセントカラーを既存3色（紺/紫/緑/黒）と被らないダークティール系（#0d3b3e / #00e0c6）に変更
+  - 実行して service/seminar/ai-meeting-minutes/img/sns-image.png を生成（同じ講師の
+    speaker_image_cutout.png を流用したため rembg の再実行は発生せず、ヘッドレスChrome
+    でのレンダリングのみ実行し正常に生成できた）
+- service/seminar/ai-meeting-minutes/img/batch_generate.py （新規、テンプレートから無編集でコピー、未使用）
+- service/seminar/ai-meeting-minutes/img/hero-bg.png （新規、テンプレートから無編集でコピー）
+- service/seminar/ai-meeting-minutes/img/layout.html （新規、generate_ogp.py実行時の作業ファイル）
+- service/seminar/ai-meeting-minutes/img/sns-image.png （新規生成、OGP画像）
+- service/seminar/ai-meeting-minutes/img/speaker_ando.jpg （新規、テンプレートから無編集でコピー、同じ講師のため流用）
+- service/seminar/ai-meeting-minutes/img/speaker_image.png （新規、テンプレートから無編集でコピー）
+- service/seminar/ai-meeting-minutes/img/speaker_image_cutout.png （新規、テンプレートから無編集でコピー、OGP生成に使用）
+
+削除したファイル（テンプレートに含まれていたが本セミナーでは不要なもの）:
+- service/seminar/ai-meeting-minutes/img/speaker_matsuishi.png （共同講師は今回いないため削除）
+- service/seminar/ai-meeting-minutes/.DS_Store, service/seminar/ai-meeting-minutes/img/.DS_Store （コピー時に混入したOS生成ファイルを削除）
+
+## 3. 最終チェック（Skillステップ5）
+.claude/skills/add-seminar/scripts/check_seminar.sh ai-meeting-minutes を実行し、以下すべて [OK]:
+- 詳細ページと申込ページの event-date meta が一致 (2026-09-12)
+- コピー元テンプレートの文言（Claude Code / claude-code-1day / 松石 等）の消し忘れなし
+- 一覧・詳細・申込ページ間の相対リンク切れなし
+- 一覧ページに ./ai-meeting-minutes/ へのカードリンクあり
+
+## 4. ユーザーへの申し送り事項
+- Googleフォームは未作成のため、apply-script.js の GOOGLE_FORM_URL は
+  「TODO: Googleフォームの formResponse URL をここに設定してください」という
+  明示的なプレースホルダーのままです。フォーム作成後、以下の対応が必要です:
+  1. apply-script.js の GOOGLE_FORM_URL を実際の formResponse URL に差し替える
+  2. apply/index.html の各 name="entry.xxxxxxxxx" を、新しく作成したフォームの
+     質問ごとの entry ID に置き換える（質問文・項目数はテンプレートのIDのまま流用しているため、
+     フォームの質問文・選択肢は本ファイルの記載内容に合わせて作成すると差し替えが楽です）
+- 参加費の支払い方法は開催概要ページに「お申込み完了後にご案内いたします」という
+  仮の文言を入れています。具体的な決済方法が決まり次第、
+  service/seminar/ai-meeting-minutes/index.html の OVERVIEW セクション（参加費の行）を更新してください。
+- 本作業はファイルの作成・編集のみです。コミット・ブランチ作成・PR化は行っていません
+  （create-pr Skillの領域のため、必要であれば別途ご依頼ください）。

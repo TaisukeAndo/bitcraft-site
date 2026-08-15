@@ -6,21 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <!-- 一般的なタグ -->
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
-    <meta name="description" content="AIに指示するだけで、資料作成・請求書処理・定常業務が全自動。フリーランス・社会人のためのClaude Code完全攻略1Dayセミナー。2025年5月25日（月）開催。参加費10,000円（税別）。">
-    <meta name="keywords" content="Claude Code,セミナー,AI,自動化,フリーランス,業務効率化,bitcraft,安藤太亮">
+    <!--
+      TODO(要確認・要更新): このセミナーは2026-07-31時点でユーザーから「デザイン思考のワークショップを来年3月くらいにやりたい」
+      という依頼のみを受けて作成した「とりあえず」のページです。以下は全て未確定のプレースホルダーです。詳細が決まり次第、
+      このコメントと該当箇所（日時・会場・参加費・定員・プログラム・講師・申込みフォーム）を更新してください。
+        - 開催日: 2027年3月20日（土）を仮置き（「来年3月くらい」から機械的に選んだ暫定日。実際の日付未確定）
+        - 会場・参加費・定員・持ち物: すべて未定
+        - 講師: bitcraft代表・安藤太亮のみを暫定的に記載（共同講師の指定なし）
+        - 申込みフォーム: Googleフォーム未接続（apply-script.js参照）
+    -->
+    <meta name="description" content="ユーザー視点で課題の本質を捉え、アイデアを形にする「デザイン思考」を体験するワークショップ。2027年3月頃 開催予定（日程調整中）。bitcraft主催。">
+    <meta name="keywords" content="デザイン思考,ワークショップ,セミナー,課題解決,アイデア発想,bitcraft,安藤太亮">
     <!-- 設定 -->
     <meta name="format-detection" content="telephone=no,email=no,address=no">
     <!-- SNS向け -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Claude Code 完全攻略1Dayセミナー | bitcraft">
-    <meta property="og:description" content="AIに指示するだけで、資料作成・請求書処理・定常業務が全自動。フリーランス・社会人のためのClaude Code完全攻略1Dayセミナー。">
-    <meta property="og:url" content="https://bitcraft.work/service/seminar/claude-code-1day/">
-    <meta property="og:image" content="https://bitcraft.work/service/seminar/claude-code-1day/img/sns-image.png">
+    <meta property="og:title" content="デザイン思考ワークショップ | bitcraft">
+    <meta property="og:description" content="ユーザー視点で課題の本質を捉え、アイデアを形にする「デザイン思考」を体験するワークショップ。2027年3月頃 開催予定（日程調整中）。">
+    <meta property="og:url" content="https://bitcraft.work/service/seminar/design-thinking-workshop/">
+    <meta property="og:image" content="https://bitcraft.work/service/seminar/design-thinking-workshop/img/sns-image.png">
     <meta property="fb:app_id" content="1382898935938867" />
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@kuma_progr">
     <meta name="twitter:creator" content="@kuma_progr">
-    <meta name="event-date" content="2026-06-14">
+    <!-- TODO: 開催日が確定したら下記event-dateとapply/index.htmlのevent-dateを両方更新してください（募集期限の自動制御に使われます） -->
+    <meta name="event-date" content="2027-03-20">
     <!-- アイコン関係 -->
     <link rel="icon" type="shortcut icon" href="../../../image/bitcraft-logo-mini.png">
     <!-- 設定 -->
@@ -31,7 +41,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    <title>Claude Code 完全攻略1Dayセミナー | bitcraft</title>
+    <title>デザイン思考ワークショップ | bitcraft</title>
   </head>
   <!-- Script読み込み -->
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
@@ -51,7 +61,6 @@
                 <li><a class="menu-item" href="../../../">Home</a></li>
                 <li><a class="menu-item" href="../../../#service">Service</a></li>
                 <li><a class="menu-item" href="../../../#idea">Idea</a></li>
-                <li><a class="menu-item" href="../../../#news">News</a></li>
                 <li class="right"><a class="contact-button" href="../../../contact">
                     <i class="fa-solid fa-envelope"></i>
                     <p>Contact</p>
@@ -74,19 +83,21 @@
                     <span>/</span>
                     <a href="../">Seminar</a>
                     <span>/</span>
-                    <span>Claude Code 完全攻略1Day</span>
+                    <span>デザイン思考ワークショップ</span>
                 </div>
-                <div class="sd-hero__badge">2026年6月14日（日）開催</div>
-                <h1 class="sd-hero__catch">AIに「仕事を渡せる人」に、<br>今日なる。</h1>
-                <p class="sd-hero__sub">ChatGPTに質問するだけで止まっているなら、次のステップへ。<br>Claude Codeは"道具"ではなく、あなた専用のスタッフです。<br>指示するだけで、書類・請求・定常業務が動き続ける仕組みを<br>1日で作り上げる実践セミナー。</p>
+                <!-- TODO: 開催日確定次第「2027年3月20日（土）開催」のような確定表現に更新 -->
+                <div class="sd-hero__badge">2027年3月頃 開催予定（日程調整中）</div>
+                <h1 class="sd-hero__catch">答えのない問いに、<br>強くなる。</h1>
+                <p class="sd-hero__sub">「いいアイデアを出せ」と言われても、何から始めればいいか分からない。<br>デザイン思考は、センスではなく"型"でその壁を越える考え方です。<br>観察・発想・試作を実際に手を動かしながら体験する、<br>実践型のワークショップです。</p>
                 <div class="sd-hero__cta-wrap">
                     <a class="sd-hero__cta" href="./apply/">
                         今すぐ申し込む
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
+                    <!-- TODO: 参加費・定員が確定次第、下記を更新 -->
                     <div class="sd-hero__meta">
-                        <span><i class="fa-solid fa-yen-sign"></i> 5,000円（税込）</span>
-                        <span><i class="fa-solid fa-users"></i> 定員20名 <span class="seminar-seats-left">残り3名</span></span>
+                        <span><i class="fa-solid fa-yen-sign"></i> 参加費未定</span>
+                        <span><i class="fa-solid fa-users"></i> 定員調整中</span>
                     </div>
                 </div>
             </div>
@@ -102,15 +113,19 @@
                 <ul class="sd-target__list">
                     <li class="sd-target__item">
                         <span class="sd-target__icon"><i class="fa-solid fa-check"></i></span>
-                        <p>「AIを使っている」と言えるけれど、<br>毎週の提案書も、毎月の請求書も、結局自分で作っている。</p>
+                        <p>「アイデアを出せ」と言われるけれど、<br>何から手をつければいいか分からない。</p>
                     </li>
                     <li class="sd-target__item">
                         <span class="sd-target__icon"><i class="fa-solid fa-check"></i></span>
-                        <p>ChatGPTで文章を直してもらったことはある。<br>でも、業務の流れそのものは何も変わっていない。</p>
+                        <p>会議では意見が出るのに、<br>実際に形にする前に議論が止まってしまう。</p>
                     </li>
                     <li class="sd-target__item">
                         <span class="sd-target__icon"><i class="fa-solid fa-check"></i></span>
-                        <p>「もっとうまく使えれば…」と思いながら、<br>今日もタスクをこなしている。</p>
+                        <p>顧客や利用者の「本当のニーズ」を、<br>深く理解できている自信がない。</p>
+                    </li>
+                    <li class="sd-target__item">
+                        <span class="sd-target__icon"><i class="fa-solid fa-check"></i></span>
+                        <p>新規事業・新商品のアイデア出しを、<br>属人的な「センス」ではなく「型」でできるようになりたい。</p>
                     </li>
                 </ul>
             </div>
@@ -126,34 +141,35 @@
                 <div class="sd-benefits__grid">
                     <div class="sd-benefit-card">
                         <div class="sd-benefit-card__num">01</div>
-                        <h3 class="sd-benefit-card__title">「渡せる仕事」と「自分がすべき仕事」が分かれる</h3>
-                        <p class="sd-benefit-card__desc">毎週繰り返していた作業の8割は、実はAIに渡せます。その判断軸を、ハンズオンを通じて身体で覚えます。</p>
+                        <h3 class="sd-benefit-card__title">「観察」から始める思考法が身につく</h3>
+                        <p class="sd-benefit-card__desc">思い込みではなく、ユーザーの行動や言葉から本質的な課題を見つけ出す「観察」の視点を養います。</p>
                     </div>
                     <div class="sd-benefit-card">
                         <div class="sd-benefit-card__num">02</div>
-                        <h3 class="sd-benefit-card__title">「動くもの」を自分で作った実感がある</h3>
-                        <p class="sd-benefit-card__desc">コードは一行も書きません。それでも、今日初めて触った人が、当日中に自分の業務ツールを完成させます。</p>
+                        <h3 class="sd-benefit-card__title">アイデアを素早く形にする感覚がつかめる</h3>
+                        <p class="sd-benefit-card__desc">完璧を目指さず、まず形にして試す。ワークの中で実際に手を動かし、簡易的な試作（プロトタイピング）を体験します。</p>
                     </div>
                     <div class="sd-benefit-card">
                         <div class="sd-benefit-card__num">03</div>
-                        <h3 class="sd-benefit-card__title">明日から使い続けられる「仕組み」を持ち帰れる</h3>
-                        <p class="sd-benefit-card__desc">セミナー終了時点で、あなたの実際の業務に合わせた自動化の仕組みが手元にあります。明日から本番で使えます。</p>
+                        <h3 class="sd-benefit-card__title">チームで発想を広げる進め方が学べる</h3>
+                        <p class="sd-benefit-card__desc">一人で抱え込まず、多様な視点を引き出しながらアイデアを広げ、収束させるファシリテーションの型を体験します。</p>
                     </div>
                     <div class="sd-benefit-card">
                         <div class="sd-benefit-card__num">04</div>
-                        <h3 class="sd-benefit-card__title">1ヶ月間の無料フォローアップ付き</h3>
-                        <p class="sd-benefit-card__desc">セミナー終了後、実際の業務でつまずいたところは、Slackでいつでも質問可能。1ヶ月間、あなたの伴走者としてサポートします。</p>
+                        <h3 class="sd-benefit-card__title">明日の仕事にそのまま使えるフレームワークを持ち帰れる</h3>
+                        <p class="sd-benefit-card__desc">デザイン思考の5ステップ（共感・定義・発想・試作・検証）を、自分の業務にそのまま当てはめられる形で持ち帰ります。</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- ===== TIMELINE ===== -->
+        <!-- TODO: 開催時間・内容の詳細は未確定。デザイン思考の標準的な5ステップに沿った仮のタイムラインです。 -->
         <section class="sd-section sd-timeline">
             <div class="content">
                 <div class="sd-section__head">
                     <p class="sd-section__label">PROGRAM</p>
-                    <h2 class="sd-section__title">当日のプログラム</h2>
+                    <h2 class="sd-section__title">当日のプログラム（予定）</h2>
                 </div>
                 <div class="sd-timeline__list">
                     <div class="sd-timeline__item">
@@ -168,16 +184,16 @@
                         <div class="sd-timeline__time">10:00〜</div>
                         <div class="sd-timeline__dot"></div>
                         <div class="sd-timeline__content">
-                            <h3>AIへの「仕事の渡し方」を身につける</h3>
-                            <p>【全体の土台】ここさえ押さえれば、あとは何でも応用できます。</p>
+                            <h3>オリエンテーション／デザイン思考とは</h3>
+                            <p>【全体の土台】デザイン思考の5ステップと、今日1日の進め方を共有します。</p>
                         </div>
                     </div>
                     <div class="sd-timeline__item">
-                        <div class="sd-timeline__time">11:00〜</div>
+                        <div class="sd-timeline__time">10:30〜</div>
                         <div class="sd-timeline__dot"></div>
                         <div class="sd-timeline__content">
-                            <h3>書類仕事を丸投げする</h3>
-                            <p>提案書・報告書・メールをテンプレ化。<br>次回からボタン一つで生成できる形で完成させます。</p>
+                            <h3>Step1: 共感（Empathize）</h3>
+                            <p>観察・簡易インタビューを通じて、ユーザーの本当の課題を掘り下げます。</p>
                         </div>
                     </div>
                     <div class="sd-timeline__item sd-timeline__item--break">
@@ -191,32 +207,32 @@
                         <div class="sd-timeline__time">13:00〜</div>
                         <div class="sd-timeline__dot"></div>
                         <div class="sd-timeline__content">
-                            <h3>数字仕事を丸投げする</h3>
-                            <p>経費入力・請求書・集計をAIが代行。<br>毎月2〜3時間の作業を15分に圧縮します。</p>
+                            <h3>Step2: 問題定義（Define）</h3>
+                            <p>集めた気づきを整理し、解くべき「問い」の形に定義し直します。</p>
                         </div>
                     </div>
                     <div class="sd-timeline__item">
-                        <div class="sd-timeline__time">14:15〜</div>
+                        <div class="sd-timeline__time">14:00〜</div>
                         <div class="sd-timeline__dot"></div>
                         <div class="sd-timeline__content">
-                            <h3>繰り返し仕事を丸投げする</h3>
-                            <p>スケジュール調整・タスク整理・フォローメール。<br>「また同じ作業か」をなくします。</p>
+                            <h3>Step3: 発想（Ideate）</h3>
+                            <p>ブレインストーミングでアイデアを量産し、チームで発想を広げます。</p>
                         </div>
                     </div>
                     <div class="sd-timeline__item">
-                        <div class="sd-timeline__time">15:30〜</div>
+                        <div class="sd-timeline__time">15:15〜</div>
                         <div class="sd-timeline__dot"></div>
                         <div class="sd-timeline__content">
-                            <h3>あなた専用スタッフを育てる</h3>
-                            <p>自分の業務課題を持ち込んで、その場で解決策を完成。<br>AIで効率化できるタスクを見極め、AIスタッフに任せる方法を学びます。</p>
+                            <h3>Step4: 試作（Prototype）</h3>
+                            <p>選んだアイデアを、紙や簡単な模型で素早く形にします。</p>
                         </div>
                     </div>
                     <div class="sd-timeline__item">
-                        <div class="sd-timeline__time">16:30〜</div>
+                        <div class="sd-timeline__time">16:15〜</div>
                         <div class="sd-timeline__dot"></div>
                         <div class="sd-timeline__content">
-                            <h3>明日から使い続けるために</h3>
-                            <p>習慣化・アップデート対応・Q&amp;A</p>
+                            <h3>Step5: 検証（Test）とふりかえり</h3>
+                            <p>試作をチーム内でレビューし、明日から使える形に落とし込みます。</p>
                         </div>
                     </div>
                     <div class="sd-timeline__item sd-timeline__item--end">
@@ -231,6 +247,7 @@
         </section>
 
         <!-- ===== VOICES ===== -->
+        <!-- 開催前のため実績なし。プレースホルダーのみ（section-guidance.md の指示に従い、架空の感想は記載しない） -->
         <section class="sd-section sd-voices">
             <div class="content">
                 <div class="sd-section__head">
@@ -239,22 +256,12 @@
                 </div>
                 <div class="sd-voices__grid">
                     <blockquote class="sd-voice-card">
-                        <p class="sd-voice-card__text">「仕事の性質上、クライアントごとに依存する業務が多かったですが、それらの業務の中から効率化できそうな部分を見極め、Claude Codeを活用することで、業務の品質を維持したまま作業効率を大幅に改善することができました。」</p>
+                        <p class="sd-voice-card__text">まだ開催前のため、参加者の声は掲載準備中です。開催後、実際にいただいたご感想をこちらに掲載いたします。</p>
                         <div class="sd-voice-card__author">
                             <i class="fa-solid fa-circle-user sd-voice-card__icon"></i>
                             <div class="sd-voice-card__author-info">
-                                <span class="sd-voice-card__name">A.Tさん</span>
-                                <span class="sd-voice-card__job">フリーランス デザイナー</span>
-                            </div>
-                        </div>
-                    </blockquote>
-                    <blockquote class="sd-voice-card">
-                        <p class="sd-voice-card__text">「これまで、解像度の低い指示によって多くのトークンを消費してしまうことが多かったですが、的確なツール選択とプロンプトを意識することで、最小限のコストで業務改善を実現できるようになりました。」</p>
-                        <div class="sd-voice-card__author">
-                            <i class="fa-solid fa-circle-user sd-voice-card__icon"></i>
-                            <div class="sd-voice-card__author-info">
-                                <span class="sd-voice-card__name">O.Tさん</span>
-                                <span class="sd-voice-card__job">個人事業主 コンサルタント</span>
+                                <span class="sd-voice-card__name">掲載準備中</span>
+                                <span class="sd-voice-card__job">&nbsp;</span>
                             </div>
                         </div>
                     </blockquote>
@@ -264,6 +271,7 @@
         </section>
 
         <!-- ===== SPEAKERS ===== -->
+        <!-- TODO: 共同講師が入る場合はここに追加してください。現時点ではbitcraft代表・安藤太亮のみ想定。 -->
         <section class="sd-section sd-speakers">
             <div class="content">
                 <div class="sd-section__head">
@@ -285,24 +293,7 @@
                             </div>
                             <h3 class="sd-speaker-card__name">安藤 太亮<span class="sd-speaker-card__kana">あんどう たいすけ</span></h3>
                             <p class="sd-speaker-card__affil">bitcraft 代表 / バックエンドエンジニア</p>
-                            <p class="sd-speaker-card__desc">バックエンドエンジニアとしての技術的素地を持ちながら、マーケティング・会社経営にも携わる実務家。現在は複数の企業でClaude環境の構築・セットアップを手がけ、AIを活用した業務改善コンサルティングを実施している。「現場で本当に使える自動化」にこだわった実践的な視点から、日々の業務を変えるClaudeCodeの使い方を伝えます。</p>
-                        </div>
-                    </div>
-
-                    <!-- 松石 将治 -->
-                    <div class="sd-speaker-card">
-                        <div class="sd-speaker-card__photo-wrap">
-                            <img src="./img/speaker_matsuishi.png" alt="松石 将治" class="sd-speaker-card__photo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                            <div class="sd-speaker-card__photo-placeholder"><i class="fa-solid fa-circle-user"></i></div>
-                        </div>
-                        <div class="sd-speaker-card__body">
-                            <div class="sd-speaker-card__tags">
-                                <span class="sd-speaker-card__tag">データサイエンス</span>
-                                <span class="sd-speaker-card__tag sd-speaker-card__tag--blue">AI研究者</span>
-                            </div>
-                            <h3 class="sd-speaker-card__name">松石 将治<span class="sd-speaker-card__kana">まついし まさはる</span></h3>
-                            <p class="sd-speaker-card__affil">島根大学大学院 自然科学研究科 / データサイエンス研究</p>
-                            <p class="sd-speaker-card__desc">島根大学大学院自然科学研究科にてデータサイエンスを研究。AIの「なぜ動くのか」「どう考えるべきか」という理論的背景を、難解な専門用語を使わず平易に伝えることを得意とする。ClaudeCodeを使いこなすための概念・思考フレームワークを深掘りし、受講者が「なんとなく使っている」から「確信を持って使える」状態になれるよう導きます。</p>
+                            <p class="sd-speaker-card__desc">バックエンドエンジニアとしての技術的素地を持ちながら、マーケティング・会社経営にも携わる実務家。現在は複数の企業でClaude環境の構築・セットアップを手がけ、AIを活用した業務改善コンサルティングを実施している。現場での実務経験をもとに、参加者が「明日から使える」形で持ち帰れることにこだわった実践的なワークショップ運営を行う。</p>
                         </div>
                     </div>
 
@@ -311,6 +302,7 @@
         </section>
 
         <!-- ===== OVERVIEW ===== -->
+        <!-- TODO: 会場・参加費・定員・持ち物はすべて未定です。確定次第このテーブルとGoogleマップのq=パラメータを更新してください。 -->
         <section class="sd-section sd-overview">
             <div class="content">
                 <div class="sd-section__head">
@@ -321,33 +313,31 @@
                     <tbody>
                         <tr>
                             <th>日時</th>
-                            <td>2026年6月14日（日） 10:00〜17:00</td>
+                            <td>2027年3月頃 開催予定（日程調整中）<br>※ 具体的な日時は確定次第、このページでお知らせします。</td>
                         </tr>
                         <tr>
                             <th>会場</th>
                             <td>
-                                島根県松江市<br>
-                                ※現時点ではオープンソースラボを予定しておりますが、変更になる可能性もございます。変更がある場合は、参加者へ別途ご連絡いたします。
-                                <iframe src="https://www.google.com/maps?q=島根県松江市&output=embed" class="sd-map-iframe" allowfullscreen="" loading="lazy"></iframe>
+                                未定（オンライン／対面を含めて検討中です）<br>
+                                ※ 決定次第、このページでお知らせします。
                             </td>
                         </tr>
                         <tr>
                             <th>定員</th>
-                            <td>20名（少人数・先着順）<span class="seminar-seats-left" style="margin-left:8px;">残り3名</span></td>
+                            <td>未定（決定次第お知らせします）</td>
                         </tr>
                         <tr>
                             <th>参加費</th>
-                            <td>5,000円（税込）<br>※当日、現地会場にてお支払いいただきます。</td>
+                            <td>未定（決定次第お知らせします）</td>
                         </tr>
                         <tr>
                             <th>持ち物</th>
-                            <td>ノートPC（MacまたはWindows）、Claudeアカウント<br>※当日は <strong>Claude Code（Proプラン）</strong> を使用します。Proプランはセミナー参加費とは別途、<strong>月額 $22（約3,400円目安）</strong> のサブスクリプションをご自身でご加入いただく必要があります。申込後にお送りする事前準備ガイドに登録手順を記載します。</td>
+                            <td>筆記用具など（詳細は確定次第ご案内します）</td>
                         </tr>
                         <tr>
                             <th>講師</th>
                             <td>
-                                <a href="https://bitcraft.work/#about" target="_blank" style="text-decoration: underline; color: #1a3a7a;">安藤 太亮（あんどう たいすけ）</a><br>
-                                松石 将治（まついし まさはる）
+                                <a href="https://bitcraft.work/#about" target="_blank" style="text-decoration: underline; color: #1a3a7a;">安藤 太亮（あんどう たいすけ）</a>
                             </td>
                         </tr>
                     </tbody>
@@ -366,11 +356,11 @@
                     <div class="sd-faq__item">
                         <div class="sd-faq__q">
                             <span class="sd-faq__q-label">Q</span>
-                            <p>プログラミング経験がなくても大丈夫ですか？</p>
+                            <p>デザインやアイデア出しの経験がなくても参加できますか？</p>
                         </div>
                         <div class="sd-faq__a">
                             <span class="sd-faq__a-label">A</span>
-                            <p>はい。コードを書く必要は一切ありません。AIへの「指示の出し方」を学ぶセミナーです。</p>
+                            <p>はい。専門知識や経験は不要です。日常業務での課題解決にそのまま活かせる「考え方」を学ぶワークショップです。</p>
                         </div>
                     </div>
                     <div class="sd-faq__item">
@@ -380,17 +370,27 @@
                         </div>
                         <div class="sd-faq__a">
                             <span class="sd-faq__a-label">A</span>
-                            <p>フリーランス・個人事業主・副業中の会社員など、自分の業務効率を上げたいすべての方が対象です。</p>
+                            <p>企画・マーケティング・商品開発など、新しいアイデアを生み出す必要があるすべての方が対象です。</p>
                         </div>
                     </div>
                     <div class="sd-faq__item">
                         <div class="sd-faq__q">
                             <span class="sd-faq__q-label">Q</span>
-                            <p>当日使う環境は事前に準備が必要ですか？</p>
+                            <p>グループワークはありますか？</p>
                         </div>
                         <div class="sd-faq__a">
                             <span class="sd-faq__a-label">A</span>
-                            <p>申込後に事前準備ガイドをお送りします。Claudeアカウントの作成のみ事前にお願いしています。</p>
+                            <p>はい。複数のワーク演習をチームで行う予定です（人数構成などの詳細は確定次第ご案内します）。</p>
+                        </div>
+                    </div>
+                    <div class="sd-faq__item">
+                        <div class="sd-faq__q">
+                            <span class="sd-faq__q-label">Q</span>
+                            <p>オンライン開催はありますか？</p>
+                        </div>
+                        <div class="sd-faq__a">
+                            <span class="sd-faq__a-label">A</span>
+                            <p>開催形式（対面／オンライン）は現在検討中です。決定次第このページでお知らせします。</p>
                         </div>
                     </div>
                     <div class="sd-faq__item">
@@ -400,27 +400,7 @@
                         </div>
                         <div class="sd-faq__a">
                             <span class="sd-faq__a-label">A</span>
-                            <p>当日の資料（スライド・スクリプト）はPDFで共有します。録画配信はありません。</p>
-                        </div>
-                    </div>
-                    <div class="sd-faq__item">
-                        <div class="sd-faq__q">
-                            <span class="sd-faq__q-label">Q</span>
-                            <p>ClaudeCodeの課金体系は、APIによる従量課金ではダメですか？（Proプランは必須ですか？）</p>
-                        </div>
-                        <div class="sd-faq__a">
-                            <span class="sd-faq__a-label">A</span>
-                            <p>最初はSkillを構築（AIを育てる）作業を多く実施するため、多くのTokenを消費することが見込まれます。<br>そのため、定額で使いやすいProプラン（月額$22）を使用することをお勧めしております。</p>
-                        </div>
-                    </div>
-                    <div class="sd-faq__item">
-                        <div class="sd-faq__q">
-                            <span class="sd-faq__q-label">Q</span>
-                            <p>島根在住でないと参加できませんか？</p>
-                        </div>
-                        <div class="sd-faq__a">
-                            <span class="sd-faq__a-label">A</span>
-                            <p>現在は対面のみですが、オンライン開催のご要望が一定数集まれば検討します。<br><a href="../../../contact/" style="text-decoration: underline; color: #3b7cff;">お問い合わせ</a>からご連絡ください。</p>
+                            <p>詳細は確定次第ご案内します。<a href="../../../contact/" style="text-decoration: underline; color: #3b7cff;">お問い合わせ</a>からもご連絡いただけます。</p>
                         </div>
                     </div>
                 </div>
@@ -432,12 +412,13 @@
             <div class="sd-hero__bg"></div>
             <div class="sd-hero__noise"></div>
             <div class="content">
-                <p class="sd-cta__closing">「使っているのに変わらない」と感じているなら、<br>それはツールではなく、使い方の問題です。</p>
-                <p class="sd-cta__sub">1日の終わりに、動くものを手に持って帰ってください。</p>
-                
+                <p class="sd-cta__closing">「いいアイデアが浮かばない」のは、センスの問題ではありません。<br>それは、考え方の「型」を知らないだけです。</p>
+                <p class="sd-cta__sub">1日の終わりに、自分の手で形にしたアイデアを持ち帰ってください。</p>
+
+                <!-- TODO: 日時・会場・参加費が確定次第、下記を更新 -->
                 <div class="sd-cta__meta" style="margin-bottom: 24px; color: #fff; text-align: center; font-size: 16px; line-height: 1.8;">
-                    <strong>2026年6月14日（日）10:00〜17:00　松江市内会場</strong><br>
-                    参加費 5,000円（税込）
+                    <strong>2027年3月頃 開催予定（日程調整中）</strong><br>
+                    会場・参加費は決定次第お知らせします
                 </div>
 
                 <a class="sd-cta__btn" href="./apply/">
@@ -463,7 +444,6 @@
                     <li><a href="../../../">- Home</a></li>
                     <li><a href="../../../#service">- Service</a></li>
                     <li><a href="../../../#idea">- Idea</a></li>
-                    <li><a href="../../../#news">- News</a></li>
                     <li><a href="../../../#about">- About</a></li>
                     <li><a href="../../../contact">- Contact</a></li>
                 </ul>

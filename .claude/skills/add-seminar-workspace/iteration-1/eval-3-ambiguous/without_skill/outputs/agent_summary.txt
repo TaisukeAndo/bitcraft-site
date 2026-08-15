@@ -1,0 +1,86 @@
+AGENT SUMMARY — デザイン思考ワークショップ追加作業
+================================================================
+
+前提確認
+- 実行環境で `date +%F` を実行し、本日の日付が 2026-07-31 であることを確認した。
+- 「来年3月」= 2027年3月と判断。具体的な開催日はユーザー未指定のため、
+  2027-03-13（土）を仮の日付として設定した（要確認）。
+
+やったこと（副作用として気づいた対応）
+- service/seminar/index.html の既存セミナー「Claude Code 完全攻略1Dayセミナー」
+  （claude-code-1day, 開催日 2026-06-14）が本日時点で開催日を過ぎていたため、
+  「開催予定のセミナー」から「過去に開催したセミナー」セクションへ移動した。
+  - バッジを「受付中」→「終了」（seminar-card-badge--past）に変更
+  - 残席表示（seminar-seats-left）を削除し、定員表示のみ残した
+  - 画像・リンクは既存の詳細ページ（./claude-code-1day/）をそのまま参照
+
+新規追加したセミナー：デザイン思考ワークショップ（design-thinking-workshop）
+- claude-code-1day を土台に service/seminar/design-thinking-workshop/ を新規作成し、
+  全セクション（HERO/TARGET/BENEFITS/TIMELINE/VOICES/SPEAKERS/OVERVIEW/FAQ/CTA）を
+  デザイン思考ワークショップ向けに書き換えた。
+- 日程・会場・参加費・定員・講師など、ユーザーから未確定と言われた項目はすべて
+  「未定」「近日公開」「調整中」等のプレースホルダー文言にし、該当箇所には
+  <!-- TODO: ... --> コメントを付けて後から見つけやすくした。
+- 参加者の声（VOICES）は実績が無いため、既存テンプレートの引用文は流用せず、
+  実績がまだ無い旨の注記のみを残した（架空の感想文は作成していない）。
+- 講師紹介（SPEAKERS）も担当者未定のため、実在の人物の名前・経歴を勝手に割り当てず、
+  「講師 未定」「bitcraft 主催」「決定次第公開」というプレースホルダーカード1枚のみにした。
+  講師写真ファイル（speaker_ando.jpg 等）は新フォルダから削除済み。
+- 申込みフォーム（apply/）はGoogleフォーム未接続の状態でスケルトンとして作成。
+  - apply-script.js の GOOGLE_FORM_URL は "TODO_REPLACE_WITH_REAL_FORM_ID" を含む
+    明らかなダミー値にしてある（実際に送信しても届かない）。
+  - 各入力項目の entry.xxxx も "entry.TODO_NAME" 等のプレースホルダー名にした。
+  - フォームの上部に「現在、日程・詳細を調整中です」という注意書きバナーを追加し、
+    訪問者が誤って本申込みと誤解しないようにした。
+  - Claude Code固有だった詳細な事前アンケート項目（AI活用状況など）は削除し、
+    お名前・メール・電話・職業・期待すること・質問・同意チェックのみのシンプルな
+    「仮登録」フォームに簡略化した。
+- OGP画像（sns-image.png）は、講師写真やrembgに依存しない簡易版の
+  generate_ogp.py を新規に用意し、Headless Chromeで実際に生成した
+  （bitcraftロゴ・タイトル・日程未定表記・アンバー系の新配色で構成。
+  既存セミナーの紺/紫/緑/黒とは被らない配色を選定）。
+  ロゴ画像パスはユーザー固有の絶対パスをハードコードせず、
+  スクリプトの場所からの相対パスを実行時に解決するよう修正した。
+- service/seminar/index.html の「開催予定のセミナー」に新カードを追加。
+  バッジは「受付中」ではなく「近日公開」とし、価格・定員は「未定」表記にした
+  （実際にはまだ申込みを受け付けられる状態ではないため、誤解を避ける目的）。
+
+作成・変更したファイル一覧（repoコピールートからの相対パス）
+- service/seminar/index.html （変更：claude-code-1dayを過去セクションへ移動／design-thinking-workshopの新規カードを開催予定セクションへ追加）
+- service/seminar/design-thinking-workshop/index.html （新規：セミナー詳細ページ）
+- service/seminar/design-thinking-workshop/seminar-detail-style.css （新規：claude-code-1dayからそのまま複製、変更なし）
+- service/seminar/design-thinking-workshop/deadline.js （新規：claude-code-1dayからそのまま複製、変更なし）
+- service/seminar/design-thinking-workshop/apply/index.html （新規：申込み仮登録ページ）
+- service/seminar/design-thinking-workshop/apply/apply-style.css （新規：claude-code-1dayからそのまま複製、変更なし）
+- service/seminar/design-thinking-workshop/apply/apply-script.js （新規：GOOGLE_FORM_URLとentry IDをプレースホルダー化）
+- service/seminar/design-thinking-workshop/img/generate_ogp.py （新規：講師写真非依存のシンプル版OGP生成スクリプト）
+- service/seminar/design-thinking-workshop/img/sns-image.png （新規：上記スクリプトで生成したOGP画像）
+- service/seminar/design-thinking-workshop/img/hero-bg.png （新規：claude-code-1dayからそのまま複製、変更なし）
+- service/seminar/design-thinking-workshop/img/layout.html （新規：generate_ogp.py実行時の中間生成物、コミット不要な作業ファイル）
+
+削除したファイル（複製後に不要と判断して削除。design-thinking-workshop内のみ、他のセミナーには影響なし）
+- service/seminar/design-thinking-workshop/img/speaker_ando.jpg
+- service/seminar/design-thinking-workshop/img/speaker_matsuishi.png
+- service/seminar/design-thinking-workshop/img/speaker_image.png
+- service/seminar/design-thinking-workshop/img/speaker_image_cutout.png
+- service/seminar/design-thinking-workshop/img/batch_generate.py
+- service/seminar/design-thinking-workshop/.DS_Store, img/.DS_Store
+
+本物のユーザーに確認したい点（実際には確認できないため、上記の仮定・プレースホルダーで進めた）
+1. 開催日：具体的に2027年3月の何日か（現在は仮で2027-03-13としている）。曜日・時間帯（平日夜/休日）の希望も。
+2. 会場：オンライン開催か対面か。対面の場合、島根県内を想定してよいか、それとも別の場所か。
+3. 参加費・定員：金額と人数の目安。
+4. 講師：誰が登壇するか（安藤太亮氏本人が担当するのか、外部講師を招くのか、複数名か）。
+5. Googleフォーム：申込み受付用のGoogleフォームをこれから作成するか、既存のものを流用するか。
+   作成後は entry.xxxx の実IDとフォームURLをapply-script.js / apply/index.htmlに反映する必要がある。
+6. プログラム内容：タイムライン（当日の時間割）は一般的なデザイン思考プロセス
+   （Empathize/Define/Ideate/Prototype/Test）を仮に当てはめただけなので、
+   実際の内容に合わせて調整が必要。
+7. 一覧ページのバッジを「近日公開」としたが、もし「受付中」の体裁で先に出したい
+   （すぐにでも興味登録を集めたい）という意図であれば、その旨と表現の希望を確認したい。
+
+備考
+- 今回の作業ディレクトリはgitリポジトリではなかったため、コミット・PR作成は行っていない
+  （create-pr Skillの領域だが、gitが未初期化のため対象外）。
+- scripts/check_seminar.sh のような自動チェックスクリプトは本コピー内に存在しなかったため、
+  手動でのタグバランス確認・リンク存在確認・コピペ跡の grep 確認で代替した。

@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "新しいセミナー用の詳細ページ(index.html)が作成されている",
+      "passed": true,
+      "evidence": "検出フォルダ: ['ai-meeting-minutes']"
+    },
+    {
+      "text": "新しいセミナー用の申込ページ(apply/index.html)が作成されている",
+      "passed": true,
+      "evidence": "ai-meeting-minutes/apply/index.html の有無"
+    },
+    {
+      "text": "詳細ページのevent-dateが2026-09-12になっている",
+      "passed": true,
+      "evidence": "検出された値: '2026-09-12'"
+    },
+    {
+      "text": "詳細ページと申込ページのevent-dateが一致している",
+      "passed": true,
+      "evidence": "detail='2026-09-12', apply='2026-09-12'"
+    },
+    {
+      "text": "一覧ページに新セミナーへのカードリンクが追加されている",
+      "passed": true,
+      "evidence": "href=\"./ai-meeting-minutes/\" の有無"
+    },
+    {
+      "text": "既存のclaude-code-1dayセミナーが「過去開催」側に移動している(受付中バッジが残っていない)",
+      "passed": true,
+      "evidence": "claude-code-1dayに紐づく「受付中」バッジは見つかりませんでした"
+    },
+    {
+      "text": "新しいセミナーのページにコピー元(Claude Code関連)の文言が残っていない",
+      "passed": true,
+      "evidence": "該当なし"
+    },
+    {
+      "text": "Googleフォーム未接続であることが分かる状態になっている(元セミナーのフォームURLを黙って使い回していない)",
+      "passed": true,
+      "evidence": "元セミナーとは異なるURL/プレースホルダーになっています"
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

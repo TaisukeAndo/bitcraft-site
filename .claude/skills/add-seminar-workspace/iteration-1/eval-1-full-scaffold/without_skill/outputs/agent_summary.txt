@@ -1,0 +1,77 @@
+seminarページに新しいセミナー「生成AI議事録自動化ワークショップ」（2026年9月12日開催）を追加した作業の変更ファイル一覧
+
+前提確認:
+- リポジトリコピー内で `date +%F` を実行し、今日の日付を 2026-07-31 と確認した。
+- 既存の「開催予定」セミナー（claude-code-1day, event-date=2026-06-14）は今日より前の日付だったため、
+  add-seminarスキルの手順に従い「過去に開催したセミナー」セクションへ移動した（残席表示は削除、バッジを「終了」に変更）。
+- 新規セミナーの開催日（2026-09-12）は今日より未来のため、通常の詳細ページ・申込ページ・OGP画像一式を新規生成するフルフローで対応した。
+
+■ 変更したファイル（既存ファイルの編集）
+- service/seminar/index.html
+  - 「開催予定のセミナー」に新規セミナー「生成AI議事録自動化ワークショップ」のカードを追加（./ai-minutes-workshop/ へのリンク）。
+  - 既存の「Claude Code 完全攻略1Dayセミナー」カードを「過去に開催したセミナー」セクションの先頭へ移動し、
+    class に seminar-card--past を付与、バッジを「終了」に変更、残席表示（残り7名）を削除。
+
+■ 新規作成したファイル（service/seminar/claude-code-1day/ を土台にコピー・編集）
+- service/seminar/ai-minutes-workshop/index.html
+  詳細ページ本体。HERO/TARGET/BENEFITS/TIMELINE/VOICES/SPEAKERS/OVERVIEW/FAQ/CTAの全セクションを
+  新セミナーの内容（キャッチコピー、開催日時、オンライン開催Zoom、参加費8,000円、定員15名、
+  講師は安藤太亮のみ、タイムライン13:00-17:00、FAQ総入れ替え等）に書き換え。
+  VOICESセクションは初開催のため実績が無いことを踏まえ、プレースホルダー文言に差し替え（架空の感想は掲載していない）。
+  SPEAKERSセクションは安藤太亮のみの単独講師構成に変更（松石将治の紹介は削除）。
+- service/seminar/ai-minutes-workshop/seminar-detail-style.css
+  （テンプレートからそのまま流用。内容依存が無いため無変更）
+- service/seminar/ai-minutes-workshop/deadline.js
+  （テンプレートからそのまま流用。汎用ロジックのため無変更）
+- service/seminar/ai-minutes-workshop/apply/index.html
+  申込みフォームページ。event-date・タイトル・締切メッセージの日付を更新。
+  フォーム項目を「議事録・会議の実態」「AI活用状況」「ワークショップへの期待」に合わせて再構成
+  （会議頻度、議事録担当者、使用ツール、録画データ持参可否など）。
+- service/seminar/ai-minutes-workshop/apply/apply-script.js
+  GOOGLE_FORM_URL を、実フォーム未作成のため明確なプレースホルダー値
+  （TODO_REPLACE_WITH_AI_MINUTES_WORKSHOP_FORM_ID を含むダミーURL）に変更。
+  既存のClaude Code用Google FormのURLをそのまま流用しないようにし、
+  誤って旧フォームに送信されることを防止。TODOコメントを追記。
+- service/seminar/ai-minutes-workshop/apply/apply-style.css
+  （テンプレートからそのまま流用。無変更）
+- service/seminar/ai-minutes-workshop/img/generate_ogp.py
+  CONFIG_TEXT（タイトル・日付・時間・会場・講師名など）を新セミナー向けに書き換え。
+  CONFIG_COLOR は既存3色（紺/紫/緑）と黒に被らない新しいアクセントカラー
+  （背景 #3a1f0f 深いブラウン、アクセント #ffb020 アンバー）に変更。
+  CONFIG_MEDIA の LOGO_IMAGE を、リポジトリコピー内のロゴ画像への絶対パスに変更
+  （元テンプレートの /Users/ando/Desktop/bitcraft-site/... というローカル絶対パスのハードコードを、
+  このリポジトリコピー内のパスに差し替え）。
+  実行し、service/seminar/ai-minutes-workshop/img/sns-image.png（OGP画像）を新規生成した。
+- service/seminar/ai-minutes-workshop/img/batch_generate.py
+  （テンプレートからそのまま流用。今回は使用していないが元フォルダにも存在するファイルのため保持）
+- service/seminar/ai-minutes-workshop/img/hero-bg.png
+  （テンプレートからそのまま流用。無変更）
+- service/seminar/ai-minutes-workshop/img/sns-image.png
+  generate_ogp.py を実行して新規生成したOGP画像（1200x630、生成AI議事録自動化ワークショップ用）。
+- service/seminar/ai-minutes-workshop/img/speaker_ando.jpg
+- service/seminar/ai-minutes-workshop/img/speaker_image.png
+- service/seminar/ai-minutes-workshop/img/speaker_image_cutout.png
+  （同一講師・安藤太亮の写真をそのまま再利用。テンプレートからのコピーで無変更）
+
+■ 意図的に削除したファイル（テンプレートに含まれていたが今回不要なもの）
+- service/seminar/ai-minutes-workshop/img/speaker_matsuishi.png
+  （今回の講師は安藤太亮のみのため、共同講師・松石将治の写真は削除）
+- service/seminar/ai-minutes-workshop/img/layout.html, .DS_Store
+  （OGP生成スクリプトが実行時に作る作業用ファイル、および不要なOSファイルを削除）
+- service/seminar/ai-minutes-workshop/.DS_Store
+  （コピー時に紛れ込んだ不要なOSファイルを削除）
+
+■ 未対応・ユーザー対応待ちの項目
+- Googleフォームは未作成のため、apply-script.js の GOOGLE_FORM_URL と
+  apply/index.html 内の各 entry.xxxxx（フォーム項目ID）はダミーのままです。
+  実際のGoogleフォームを作成後、正しいフォームURLと各質問のentry IDに差し替えが必要です。
+  （現状のentry IDは体裁を保つための仮の値で、実際に送信しても正しい送信先が無いため保存されません。）
+
+■ 動作確認
+- Playwrightのヘッドレスブラウザで一覧ページ・詳細ページ・申込みページをレンダリングし、
+  レイアウト崩れが無いこと、新セミナーが「開催予定」に、旧セミナーが「過去に開催した」に
+  正しく表示されることを目視確認済み。
+- 詳細ページ・申込ページの event-date meta（2026-09-12）が一致していることを確認済み。
+- 「Claude Code」「claude-code-1day」「松江」「松石」など、コピー元セミナーの文言の消し忘れが
+  無いことをgrepで確認済み。
+- 一覧・詳細・申込ページ間の相対リンク（href/src）が実在するファイル・階層を指していることを確認済み。
