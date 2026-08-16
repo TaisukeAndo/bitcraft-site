@@ -9,10 +9,16 @@
     "DATE_SUB": "(土)",
     "TIME_RANGE": "10:00 - 17:00",
     "VENUE": "鳥取市（SANDBOX TOTTORI）",
-    "SPEAKER_COMPANY": "bitcraft",
-    "SPEAKER_ROLE": "代表 / 講師",
     "SPEAKER_NAME_RUBY": "あんどう たいすけ",
-    "SPEAKER_NAME": "安藤 太亮"
+    "SPEAKER_NAME": "安藤 太亮",
+    "SPEAKER_TITLE": "bitcraft / バックエンドエンジニア",
+    "SPEAKER_BIO_LINE_1": "Claude環境構築・導入を多数支援。",
+    "SPEAKER_BIO_LINE_2": "実践派AIコンサルタントとして活躍。",
+    "CO_SPEAKER_NAME": "吉井 秀三",
+    "CO_SPEAKER_NAME_RUBY": "よしい しゅうぞう",
+    "CO_SPEAKER_TITLE": "生成AI研修講師 / 元IT企業役員",
+    "CO_SPEAKER_BIO_LINE_1": "企業・自治体向け研修に多数登壇。",
+    "CO_SPEAKER_BIO_LINE_2": "約20年のIT企業経験を活かし、指導。"
   },
   "color": {
     "BG_NAVY": "#0a4d68",
@@ -22,6 +28,9 @@
   },
   "media": {
     "SPEAKER_IMAGE_URL": "https://drive.google.com/uc?export=download&id=1g-PChIKpiZZj5IOq-G9o5-ciSUDwHJKZ",
-    "PARTNER_LOGO_IMAGE": "session_logo.png"
+    "PARTNER_LOGO_IMAGE": "session_logo.png",
+    "CO_SPEAKER_IMAGE_CUTOUT": "speaker_yoshii_cutout.png",
+    "SPEAKER_SLOT_WIDTH": "320px",
+    "CO_SPEAKER_SLOT_WIDTH": "260px"
   }
 }
