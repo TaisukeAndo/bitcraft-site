@@ -231,6 +231,101 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             mask-image: linear-gradient(to top, transparent 0%, rgba(0,0,0,0.05) 5%, rgba(0,0,0,0.8) 20%, rgba(0,0,0,1) 30%);
         }
 
+        /* Dual Speaker（登壇者が2名で、かつ対等に扱いたい場合だけ描画。
+           media.CO_SPEAKER_IMAGE_CUTOUT がある構成では、こちらが1名構成の
+           speaker-area / speaker-info-box をまるごと置き換える（create_layout_html
+           側で __SPEAKER_SECTION__ に何を差し込むかで分岐する）。
+           2枚の写真を右半分に同じ高さで横並びし、各写真の下にプレーンテキストで
+           氏名（ルビ）・肩書き・経歴2行を添える。単一講師用の .speaker-silhouette /
+           .speaker-img とはクラス名を分け、cascadeの巻き込みを避けている。 */
+        .dual-speaker-area {
+            position: absolute;
+            top: 70px;
+            right: 0;
+            height: 400px;
+            z-index: 2;
+            display: flex;
+            /* widthは指定しない（shrink-to-fitで2枠の合計に自動フィットさせる）。
+               各スロットの実寸は .dual-speaker-slot 側の flex-basis（インライン, px単位）
+               で決まる。写真ごとに被写体のアスペクト比が違う（全身/バストアップ等）ため、
+               ここを固定幅にすると片方だけ小さく詰まって見える事故が起きる。 */
+        }
+        .dual-speaker-slot {
+            position: relative;
+            flex: 0 0 auto;
+            height: 100%;
+        }
+        .ds-silhouette {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, __ACCENT_BLUE__ 3px, rgba(0,163,255,0) 3.5px);
+            background-size: 16px 16px;
+            -webkit-mask-size: cover;
+            mask-size: cover;
+            -webkit-mask-position: bottom center;
+            mask-position: bottom center;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            opacity: 0.8;
+        }
+        .ds-photo {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            /* containだと枠の横幅が狭い方（等身大のジェスチャー写真等）だけ縦が
+               縮んで2人のスケールが揃わないため、coverで枠の高さいっぱいに
+               揃える（枠幅がその分だけ左右をわずかにクロップする）。 */
+            object-fit: cover;
+            object-position: bottom center;
+            filter: brightness(1.1) contrast(1.1);
+        }
+
+        .dual-speaker-names {
+            position: absolute;
+            top: 478px;
+            right: 0;
+            z-index: 3;
+            display: flex;
+            color: __TEXT_WHITE__;
+        }
+        .dsn-col {
+            flex: 0 0 auto;
+            padding-right: 16px;
+            box-sizing: border-box;
+            /* 枠は2人分の合計幅を date-area の白バッジ（会場表記の長さ次第で
+               右端が動く）と衝突しない範囲に収めているため、ここは横に余裕が
+               あまりない。折り返し事故を避けるため .speaker-info-box 系より
+               ひとまわり小さいフォントサイズにしてある。 */
+        }
+        .dsn-name {
+            font-size: 19px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+            white-space: nowrap;
+        }
+        .dsn-ruby {
+            font-size: 11px;
+            font-weight: 700;
+            opacity: 0.75;
+            margin-left: 1px;
+        }
+        .dsn-title {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            opacity: 0.95;
+            white-space: nowrap;
+        }
+        .dsn-bio {
+            font-size: 11px;
+            font-weight: 400;
+            line-height: 1.5;
+            opacity: 0.85;
+            white-space: nowrap;
+        }
+
         .speaker-silhouette {
             position: absolute;
             bottom: 0;
@@ -335,6 +430,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             </div>
         </div>
 
+        __SPEAKER_SECTION__
+    </div>
+</body>
+</html>"""
+
+# 1名構成（既定）。既存セミナー（例: claude-code-1day）はこのブロックのみを使う。
+SINGLE_SPEAKER_SECTION = """
         <div class="speaker-area">
             <div class="speaker-silhouette"></div>
             <img src="speaker_image_cutout.png" class="speaker-img">
@@ -345,10 +447,34 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             <div class="info-role">__SPEAKER_ROLE__</div>
             <span class="info-name-ruby">__SPEAKER_NAME_RUBY__</span>
             <div class="info-name">__SPEAKER_NAME__</div>
+        </div>"""
+
+# 2名対等構成。media.CO_SPEAKER_IMAGE_CUTOUT がある場合に SINGLE_SPEAKER_SECTION の
+# 代わりに使われる。トークンは create_layout_html 側の text/media 置換ループでまとめて
+# 解決されるので、ここでは文字列を組み立てるだけでよい。
+DUAL_SPEAKER_SECTION = """
+        <div class="dual-speaker-area">
+            <div class="dual-speaker-slot" style="flex-basis: __CO_SPEAKER_SLOT_WIDTH__;">
+                <div class="ds-silhouette" style="-webkit-mask-image:url('__CO_SPEAKER_IMAGE_CUTOUT__');mask-image:url('__CO_SPEAKER_IMAGE_CUTOUT__');"></div>
+                <img src="__CO_SPEAKER_IMAGE_CUTOUT__" class="ds-photo">
+            </div>
+            <div class="dual-speaker-slot" style="flex-basis: __SPEAKER_SLOT_WIDTH__;">
+                <div class="ds-silhouette" style="-webkit-mask-image:url('speaker_image_cutout.png');mask-image:url('speaker_image_cutout.png');"></div>
+                <img src="speaker_image_cutout.png" class="ds-photo">
+            </div>
         </div>
-    </div>
-</body>
-</html>"""
+        <div class="dual-speaker-names">
+            <div class="dsn-col" style="flex-basis: __CO_SPEAKER_SLOT_WIDTH__;">
+                <div class="dsn-name">__CO_SPEAKER_NAME__<span class="dsn-ruby">（__CO_SPEAKER_NAME_RUBY__）</span></div>
+                <div class="dsn-title">__CO_SPEAKER_TITLE__</div>
+                <div class="dsn-bio">__CO_SPEAKER_BIO_LINE_1__<br>__CO_SPEAKER_BIO_LINE_2__</div>
+            </div>
+            <div class="dsn-col" style="flex-basis: __SPEAKER_SLOT_WIDTH__;">
+                <div class="dsn-name">__SPEAKER_NAME__<span class="dsn-ruby">（__SPEAKER_NAME_RUBY__）</span></div>
+                <div class="dsn-title">__SPEAKER_TITLE__</div>
+                <div class="dsn-bio">__SPEAKER_BIO_LINE_1__<br>__SPEAKER_BIO_LINE_2__</div>
+            </div>
+        </div>"""
 
 
 def find_repo_root(start: Path) -> Path:
@@ -436,6 +562,13 @@ def create_layout_html(outdir: Path, text: dict, color: dict, media: dict) -> Pa
         partner_block = ""
     html = html.replace("__PARTNER_LOGO_BLOCK__", partner_block)
 
+    # 共同登壇者（例: 吉井さん）は media.CO_SPEAKER_IMAGE_CUTOUT がある場合だけ、
+    # メイン講師と対等な大きさの写真＋プレーンテキストのネームプレートを持つ
+    # DUAL_SPEAKER_SECTION に切り替える。無ければ従来どおり1名構成のまま
+    # （既存configはこのキーを持たないので挙動は変わらない）。
+    speaker_section = DUAL_SPEAKER_SECTION if media.get("CO_SPEAKER_IMAGE_CUTOUT") else SINGLE_SPEAKER_SECTION
+    html = html.replace("__SPEAKER_SECTION__", speaker_section)
+
     for key, val in text.items():
         html = html.replace(f"__{key}__", val)
     for key, val in color.items():
@@ -514,6 +647,13 @@ def main() -> None:
     outdir.mkdir(parents=True, exist_ok=True)
 
     media.setdefault("BG_EFFECT_IMAGE", "ai_bg.png")
+    # Dual Speaker（2名対等表示）の各写真枠の幅。デフォルトはメイン講師（全身寄りの
+    # ジェスチャー写真になりがちで、同じ枠幅だとバストアップ写真より小さく収まって
+    # しまう）をやや広めにしてある。被写体のトリミングが違う組み合わせでは
+    # ogp-config.json の media.SPEAKER_SLOT_WIDTH / CO_SPEAKER_SLOT_WIDTH で調整する。
+    if media.get("CO_SPEAKER_IMAGE_CUTOUT"):
+        media.setdefault("SPEAKER_SLOT_WIDTH", "420px")
+        media.setdefault("CO_SPEAKER_SLOT_WIDTH", "300px")
     if "LOGO_IMAGE" not in media:
         repo_root = find_repo_root(SCRIPT_DIR)
         logo_path = repo_root / "image" / "bitcraft-logo-white.png"

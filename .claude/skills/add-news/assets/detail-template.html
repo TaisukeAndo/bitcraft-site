@@ -6,51 +6,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <!-- 一般的なタグ -->
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
-    <meta name="description" content="bitcraftからのお知らせ・最新情報の一覧です。サービスやセミナーに関するお知らせを掲載しています。">
-    <meta name="keywords" content="bitcraft,お知らせ,News,安藤太亮">
+    <meta name="description" content="{{DESCRIPTION}}">
+    <meta name="keywords" content="bitcraft,お知らせ,News,{{KEYWORDS}},安藤太亮">
     <!-- 設定 -->
     <meta name="format-detection" content="telephone=no,email=no,address=no">
     <!-- SNS向け -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="bitcraft | News">
-    <meta property="og:description" content="bitcraftからのお知らせ・最新情報の一覧です。サービスやセミナーに関するお知らせを掲載しています。">
-    <meta property="og:url" content="bitcraft.work/news">
-    <meta property="og:image" content="../image/sns-image.png">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{TITLE}} | bitcraft">
+    <meta property="og:description" content="{{DESCRIPTION}}">
+    <meta property="og:url" content="bitcraft.work/news/{{SLUG}}/">
+    <meta property="og:image" content="../../image/sns-image.png">
     <meta property="fb:app_id" content="1382898935938867" />
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@kuma_progr">
     <meta name="twitter:creator" content="@kuma_progr">
     <!-- アイコン関係 -->
-    <link rel="icon" type="shortcut icon" href="../image/bitcraft-logo-mini.png">
+    <link rel="icon" type="shortcut icon" href="../../image/bitcraft-logo-mini.png">
     <!-- 設定 -->
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/subpage-style.css">
-    <link rel="stylesheet" href="../css/animation.css">
-    <link rel="stylesheet" href="news-style.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/subpage-style.css">
+    <link rel="stylesheet" href="../../css/animation.css">
+    <link rel="stylesheet" href="../news-detail-style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    <title>News | bitcraft</title>
+    <title>{{TITLE}} | bitcraft</title>
   </head>
   <!-- Script読み込み -->
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
   <script src="https://kit.fontawesome.com/88efd4f5df.js" crossorigin="anonymous"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-  <script src="../js/script.js" defer></script>
+  <script src="../../js/script.js" defer></script>
   <!-- Body -->
   <body>
     <!-- header -->
     <header>
-        <a class="header-logo" href="../"><img src="../image/bitcraft-logo.png" alt="bitcraft-logo"></a>
+        <a class="header-logo" href="../../"><img src="../../image/bitcraft-logo.png" alt="bitcraft-logo"></a>
         <div class="header-right">
             <input type="checkbox" class="menu-btn" id="menu-btn">
             <label for="menu-btn" class="menu-icon"><span class="navicon"></span></label>
             <ul class="menu">
-                <li><a class="menu-item" href="../">Home</a></li>
-                <li><a class="menu-item" href="../#service">Service</a></li>
-                <li><a class="menu-item" href="../#idea">Idea</a></li>
-                <li><a class="menu-item" href="../#news">News</a></li>
-                <li class="right"><a class="contact-button" href="../contact">
+                <li><a class="menu-item" href="../../">Home</a></li>
+                <li><a class="menu-item" href="../../#service">Service</a></li>
+                <li><a class="menu-item" href="../../#idea">Idea</a></li>
+                <li><a class="menu-item" href="../../#news">News</a></li>
+                <li class="right"><a class="contact-button" href="../../contact">
                     <i class="fa-solid fa-envelope"></i>
                     <p>Contact</p>
                 </a></li>
@@ -61,28 +61,23 @@
     <main>
         <!--Top-->
         <div class="top top--news">
-            <div class="title-image"><img src="img/top-image.jpg" alt="News"></div>
+            <div class="title-image"><img src="../img/top-image.jpg" alt="News"></div>
             <div class="title">
-                <h1>News</h1>
-                <p>bitcraftからのお知らせや最新情報をお届けします。</p>
+                <h1>{{TITLE}}</h1>
             </div>
         </div>
 
-        <!-- News List -->
-        <div class="news-list-section">
+        <!-- Article -->
+        <div class="detail">
             <div class="content">
-                <h2 class="news-list-title">お知らせ一覧</h2>
-                <ul class="news-list">
-                    <li class="news-item">
-                        <a class="news-item-link" href="./ai-agent-1day-open/">
-                            <span class="news-date">2026.08.15</span>
-                            <span class="news-tag">セミナー</span>
-                            <span class="news-item-title">Claude Code AIエージェント構築1Dayセミナー、申込受付を開始しました</span>
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </a>
-                        <p class="news-item-desc">AIを「使う」から「任せる」へ。企業のAI担当者向け対面1Dayセミナー「Claude Code AIエージェント構築1Dayセミナー」（2026年9月19日・鳥取県鳥取市 SANDBOX TOTTORI）の申込受付を開始しました。</p>
-                    </li>
-                </ul>
+                <div class="article-meta">
+                    <span class="news-date">{{DATE_DISPLAY}}</span>
+                    <span class="news-tag">{{TAG}}</span>
+                </div>
+
+                {{BODY}}
+
+                <a class="back-link" href="../"><i class="fa-solid fa-chevron-right"></i> お知らせ一覧へ戻る</a>
             </div>
         </div>
     </main>
@@ -90,19 +85,19 @@
     <footer>
         <div class="footer-menu content">
             <div class="image">
-                <a href="../">
-                    <img src="../image/bitcraft-logo-white.png" alt="bitcraft-logo">
+                <a href="../../">
+                    <img src="../../image/bitcraft-logo-white.png" alt="bitcraft-logo">
                 </a>
             </div>
             <div class="list">
                 <h2>Site map</h2>
                 <ul>
-                    <li><a href="../">- Home</a></li>
-                    <li><a href="../#service">- Service</a></li>
-                    <li><a href="../#idea">- Idea</a></li>
-                    <li><a href="../#news">- News</a></li>
-                    <li><a href="../#about">- About</a></li>
-                    <li><a href="../contact">- Contact</a></li>
+                    <li><a href="../../">- Home</a></li>
+                    <li><a href="../../#service">- Service</a></li>
+                    <li><a href="../../#idea">- Idea</a></li>
+                    <li><a href="../../#news">- News</a></li>
+                    <li><a href="../../#about">- About</a></li>
+                    <li><a href="../../contact">- Contact</a></li>
                 </ul>
             </div>
             <div class="list">
@@ -137,7 +132,7 @@
                 </ul>
             </div>
         </div>
-        <div class="content policy"><a href="../policy/">プライバシーポリシー</a></div>
+        <div class="content policy"><a href="../../policy/">プライバシーポリシー</a></div>
         <div class="content"><small>© 2025 bitcraft All Rights Reserved</small></div>
     </footer>
   </body>
