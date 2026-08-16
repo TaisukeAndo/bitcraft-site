@@ -3,15 +3,17 @@
 // add-news Skill（.claude/skills/add-news/SKILL.md）が人手で行っている
 // 「3箇所同期＋トップページ最新3件まで」というルールをそのままコードにしたもの。
 //
-// 実行にはCF_ACCOUNT_ID / CF_D1_DATABASE_ID / CF_API_TOKEN が必要（GitHub Actions Secretsで注入）。
+// 実行にはCMS_API_URL（cms/workerの公開URL、ローカルDockerなら http://worker:8787）と
+// CMS_API_TOKEN（Worker側のMCP_BEARER_TOKENと同じ値）が必要。
 // 追加npm依存なし（Node組み込みのfetch/fsのみ使用）。
 //
 // Usage: node cms/build/build.mjs
+// Docker: docker compose -f cms/docker-compose.yml run --rm build
 
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { queryD1 } from "./lib/d1.mjs";
+import { fetchPublishedNews } from "./lib/cms-api.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
@@ -51,18 +53,35 @@ function replaceBetweenMarkers(html, startMarker, endMarker, content) {
     );
   }
   const before = html.slice(0, startIdx + startMarker.length);
+  // endMarker行の行頭（インデント込み）を保持する。html.indexOf(endMarker)はインデントを
+  // 含まないため、単純に html.slice(endIdx) すると次回ビルド時にendMarker行の字下げが
+  // 失われて左端に寄ってしまう。
+  const endLineStart = html.lastIndexOf("\n", endIdx) + 1;
+  const endIndent = html.slice(endLineStart, endIdx);
   const after = html.slice(endIdx);
-  return `${before}\n${content}\n${after}`;
+
+  // index.htmlはファイル全体がCRLFで保存されている（news/index.html等はLF）。
+  // 差し込むcontentがLF固定だとファイル内で改行コードが混在してしまうので、
+  // 差し込み先の既存の改行コードに合わせる。
+  const usesCrlf = html.includes("\r\n");
+  const normalizedContent = usesCrlf ? content.replace(/\r?\n/g, "\r\n") : content;
+  const newline = usesCrlf ? "\r\n" : "\n";
+
+  return `${before}${newline}${normalizedContent}${newline}${endIndent}${after}`;
 }
 
 async function main() {
-  const rows = await queryD1("SELECT * FROM news WHERE status = 'published' ORDER BY published_at DESC, id DESC");
+  const rows = await fetchPublishedNews();
 
-  const [detailTemplate, listItemTemplate, topItemTemplate] = await Promise.all([
+  const [detailTemplate, listItemTemplateRaw, topItemTemplateRaw] = await Promise.all([
     readFile(DETAIL_TEMPLATE_PATH, "utf8"),
     readFile(LIST_ITEM_TEMPLATE_PATH, "utf8"),
     readFile(TOP_ITEM_TEMPLATE_PATH, "utf8"),
   ]);
+  // フラグメントテンプレートは末尾改行込みでファイル保存されているため、そのまま.join("\n")すると
+  // 複数件の間に空行が増殖する。末尾の空白だけ落として1件ずつを綺麗に連結できるようにする。
+  const listItemTemplate = listItemTemplateRaw.trimEnd();
+  const topItemTemplate = topItemTemplateRaw.trimEnd();
 
   // 1. 詳細ページ (news/<slug>/index.html) を全件再生成
   for (const row of rows) {

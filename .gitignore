@@ -5,3 +5,10 @@ service/seminar/**/img/layout.html
 service/seminar/**/img/speaker_image_cutout.png
 service/seminar/**/img/speaker_image.png
 tmp/
+# cms/ のローカル開発（Docker/wrangler）専用の生成物・秘密情報。
+# cms/.env.example・cms/worker/.dev.vars.example はテンプレートなのでコミット対象。
+cms/.env
+cms/worker/.dev.vars
+cms/worker/node_modules/
+cms/worker/.wrangler/
+cms/build/node_modules/

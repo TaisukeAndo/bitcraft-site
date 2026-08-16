@@ -18,7 +18,10 @@ bindings = [
 
 [[migrations]]
 tag = "v1"
-new_classes = ["BitcraftCmsMcp"]
+# McpAgent(agentsパッケージ)はDurable ObjectのSQLiteストレージを内部で使うため、
+# new_classes ではなく new_sqlite_classes で登録する必要がある（実機検証で確認済み。
+# new_classesのままだと "SQL is not enabled for this Durable Object class" で500になる）。
+new_sqlite_classes = ["BitcraftCmsMcp"]
 
 # --- Secrets ---
 # 値はここに書かず `wrangler secret put <NAME>` で設定する。

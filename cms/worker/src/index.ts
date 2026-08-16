@@ -1,11 +1,11 @@
 // bitcraft-site CMS用 Remote MCPサーバー（Cloudflare Workers + D1）。
 //
-// 注意: このファイルは `npm install` / `wrangler dev` で一度も実行検証していないscaffoldです
-// （このリポジトリの開発環境にwrangler/Cloudflareアカウントの認証が無いため）。
-// API呼び出し形（McpAgent.server.registerTool / McpAgent.serve等）はagents@0.20.1・
-// @modelcontextprotocol/sdk@1.30.0の型定義ソースと照合済みだが、実行しての確認はできていない。
-// Cloudflareアカウント準備後、必ず `cms/worker` で `npm install && npx wrangler dev` して
-// 動作確認してから deploy すること。詳細手順は `cms/README.md` を参照。
+// ローカルDocker環境（`cms/docker-compose.yml`, wrangler dev + ローカルD1）で
+// 実際に動作検証済み: tools/list・create_news/list_news/update_news/get_news を
+// 実MCPプロトコル(Streamable HTTP)経由で呼び出し、バリデーションエラー・404系も含めて確認した。
+// 一方、Cloudflareの実アカウントへのdeploy・publish_newsからのGitHub Actions起動は
+// この開発環境にCloudflare/GitHubの認証情報が無いため未検証。`cms/README.md`の
+// 「本番Cloudflareリソースの準備」以降を実施したら、そちらも確認すること。
 //
 // Phase 1のスコープ: news CRUD + publish のみ。seminar/profile/service用toolは
 // tmp/cms-architecture.md のロードマップに沿って後続フェーズで追加する。
@@ -140,6 +140,18 @@ export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const authError = requireBearerAuth(request, env);
     if (authError) return authError;
+
+    const url = new URL(request.url);
+
+    // cms/build/build.mjs 用の内部API。D1のREST APIを直接叩く代わりに、この
+    // Workerを経由させることで、build.mjsが「ローカルのwrangler dev（local D1）」
+    // 「本番の deploy 済みWorker（remote D1）」のどちらに対しても同じコードで
+    // 動作するようにしている（Cloudflareアカウントの認証情報をbuild側に持たせなくてよい）。
+    if (url.pathname === "/internal/published-news" && request.method === "GET") {
+      const rows = await listNews(env.DB, "published");
+      return Response.json({ news: rows });
+    }
+
     return BitcraftCmsMcp.serve("/mcp").fetch(request, env, ctx);
   },
 };

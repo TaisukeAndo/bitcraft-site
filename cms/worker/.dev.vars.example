@@ -1,0 +1,10 @@
+# wrangler devがローカル実行時にsecret相当として読み込むファイルの雛形。
+# `docker compose up worker` を初回実行すると .dev.vars が自動生成されるので、
+# 通常は手動でコピーしなくてよい（cms/.env でMCP_BEARER_TOKEN等を指定していればそれが使われる）。
+# 手動で用意したい場合だけ、このファイルを .dev.vars にコピーして値を埋める。
+#
+#   cp .dev.vars.example .dev.vars
+
+MCP_BEARER_TOKEN=local-dev-token
+GITHUB_TOKEN=
+GITHUB_REPO=

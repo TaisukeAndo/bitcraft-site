@@ -6,7 +6,7 @@ name: CMS News Build
 # mainへの直接pushは行わない（release-pr Skillのレビューを必ず経由させるため）。
 #
 # 事前準備（cms/README.md参照）:
-#   - リポジトリSecrets: CF_ACCOUNT_ID, CF_D1_DATABASE_ID, CF_API_TOKEN
+#   - リポジトリSecrets: CMS_API_URL（deploy済みWorkerの公開URL）, CMS_API_TOKEN（MCP_BEARER_TOKENと同じ値）
 #   - Settings > Actions > General > Workflow permissions で
 #     "Allow GitHub Actions to create and approve pull requests" を有効化
 
@@ -36,11 +36,10 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Build news pages from D1
+      - name: Build news pages from D1 (via cms/worker)
         env:
-          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          CF_D1_DATABASE_ID: ${{ secrets.CF_D1_DATABASE_ID }}
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CMS_API_URL: ${{ secrets.CMS_API_URL }}
+          CMS_API_TOKEN: ${{ secrets.CMS_API_TOKEN }}
         run: node cms/build/build.mjs
 
       - name: Smoke test changed slugs

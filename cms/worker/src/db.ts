@@ -4,8 +4,8 @@ export type NewsRow = Record<string, unknown>;
 
 export async function listNews(db: D1Database, status?: "draft" | "published"): Promise<NewsRow[]> {
   const stmt = status
-    ? db.prepare("SELECT * FROM news WHERE status = ? ORDER BY published_at DESC").bind(status)
-    : db.prepare("SELECT * FROM news ORDER BY published_at DESC");
+    ? db.prepare("SELECT * FROM news WHERE status = ? ORDER BY published_at DESC, id DESC").bind(status)
+    : db.prepare("SELECT * FROM news ORDER BY published_at DESC, id DESC");
   const { results } = await stmt.all<NewsRow>();
   return results ?? [];
 }

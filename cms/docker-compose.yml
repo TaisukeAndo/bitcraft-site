@@ -1,0 +1,99 @@
+# bitcraft-site CMSのローカル開発環境。
+# ホスト側にNode/wranglerを直接インストールしなくても、これだけでMCPサーバーの起動・
+# ローカルD1へのスキーマ適用・ビルドスクリプトの動作確認ができる。
+#
+# 使い方は cms/README.md の「Dockerで動かす」セクション参照。要点だけ:
+#
+#   cd cms
+#   docker compose up worker              # MCPサーバーをlocalhost:8787で起動（ローカルD1、Cloudflareアカウント不要）
+#   docker compose run --rm migrate        # （別ターミナルで）ローカルD1にスキーマ+既存記事seedを適用
+#   docker compose run --rm build          # ローカルD1の内容でnews/以下とindex.htmlを再生成
+#   docker compose run --rm wrangler d1 create bitcraft-cms   # 実アカウントへの一回限りの操作はwranglerサービス経由
+#
+# CLOUDFLARE_API_TOKEN 等の実アカウント向け値は cms/.env（gitignore対象、.env.exampleを参照）に置く。
+
+services:
+  # ローカルMCPサーバー（wrangler dev）。D1はローカルSQLiteでエミュレートされ、
+  # Cloudflareアカウントへの通信は発生しない。
+  worker:
+    build:
+      context: ./worker
+    working_dir: /app
+    volumes:
+      - ./worker:/app
+      - worker_node_modules:/app/node_modules
+      - wrangler_state:/app/.wrangler
+    ports:
+      - "8787:8787"
+    environment:
+      MCP_BEARER_TOKEN: ${MCP_BEARER_TOKEN:-local-dev-token}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      GITHUB_REPO: ${GITHUB_REPO:-}
+
+  # ローカルD1へのスキーマ適用（初回・migrations追加時に一度実行）。
+  # worker と同じ wrangler_state を共有するので、worker起動前でも後でもよい。
+  migrate:
+    build:
+      context: ./worker
+    working_dir: /app
+    volumes:
+      - ./worker:/app
+      - worker_node_modules:/app/node_modules
+      - wrangler_state:/app/.wrangler
+      - ./migrations:/migrations:ro
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        npm install
+        npx wrangler d1 execute bitcraft-cms --local --file=/migrations/0001_news.sql
+        npx wrangler d1 execute bitcraft-cms --local --file=/migrations/0002_seed_existing_news.sql
+    profiles: ["migrate"]
+
+  # cms/build/build.mjs をworker宛に実行し、リポジトリ本体（news/, index.html等）へ
+  # 生成結果を書き込む。リポジトリ全体をbind mountするので、実行後は
+  # ホスト側で `git diff` すれば生成結果を確認できる。
+  build:
+    image: node:22-alpine
+    working_dir: /repo
+    volumes:
+      - ..:/repo
+    environment:
+      CMS_API_URL: http://worker:8787
+      CMS_API_TOKEN: ${MCP_BEARER_TOKEN:-local-dev-token}
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        echo "waiting for worker ($$CMS_API_URL) ..."
+        until wget -q -O- --header="Authorization: Bearer $$CMS_API_TOKEN" "$$CMS_API_URL/internal/published-news" >/dev/null 2>&1; do
+          sleep 1
+        done
+        node cms/build/build.mjs
+    depends_on:
+      - worker
+    profiles: ["build"]
+
+  # d1 create / secret put / deploy 等、実Cloudflareアカウントに対する一回限りの操作を
+  # ホストにwranglerを入れずに実行するための素通しサービス。
+  # 例: docker compose run --rm wrangler d1 create bitcraft-cms
+  #     docker compose run --rm wrangler d1 execute bitcraft-cms --remote --file=../migrations/0001_news.sql
+  #     docker compose run --rm wrangler secret put MCP_BEARER_TOKEN
+  #     docker compose run --rm wrangler deploy
+  # CLOUDFLARE_API_TOKEN（必要なら CLOUDFLARE_ACCOUNT_ID も）を cms/.env に設定しておく
+  # （wrangler loginのブラウザ認証はコンテナ内では使えないため、APIトークン方式を使う）。
+  wrangler:
+    build:
+      context: ./worker
+    working_dir: /app
+    volumes:
+      - ./worker:/app
+      - worker_node_modules:/app/node_modules
+      - wrangler_state:/app/.wrangler
+    environment:
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:-}
+      CLOUDFLARE_ACCOUNT_ID: ${CLOUDFLARE_ACCOUNT_ID:-}
+    entrypoint: ["sh", "-c", "npm install && exec npx wrangler \"$@\"", "--"]
+    profiles: ["wrangler"]
+
+volumes:
+  worker_node_modules:
+  wrangler_state:
