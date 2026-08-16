@@ -152,6 +152,20 @@
     vertical-align: middle;
 }
 
+/* 募集開始前の告知バッジ（残席表示の代わりに使う。urgency色の.seminar-seats-leftとは
+   区別し、案内色（青系）にしている） */
+.seminar-registration-badge {
+    display: inline-block;
+    background-color: #eef4ff;
+    color: #1a3a7a;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
 /* ===========================
    Sub Catch
    =========================== */
