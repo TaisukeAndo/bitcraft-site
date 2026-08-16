@@ -17,6 +17,7 @@ description: bitcraft-site の service/seminar ページに新しいセミナー
    - 未来日 → 詳細ページ・申込ページ・OGP画像一式をテンプレートから生成し、一覧の「開催予定」に追加
    - 過去日（実績としての事後登録） → 詳細/申込ページは作らず、「過去開催」に直接カードを追加
 4. 最終チェック（リンク切れ・コピペ跡・相対パスの確認）
+5. SEOの仕上げ（未来日のケースのみ。`seo-optimizer` Agentを呼んで新規ページのmeta/OGP/構造化データを仕上げる）
 
 順番に説明する。
 
@@ -147,5 +148,13 @@ python3 .claude/skills/add-seminar/scripts/generate_ogp.py --config service/semi
 スクリプトが指摘した項目は必ず目視でも確認する（自動チェックはコピペ跡や壊れたリンクなど機械的に分かるものしか見つけられず、文章の質やレイアウト崩れは見ていない）。
 
 最後に、可能であればブラウザ相当の確認（少なくとも各HTMLファイルを開いてリンク遷移を目でたどる）をして、ユーザーに「詳細ページ」「申込ページ」「一覧ページの見え方」を要約して報告する。
+
+## ステップ6: SEOの仕上げ（`seo-optimizer` Agentを呼ぶ）
+
+3-Aのケース（詳細ページ・申込ページを新規生成した場合）に限り、Agentツール（`subagent_type: seo-optimizer`）で `.claude/agents/seo-optimizer.md` のSEO専門サブエージェントを呼び出す。プロンプトには対象ファイルを明示すること（例:「`service/seminar/<slug>/index.html` と `service/seminar/<slug>/apply/index.html` の2ページを対象にSEO監査と実装をお願いします」）。指定しないとサイト全体が監査対象になり、無関係な既存ページまで書き換えられてしまう。
+
+seo-optimizerはmeta descriptionの固有化・`og:url`/`og:image`の絶対URL統一・Event/FAQPage構造化データ（JSON-LD）の追加・画像altの具体化などをその場で実装するが、git commit/push・PR作成は行わない（このSkill自身と同じ制約）。実装内容はユーザーへの最終報告に含める。
+
+3-Bのケース（過去実績としてカードのみ追加）は詳細ページが存在しないため、この呼び出しはスキップしてよい。
 
 このリポジトリで変更をコミット・PR化する流れは `create-pr` Skill が別途あるので、ユーザーがそれを望んだらそちらに任せる（このSkillの範囲はファイルの作成・編集まで）。
