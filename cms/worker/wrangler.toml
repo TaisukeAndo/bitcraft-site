@@ -1,0 +1,28 @@
+name = "bitcraft-cms"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# --- D1 ---
+# `npx wrangler d1 create bitcraft-cms` 実行後、出力される database_id をここに貼る。
+[[d1_databases]]
+binding = "DB"
+database_name = "bitcraft-cms"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+# --- Durable Objects (McpAgentが内部でセッション管理に使用) ---
+[durable_objects]
+bindings = [
+  { name = "MCP_OBJECT", class_name = "BitcraftCmsMcp" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["BitcraftCmsMcp"]
+
+# --- Secrets ---
+# 値はここに書かず `wrangler secret put <NAME>` で設定する。
+#   MCP_BEARER_TOKEN  MCPクライアント認証用の共有トークン（openssl rand -hex 32 等で生成）
+#   GITHUB_TOKEN       repository の Actions を起動するためのGitHub PAT
+#                       (fine-grained PAT, 対象repoに Actions: write, Contents: write)
+#   GITHUB_REPO        "TaisukeAndo/bitcraft-site"

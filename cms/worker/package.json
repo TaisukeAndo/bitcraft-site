@@ -1,0 +1,21 @@
+{
+  "name": "bitcraft-cms-worker",
+  "private": true,
+  "type": "module",
+  "description": "bitcraft-site CMS用 Remote MCPサーバー（Cloudflare Workers + D1）。Phase 1: newsのみ対応。",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "agents": "^0.20.1",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.0.0",
+    "typescript": "^5.5.0",
+    "wrangler": "^4.0.0"
+  }
+}
