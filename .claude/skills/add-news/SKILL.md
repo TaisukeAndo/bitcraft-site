@@ -20,6 +20,7 @@ description: bitcraft-site のトップページ（index.htmlの#newsセクシ�
 5. `/news/` の一覧ページに記事を追加する
 6. トップページの `#news` セクションに記事を追加する（コンパクト表示・最新3件まで）
 7. 最終チェック
+8. SEOの仕上げ（`seo-optimizer` Agentを呼んで記事詳細ページのmeta/OGP/構造化データを仕上げる）
 
 順番に説明する。
 
@@ -122,5 +123,11 @@ bash .claude/skills/add-news/scripts/check_news.sh <slug>
 スクリプトが指摘した項目は必ず目視でも確認する（自動チェックは機械的に分かるものしか見つけられず、文章の質やレイアウト崩れ、日付・タグの表記ゆれは見ていない）。
 
 最後に、可能であればブラウザ相当の確認（各HTMLファイルを開いてリンク遷移を目でたどる）をして、ユーザーに「トップページの見え方」「一覧ページの見え方」「詳細ページの内容」を要約して報告する。
+
+## ステップ7: SEOの仕上げ（`seo-optimizer` Agentを呼ぶ）
+
+Agentツール（`subagent_type: seo-optimizer`）で `.claude/agents/seo-optimizer.md` のSEO専門サブエージェントを呼び出す。プロンプトには対象ファイルを明示すること（例:「`news/<slug>/index.html` を対象にSEO監査と実装をお願いします」）。指定しないとサイト全体が監査対象になり、無関係な既存ページまで書き換えられてしまう。
+
+seo-optimizerはmeta descriptionの固有化・`og:url`/`og:image`の絶対URL統一・NewsArticle構造化データ（JSON-LD）の追加などをその場で実装するが、git commit/push・PR作成は行わない（このSkill自身と同じ制約）。実装内容はユーザーへの最終報告に含める。`/news/` 一覧ページ・トップページ側の `<li>` は簡易表示のみで独自のmeta/OGPを持たないため対象外でよい。
 
 このリポジトリで変更をコミット・PR化する流れは `create-pr` Skill が別途あるので、ユーザーがそれを望んだらそちらに任せる（このSkillの範囲はファイルの作成・編集まで）。
