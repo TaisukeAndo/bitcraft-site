@@ -55,6 +55,16 @@
     margin-left: 25px;
 }
 
+.detail .content p a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 600;
+}
+
+.detail .content p a:hover {
+    opacity: 0.7;
+}
+
 .detail .back-link {
     display: inline-flex;
     align-items: center;
