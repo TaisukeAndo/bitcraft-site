@@ -21,7 +21,7 @@
 .content h2.news-list-title {
     font-size: 36px;
     font-weight: bold;
-    margin: 0 0 40px;
+    margin: 50px 0 40px;
     color: #000;
 }
 
@@ -36,7 +36,7 @@
 
 .news-list-section .news-item-desc {
     flex: 1 1 100%;
-    margin: 10px 0 0 130px;
+    margin: 10px 0 0 230px;
     color: var(--base-deep-color);
     font-size: 14px;
     line-height: 1.7;
