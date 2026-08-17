@@ -75,14 +75,20 @@ cp .claude/skills/add-news/assets/detail-template.html news/<slug>/index.html
 ```html
 <li class="news-item">
     <a class="news-item-link" href="./<slug>/">
-        <span class="news-date">{{DATE_DISPLAY}}</span>
-        <span class="news-tag">{{TAG}}</span>
-        <span class="news-item-title">{{TITLE}}</span>
+        <div class="news-item-main">
+            <div class="news-item-meta">
+                <span class="news-date">{{DATE_DISPLAY}}</span>
+                <span class="news-tag">{{TAG}}</span>
+            </div>
+            <span class="news-item-title">{{TITLE}}</span>
+            <p class="news-item-desc">{{一覧ページ用の概要文}}</p>
+        </div>
         <i class="fa-solid fa-chevron-right"></i>
     </a>
-    <p class="news-item-desc">{{一覧ページ用の概要文}}</p>
 </li>
 ```
+
+`news-item-desc` を含む一覧表示は `news/news-style.css` の `.news-list-section` スコープで「date+tag → タイトル → 概要文」を縦積みにするレイアウトを前提にしている（date/タイトルと概要文の開始位置がズレる、概要文だけリンクの外に出てクリックできない、といった過去の崩れを避けるため）。`<p class="news-item-desc">` は必ず `<a class="news-item-link">` の中、`<div class="news-item-main">` の中に置き、この入れ子構造を変えないこと。
 
 `<li class="news-item news-empty">現在、お知らせはございません。</li>` が残っていれば、これが最初の記事なので削除する。
 
