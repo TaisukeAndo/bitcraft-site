@@ -11,4 +11,3 @@ cms/.env
 cms/worker/.dev.vars
 cms/worker/node_modules/
 cms/worker/.wrangler/
-cms/build/node_modules/

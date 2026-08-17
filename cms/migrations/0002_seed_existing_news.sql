@@ -1,9 +1,10 @@
 -- 既存の手書きニュース記事（news/ai-agent-1day-open/）をDBへ取り込むための1回限りのseed。
 --
--- なぜ必要か: build.mjs は「DBの published な行 = news/ 配下と index.html #news の正」として
--- 全件を再生成する。この記事がDBに無いまま最初のCMSビルドを実行すると、
--- 既存の手書き記事が一覧・トップページから消えてしまう。
--- 初回ビルド前に必ず一度だけ実行すること（2回実行してもslug UNIQUE制約でエラーになるだけで
+-- なぜ必要か: cms/worker は「DBのpublishedな行 = /news/以下とindex.html #newsの正」として
+-- 動的にレンダリングする。この記事がDBに無いまま本番でCloudflare Routeを有効化すると、
+-- 既存の手書き記事が一覧・トップページから消えてしまう（news/配下の静的HTMLファイル自体は
+-- 残るが、Route有効化後はオリジンとして参照されなくなるため）。
+-- Route有効化前に必ず一度だけ実行すること（2回実行してもslug UNIQUE制約でエラーになるだけで
 -- 二重登録はされない）。
 --
 --   npx wrangler d1 execute bitcraft-cms --remote --file=../migrations/0002_seed_existing_news.sql

@@ -1,28 +1,30 @@
-// bitcraft-site CMS用 Remote MCPサーバー（Cloudflare Workers + D1）。
+// bitcraft-site CMS用 Worker。2つの役割を1つのWorkerが兼ねる:
+//   1. `/mcp` — Remote MCPサーバー（他エージェントからのnews CRUD/publish操作）
+//   2. `/`・`/news`・`/news/<slug>/` — 動的SSR（D1の内容をリクエスト毎にHTMLへレンダリング）
+// それ以外のパス（/service/, /contact/, /image/等、CMS管理下にない既存の静的ページ）は
+// すべてオリジン（GitHub Pages）へそのまま素通しする。DBを更新した瞬間から本番に反映され、
+// 旧cms/build/のような「ビルド→PR→merge」の待ち時間は無い。
 //
-// ローカルDocker環境（`cms/docker-compose.yml`, wrangler dev + ローカルD1）で
-// 実際に動作検証済み: tools/list・create_news/list_news/update_news/get_news を
-// 実MCPプロトコル(Streamable HTTP)経由で呼び出し、バリデーションエラー・404系も含めて確認した。
-// 一方、Cloudflareの実アカウントへのdeploy・publish_newsからのGitHub Actions起動は
-// この開発環境にCloudflare/GitHubの認証情報が無いため未検証。`cms/README.md`の
-// 「本番Cloudflareリソースの準備」以降を実施したら、そちらも確認すること。
+// 本番運用にはCloudflare側でこのWorkerを bitcraft.work の `/`・`/news`・`/news/*` に
+// Route登録し、ドメインのDNSをCloudflare経由（proxied）にする必要がある。詳細はcms/README.md参照。
 //
-// Phase 1のスコープ: news CRUD + publish のみ。seminar/profile/service用toolは
-// tmp/cms-architecture.md のロードマップに沿って後続フェーズで追加する。
+// ローカルDocker環境で実際に動作検証済み（tools/list・news CRUD・SSR描画・オリジン素通し）。
+// 実際のCloudflare Route登録・DNS切替は未検証（この環境に認証情報が無いため）。
 
 import { McpAgent } from "agents/mcp";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { createPublishRequest, getNewsBySlug, insertNews, listNews, updateNewsBySlug } from "./db";
+import { getNewsBySlug, insertNews, listNews, updateNewsBySlug } from "./db";
 import { requireBearerAuth } from "./auth";
-import { dispatchBuildWorkflow } from "./github";
 import { NewsCreateSchema, NewsUpdateSchema } from "./validation";
+import { patchHomepageNews, renderNewsDetailPage, renderNewsListPage, selectTopRows, type NewsRow } from "./render";
 
 export interface Env {
   DB: D1Database;
   MCP_BEARER_TOKEN: string;
-  GITHUB_TOKEN: string;
-  GITHUB_REPO: string;
+  // ローカル/検証環境専用。設定されている間は素通し先をこのURLに固定する
+  // （本番ではCloudflareのRoute経由の`fetch(request)`が正しいオリジンに届くため未設定のままでよい）。
+  ORIGIN_BASE_URL?: string;
 }
 
 // created_by の厳密なクライアント識別は未実装（TODO: Phase 2）。
@@ -35,8 +37,53 @@ function errorResult(err: unknown) {
   return { content: [{ type: "text" as const, text: message }], isError: true as const };
 }
 
+function htmlResponse(html: string, init: ResponseInit = {}): Response {
+  return new Response(html, {
+    ...init,
+    headers: { "content-type": "text/html; charset=UTF-8", ...init.headers },
+  });
+}
+
+/**
+ * CMS管理下でないパス（/service/, /contact/, /image/, /news/配下の静的アセット等）を
+ * オリジン(GitHub Pages)へ素通しする。
+ */
+async function fetchOrigin(request: Request, env: Env): Promise<Response> {
+  if (env.ORIGIN_BASE_URL) {
+    const url = new URL(request.url);
+    return fetch(`${env.ORIGIN_BASE_URL}${url.pathname}${url.search}`);
+  }
+  // 本番（Cloudflareがゾーンの手前にいる想定）ではfetch(request)がこのWorkerを再度呼ばず、
+  // 本来のオリジンへ届く（Cloudflareが「同一ゾーン・同一Routeへのfetch」の標準パターンとして
+  // ドキュメント化している挙動）。ローカルdevでは必ずORIGIN_BASE_URLを設定すること
+  // （さもないと自分自身への再帰fetchになってしまう）。
+  return fetch(request);
+}
+
+async function handleHomepage(request: Request, env: Env): Promise<Response> {
+  const originRes = await fetchOrigin(request, env);
+  if (!originRes.ok) return originRes;
+  const html = await originRes.text();
+  const rows = (await listNews(env.DB, "published")) as NewsRow[];
+  const patched = patchHomepageNews(html, selectTopRows(rows));
+  return htmlResponse(patched, { status: originRes.status });
+}
+
+async function handleNewsList(env: Env): Promise<Response> {
+  const rows = (await listNews(env.DB, "published")) as NewsRow[];
+  return htmlResponse(renderNewsListPage(rows));
+}
+
+async function handleNewsDetail(env: Env, slug: string): Promise<Response> {
+  const row = await getNewsBySlug(env.DB, slug);
+  if (!row || row.status !== "published") {
+    return new Response("Not Found", { status: 404 });
+  }
+  return htmlResponse(renderNewsDetailPage(row as NewsRow));
+}
+
 export class BitcraftCmsMcp extends McpAgent<Env> {
-  server = new McpServer({ name: "bitcraft-cms", version: "0.1.0" });
+  server = new McpServer({ name: "bitcraft-cms", version: "0.2.0" });
 
   async init() {
     // `tool()`はSDK上deprecatedなため、非推奨扱いになっていない`registerTool()`で統一する。
@@ -106,25 +153,22 @@ export class BitcraftCmsMcp extends McpAgent<Env> {
       "publish_news",
       {
         description: [
-          "指定したslug群をpublishedにし、GitHub Actions(cms-news-build.yml)をworkflow_dispatchで起動する。",
-          "ビルドはDB上のpublished記事全件からnews/以下とindex.htmlの#newsセクションを再生成し、",
-          "Pull Requestを自動作成する（mainへの自動mergeはしない）。実際のサイト反映にはPRレビュー・",
-          "mergeが別途必要（release-pr Skillの安全確認を経由すること）。",
+          "指定したslug群をpublishedにする。DBを更新した直後から https://bitcraft.work/news/ 以下に",
+          "動的に反映される（ビルド・Pull Request・デプロイは不要、mainブランチへのgit操作も発生しない）。",
         ].join("\n"),
         inputSchema: { slugs: z.array(z.string()).min(1) },
       },
       async ({ slugs }) => {
         try {
+          const updated = [];
           for (const slug of slugs) {
-            await updateNewsBySlug(this.env.DB, slug, { status: "published" }, ACTOR);
+            updated.push(await updateNewsBySlug(this.env.DB, slug, { status: "published" }, ACTOR));
           }
-          const requestId = await createPublishRequest(this.env.DB, "news", slugs, ACTOR);
-          const dispatch = await dispatchBuildWorkflow(this.env, { requestId, slugs });
           return {
             content: [
               {
                 type: "text",
-                text: `公開ビルドを起動しました。GitHub Actions完了後にPull Requestが自動作成されます。\nrequest_id: ${requestId}\n${JSON.stringify(dispatch)}`,
+                text: `公開しました。次のアクセスから本番に反映されます。\n${JSON.stringify(updated, null, 2)}`,
               },
             ],
           };
@@ -138,20 +182,28 @@ export class BitcraftCmsMcp extends McpAgent<Env> {
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    const authError = requireBearerAuth(request, env);
-    if (authError) return authError;
-
     const url = new URL(request.url);
 
-    // cms/build/build.mjs 用の内部API。D1のREST APIを直接叩く代わりに、この
-    // Workerを経由させることで、build.mjsが「ローカルのwrangler dev（local D1）」
-    // 「本番の deploy 済みWorker（remote D1）」のどちらに対しても同じコードで
-    // 動作するようにしている（Cloudflareアカウントの認証情報をbuild側に持たせなくてよい）。
-    if (url.pathname === "/internal/published-news" && request.method === "GET") {
-      const rows = await listNews(env.DB, "published");
-      return Response.json({ news: rows });
+    if (url.pathname === "/mcp") {
+      const authError = requireBearerAuth(request, env);
+      if (authError) return authError;
+      return BitcraftCmsMcp.serve("/mcp").fetch(request, env, ctx);
     }
 
-    return BitcraftCmsMcp.serve("/mcp").fetch(request, env, ctx);
+    if (request.method === "GET" || request.method === "HEAD") {
+      if (url.pathname === "/") {
+        return handleHomepage(request, env);
+      }
+      if (url.pathname === "/news" || url.pathname === "/news/") {
+        return handleNewsList(env);
+      }
+      const detailMatch = url.pathname.match(/^\/news\/([a-z0-9][a-z0-9-]*)\/?$/);
+      if (detailMatch) {
+        return handleNewsDetail(env, detailMatch[1]);
+      }
+    }
+
+    // /news/配下の静的アセット(css/画像)や、CMS管理下でないその他すべてのパスはオリジンへ素通し。
+    return fetchOrigin(request, env);
   },
 };

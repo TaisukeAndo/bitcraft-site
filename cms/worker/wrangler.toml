@@ -3,6 +3,13 @@ main = "src/index.ts"
 compatibility_date = "2026-01-01"
 compatibility_flags = ["nodejs_compat"]
 
+# newsのテンプレート(.html)を生の文字列としてimportするために必要
+# （cms/worker/src/render.ts）。
+[[rules]]
+type = "Text"
+globs = ["**/*.html"]
+fallthrough = true
+
 # --- D1 ---
 # `npx wrangler d1 create bitcraft-cms` 実行後、出力される database_id をここに貼る。
 [[d1_databases]]
@@ -23,9 +30,28 @@ tag = "v1"
 # new_classesのままだと "SQL is not enabled for this Durable Object class" で500になる）。
 new_sqlite_classes = ["BitcraftCmsMcp"]
 
+# --- 動的レンダリング用のRoute設定（未適用・コメントアウト） ---
+# bitcraft.workのDNSがCloudflare経由(proxied)になり、`wrangler deploy`でこのWorkerを
+# 一度デプロイした後に、以下のコメントを外して再deployする。それまでは`*.workers.dev`の
+# URLだけでMCP動作確認・SSR確認ができる（cms/README.md参照）。
+# [[routes]]
+# pattern = "bitcraft.work/"
+# zone_name = "bitcraft.work"
+# [[routes]]
+# pattern = "bitcraft.work/news"
+# zone_name = "bitcraft.work"
+# [[routes]]
+# pattern = "bitcraft.work/news/*"
+# zone_name = "bitcraft.work"
+# [[routes]]
+# pattern = "bitcraft.work/mcp"
+# zone_name = "bitcraft.work"
+
 # --- Secrets ---
 # 値はここに書かず `wrangler secret put <NAME>` で設定する。
 #   MCP_BEARER_TOKEN  MCPクライアント認証用の共有トークン（openssl rand -hex 32 等で生成）
-#   GITHUB_TOKEN       repository の Actions を起動するためのGitHub PAT
-#                       (fine-grained PAT, 対象repoに Actions: write, Contents: write)
-#   GITHUB_REPO        "TaisukeAndo/bitcraft-site"
+#
+# --- 非secretな変数 ---
+# ORIGIN_BASE_URL はローカル/検証環境専用（cms/docker-compose.ymlが設定する）。
+# 本番では設定しない（未設定だとfetch(request)経由でCloudflareの標準的な
+# オリジンpassthrough挙動を使う。cms/worker/src/index.tsのfetchOrigin()参照）。

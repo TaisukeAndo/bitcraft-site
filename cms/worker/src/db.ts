@@ -83,23 +83,3 @@ export async function updateNewsBySlug(
 
   return getNewsBySlug(db, slug);
 }
-
-export async function createPublishRequest(
-  db: D1Database,
-  entityType: string,
-  slugs: string[],
-  actor: string
-): Promise<number> {
-  const result = await db
-    .prepare(`INSERT INTO publish_requests (entity_type, entity_ids, status, requested_by) VALUES (?, ?, 'queued', ?)`)
-    .bind(entityType, JSON.stringify(slugs), actor)
-    .run();
-  return Number(result.meta.last_row_id);
-}
-
-export async function markPublishRequestDispatched(db: D1Database, id: number, runUrl?: string): Promise<void> {
-  await db
-    .prepare(`UPDATE publish_requests SET status = 'dispatched', github_run_url = ? WHERE id = ?`)
-    .bind(runUrl ?? null, id)
-    .run();
-}

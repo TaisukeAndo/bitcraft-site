@@ -11,9 +11,9 @@ CREATE TABLE IF NOT EXISTS news (
   slug          TEXT UNIQUE NOT NULL,
   title         TEXT NOT NULL,
   category      TEXT NOT NULL,            -- 一覧に出すタグ文言（例: セミナー / サービス / お知らせ / メディア）
-  published_at  TEXT NOT NULL,            -- 'YYYY-MM-DD'。表示は build.mjs 側で 'YYYY.MM.DD' に変換する
+  published_at  TEXT NOT NULL,            -- 'YYYY-MM-DD'。表示はcms/worker側で'YYYY.MM.DD'に変換する
   list_desc     TEXT NOT NULL,            -- /news/ 一覧にだけ表示される概要文（トップページには出さない）
-  body_html     TEXT NOT NULL,            -- 詳細ページ本文。h2/p/ul/li と <a> のみ許可（build.mjs でサニタイズ）
+  body_html     TEXT NOT NULL,            -- 詳細ページ本文。h2/p/ul/li と <a> のみ許可（cms/worker/src/validation.tsでチェック）
   keywords      TEXT NOT NULL DEFAULT '', -- meta keywords に追加するカンマ区切りキーワード
   description   TEXT,                     -- meta description / og:description。NULLならlist_descから自動生成
   status        TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'published')),
@@ -34,15 +34,4 @@ CREATE TABLE IF NOT EXISTS revisions (
   diff_json   TEXT,
   actor       TEXT,
   created_at  TEXT NOT NULL DEFAULT (datetime('now'))
-);
-
--- publish操作とGitHub Actions側のビルド/PR状態を紐付けるための記録
-CREATE TABLE IF NOT EXISTS publish_requests (
-  id            INTEGER PRIMARY KEY AUTOINCREMENT,
-  entity_type   TEXT NOT NULL,
-  entity_ids    TEXT NOT NULL,          -- JSON配列 (例: "[1,2]")
-  status        TEXT NOT NULL DEFAULT 'queued' CHECK (status IN ('queued', 'dispatched', 'failed')),
-  github_run_url TEXT,
-  requested_by  TEXT,
-  created_at    TEXT NOT NULL DEFAULT (datetime('now'))
 );

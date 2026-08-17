@@ -8,10 +8,13 @@
 set -eu
 
 if [ ! -f .dev.vars ]; then
+  # 注意: docker-composeの `environment:` で渡した値は、このプロセスの環境変数には
+  # 入るが、wrangler devが読み込む env.X バインディングには自動反映されない
+  # （wrangler devがWorkerへ渡すenvは wrangler.tomlの[vars]と.dev.varsだけを見る）。
+  # そのため一度ここで.dev.varsとして書き出す必要がある（実機検証で判明）。
   cat > .dev.vars <<EOF
 MCP_BEARER_TOKEN=${MCP_BEARER_TOKEN:-local-dev-token}
-GITHUB_TOKEN=${GITHUB_TOKEN:-}
-GITHUB_REPO=${GITHUB_REPO:-}
+ORIGIN_BASE_URL=${ORIGIN_BASE_URL:-}
 EOF
   echo "[docker-entrypoint] .dev.vars が無かったので生成しました（cms/worker/.dev.vars、以後は直接編集してよい）"
 fi

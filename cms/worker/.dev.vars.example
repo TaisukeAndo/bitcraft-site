@@ -6,5 +6,7 @@
 #   cp .dev.vars.example .dev.vars
 
 MCP_BEARER_TOKEN=local-dev-token
-GITHUB_TOKEN=
-GITHUB_REPO=
+# CMS管理下でないパスの素通し先・#newsパッチ用のオリジン取得先。
+# ローカルではdocker-compose.ymlのstatic-originサービスを指す（http://static-origin:8080）。
+# 本番では設定しない（未設定だとfetch(request)経由のオリジンpassthroughになる）。
+ORIGIN_BASE_URL=
