@@ -14,6 +14,33 @@ document.addEventListener("DOMContentLoaded", function() {
 
     var now = new Date();
 
+    // --- 手動ロック（<meta name="apply-locked" content="true"> がある場合のみ）
+    //     GAS・スプレッドシート等バックエンドの準備がまだ整っていない場合に、
+    //     registration-open-date を過ぎていても強制的に「準備中」表示にするための
+    //     一時的な上書き。準備が整ったらこのmetaタグごと削除する。 ---
+    var manualLockMeta = document.querySelector('meta[name="apply-locked"]');
+    if (manualLockMeta && manualLockMeta.getAttribute("content") === "true") {
+        // 1. 詳細ページ用の制御
+        var lockCtaButtons = document.querySelectorAll(".sd-hero__cta, .sd-cta__btn");
+        lockCtaButtons.forEach(function(btn) {
+            btn.removeAttribute("href");
+            btn.innerHTML = 'まもなく申込開始 <i class="fa-solid fa-clock"></i>';
+            btn.style.backgroundColor = "#555";
+            btn.style.pointerEvents = "none";
+        });
+
+        // 2. 申し込みページ用の制御
+        var lockForm = document.getElementById("apply-form");
+        var lockNotOpenMsg = document.getElementById("not-open-message");
+        if (lockForm && lockNotOpenMsg) {
+            lockForm.style.display = "none";
+            lockNotOpenMsg.style.display = "block";
+        }
+
+        // 手動ロック中は他の日付判定を行う意味が無いのでここで終了する
+        return;
+    }
+
     // --- 募集開始前の制御（<meta name="registration-open-date"> がある場合のみ。
     //     無ければ従来どおり常に受付中として扱う） ---
     var openDateMeta = document.querySelector('meta[name="registration-open-date"]');
