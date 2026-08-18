@@ -1,5 +1,5 @@
 const GOOGLE_FORM_URL =
-  "TODO: Googleフォームの formResponse URL をここに設定してください";
+  "https://docs.google.com/forms/d/e/1FAIpQLScDbru2yfQwWov5n5heSOexj0-xeDSZMldRmxB8Dw7Mh9poHw/formResponse";
 
 const form = document.getElementById("apply-form");
 const thanks = document.getElementById("thanks-message");

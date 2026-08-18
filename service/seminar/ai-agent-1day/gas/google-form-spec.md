@@ -4,7 +4,9 @@
 
 **重要: 質問タイトルは一字一句このとおりに入力すること。** 特に「お名前」「メールアドレス」の2つは `gas/Code.gs` の `CONFIG.NAME_FIELD` / `CONFIG.EMAIL_FIELD` が文字列一致で参照しており、全角/半角・句読点・表記が1文字でもずれると自動返信メールが静かに送信されなくなる（エラーにもならないため気づきにくい）。
 
-作成後にやること: 各質問の「⋮」→「事前入力したリンクを取得」で `entry.xxxxxxxxx` を確認し、`apply/index.html` の対応する `name` 属性と `apply/apply-script.js` の `GOOGLE_FORM_URL` に反映する（現在は `claude-code-1day` からコピーしたダミーIDが入ったままなので、必ず実際の値に差し替える）。
+作成後にやること: 各質問の「⋮」→「事前入力したリンクを取得」で `entry.xxxxxxxxx` を確認し、`apply/index.html` の対応する `name` 属性と `apply/apply-script.js` の `GOOGLE_FORM_URL` に反映する。
+
+**→ 対応済み。** 実際のGoogleフォーム（<https://docs.google.com/forms/d/e/1FAIpQLScDbru2yfQwWov5n5heSOexj0-xeDSZMldRmxB8Dw7Mh9poHw/viewform>）のentry IDを `apply/index.html` と `apply/apply-script.js` に反映済み。ただし「お名前」の質問タイトルが `gas/Code.gs` の `CONFIG.NAME_FIELD`（"お名前"）と一字一句一致しているかは、Googleフォームの編集画面で目視確認すること（本仕様書どおりに作成されていれば問題ないはずだが、GAS設置前に必ず確認する）。
 
 **「その他」を選択できる質問（5・7・9）について:** Googleフォームの選択肢一覧に手入力で「その他」を追加するのではなく、ラジオボタン/チェックボックス質問の編集画面下部にある **「'その他' を追加」** トグルを使うこと。これにより「その他」を選んだ回答者に自由記述欄が自動的に表示される。この場合、事前入力リンクで取得できる値は2つに分かれる:
 - 選択肢そのものの `entry.xxxxxxxxx`（「その他」を選ぶと値は `__other_option__` になる）
