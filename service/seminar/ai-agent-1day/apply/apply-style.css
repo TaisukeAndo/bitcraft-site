@@ -74,6 +74,11 @@ form {
     resize: vertical;
 }
 
+/* 「その他」選択時に表示する自由記述欄 */
+.form-control--other {
+    margin-top: 4px;
+}
+
 /* ── ラジオ・チェックボックス ── */
 .check_label {
     display: flex;

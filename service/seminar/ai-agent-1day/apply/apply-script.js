@@ -4,6 +4,32 @@ const GOOGLE_FORM_URL =
 const form = document.getElementById("apply-form");
 const thanks = document.getElementById("thanks-message");
 
+// 「その他」選択時に自由記述欄を表示する
+// data-other-trigger を持つラジオ/チェックボックスが選択されているかどうかで、
+// 同じ .form-group 内の .form-control--other（entry.xxxxxxxxx.other_option_response）を出し分ける。
+function initOtherToggles() {
+  document.querySelectorAll(".form-group").forEach(function (group) {
+    const otherTriggers = group.querySelectorAll("[data-other-trigger]");
+    const otherInput = group.querySelector(".form-control--other");
+    if (!otherTriggers.length || !otherInput) return;
+
+    function sync() {
+      const checked = Array.prototype.some.call(otherTriggers, function (input) {
+        return input.checked;
+      });
+      otherInput.style.display = checked ? "block" : "none";
+      if (!checked) otherInput.value = "";
+    }
+
+    group.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(function (input) {
+      input.addEventListener("change", sync);
+    });
+    sync();
+  });
+}
+
+document.addEventListener("DOMContentLoaded", initOtherToggles);
+
 form.addEventListener("submit", function (e) {
   e.preventDefault();
 
