@@ -15,9 +15,10 @@ document.addEventListener("DOMContentLoaded", function() {
     var now = new Date();
 
     // --- 手動ロック（<meta name="apply-locked" content="true"> がある場合のみ）
-    //     GAS・スプレッドシート等バックエンドの準備がまだ整っていない場合に、
-    //     registration-open-date を過ぎていても強制的に「準備中」表示にするための
-    //     一時的な上書き。準備が整ったらこのmetaタグごと削除する。 ---
+    //     GAS・スプレッドシート等バックエンドの準備がまだ整っていないため、
+    //     日付に関わらず強制的に「準備中」表示にする。募集開始日を自動判定する
+    //     仕組み（registration-open-date）は廃止し、このmetaタグの有無だけで
+    //     手動で開閉を制御する。準備が整ったらこのmetaタグごと削除する。 ---
     var manualLockMeta = document.querySelector('meta[name="apply-locked"]');
     if (manualLockMeta && manualLockMeta.getAttribute("content") === "true") {
         // 1. 詳細ページ用の制御
@@ -39,37 +40,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // 手動ロック中は他の日付判定を行う意味が無いのでここで終了する
         return;
-    }
-
-    // --- 募集開始前の制御（<meta name="registration-open-date"> がある場合のみ。
-    //     無ければ従来どおり常に受付中として扱う） ---
-    var openDateMeta = document.querySelector('meta[name="registration-open-date"]');
-    if (openDateMeta) {
-        var openDate = new Date(openDateMeta.getAttribute("content") + "T00:00:00+09:00");
-        if (now < openDate) {
-            var weekday = ["日", "月", "火", "水", "木", "金", "土"][openDate.getDay()];
-            var openLabel = (openDate.getMonth() + 1) + "/" + openDate.getDate() + "（" + weekday + "）";
-
-            // 1. 詳細ページ用の制御
-            var preOpenCtaButtons = document.querySelectorAll(".sd-hero__cta, .sd-cta__btn");
-            preOpenCtaButtons.forEach(function(btn) {
-                btn.removeAttribute("href");
-                btn.innerHTML = openLabel + "より申込開始 <i class=\"fa-solid fa-clock\"></i>";
-                btn.style.backgroundColor = "#555";
-                btn.style.pointerEvents = "none";
-            });
-
-            // 2. 申し込みページ用の制御
-            var preOpenForm = document.getElementById("apply-form");
-            var notOpenMsg = document.getElementById("not-open-message");
-            if (preOpenForm && notOpenMsg) {
-                preOpenForm.style.display = "none";
-                notOpenMsg.style.display = "block";
-            }
-
-            // 募集開始前は締切判定を行う意味が無いのでここで終了する
-            return;
-        }
     }
 
     // 期限を過ぎている場合の処理
