@@ -1,0 +1,8 @@
+# cp terraform.tfvars.example terraform.tfvars してから値を埋める。
+# terraform.tfvars 自体は .gitignore 対象（秘匿情報ではないaccount_idも、
+# 環境ごとの値をコード本体に混ぜないためコミットしない）。
+
+account_id = "your-cloudflare-account-id"
+
+# Phase 8のカットオーバー時のみ true にする。それまでは false のままでよい。
+# enable_custom_domains = false
