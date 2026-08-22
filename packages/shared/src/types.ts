@@ -47,7 +47,22 @@ export type SeminarSections = {
 };
 
 // seminars.google_form_fields_json (D1) の型。
-// entry ID はGoogleフォームインスタンスごとに完全に固有なため、セミナーごとに
-// このマッピングをデータとして保持する（.claude/skills/add-seminar/references/
-// google-form-fields.md のパターンA/Bに対応）。
-export type GoogleFormFieldMapping = Record<string, string>;
+// entry ID はGoogleフォームインスタンスごとに完全に固有なため
+// （.claude/skills/add-seminar/references/google-form-fields.md のパターンA/Bに
+// 対応）、apps/web が申込フォームをHTMLとして描画できるよう、ラベル・入力種別・
+// 選択肢まで含めてセミナーごとにデータとして保持する（entry IDだけの
+// マッピングでは「何のフォームか」をレンダリングできないため）。
+export type SeminarFormField = {
+  section: string; // フォーム内のグルーピング見出し（例: "基本情報"）
+  label: string;
+  entryId: string; // "entry.xxxxxxxxx"
+  type: "text" | "email" | "tel" | "textarea" | "radio" | "checkbox";
+  required?: boolean;
+  placeholder?: string;
+  options?: string[]; // radio/checkbox の選択肢
+  otherOption?: boolean; // 「その他」自由記述欄を持つか（entryId + ".other_option_response"）
+};
+
+export type SeminarFormDefinition = {
+  fields: SeminarFormField[];
+};
