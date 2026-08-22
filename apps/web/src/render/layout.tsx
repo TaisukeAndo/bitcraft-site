@@ -12,6 +12,7 @@ export type LayoutProps = PropsWithChildren<{
   extraStyles?: string[]; // 追加のページ固有CSS（ルート相対パス）
   bodyScripts?: string[]; // </body>直前に読み込む追加スクリプト（ルート相対パス、deferで読み込む）
   jsonLd?: Record<string, unknown>[];
+  isHome?: boolean; // トップページのみtrue（subpage-style.css を外し、Header/Footerのリンクをフラグメントのみにする）
 }>;
 
 const SITE_ORIGIN = "https://bitcraft.work";
@@ -28,6 +29,7 @@ export const Layout: FC<LayoutProps> = ({
   extraStyles = [],
   bodyScripts = [],
   jsonLd = [],
+  isHome = false,
   children,
 }) => {
   const canonicalUrl = `${SITE_ORIGIN}${canonicalPath}`;
@@ -55,7 +57,7 @@ export const Layout: FC<LayoutProps> = ({
         <link rel="canonical" href={canonicalUrl} />
         <link rel="icon" type="shortcut icon" href="/image/bitcraft-logo-mini.png" />
         <link rel="stylesheet" href="/css/style.css" />
-        <link rel="stylesheet" href="/css/subpage-style.css" />
+        {!isHome ? <link rel="stylesheet" href="/css/subpage-style.css" /> : null}
         <link rel="stylesheet" href="/css/animation.css" />
         {extraStyles.map((href) => (
           <link rel="stylesheet" href={href} />
@@ -79,9 +81,9 @@ export const Layout: FC<LayoutProps> = ({
         <script src={src} defer></script>
       ))}
       <body>
-        <Header />
+        <Header isHome={isHome} />
         {children}
-        <Footer />
+        <Footer isHome={isHome} />
       </body>
     </html>
   );

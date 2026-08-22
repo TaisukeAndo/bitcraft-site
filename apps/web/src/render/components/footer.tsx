@@ -1,9 +1,15 @@
-export function Footer() {
+export function Footer({ isHome = false }: { isHome?: boolean } = {}) {
+  const home = isHome ? "#" : "/";
+  const service = isHome ? "#service" : "/#service";
+  const idea = isHome ? "#idea" : "/#idea";
+  const news = isHome ? "#news" : "/#news";
+  const about = isHome ? "#about" : "/#about";
+
   return (
     <footer>
       <div class="footer-menu content">
         <div class="image">
-          <a href="/">
+          <a href={home}>
             <img src="/image/bitcraft-logo-white.png" alt="bitcraft-logo" />
           </a>
         </div>
@@ -11,19 +17,19 @@ export function Footer() {
           <h2>Site map</h2>
           <ul>
             <li>
-              <a href="/">- Home</a>
+              <a href={home}>- Home</a>
             </li>
             <li>
-              <a href="/#service">- Service</a>
+              <a href={service}>- Service</a>
             </li>
             <li>
-              <a href="/#idea">- Idea</a>
+              <a href={idea}>- Idea</a>
             </li>
             <li>
-              <a href="/#news">- News</a>
+              <a href={news}>- News</a>
             </li>
             <li>
-              <a href="/#about">- About</a>
+              <a href={about}>- About</a>
             </li>
             <li>
               <a href="/contact">- Contact</a>
