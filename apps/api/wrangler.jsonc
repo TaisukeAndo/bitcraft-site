@@ -2,9 +2,20 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "bitcraft-api",
   "main": "src/index.ts",
-  "compatibility_date": "2024-09-23"
-  // Phase 1/2 で以下を追加する:
-  // "d1_databases": [{ "binding": "DB", "database_name": "bitcraft-cms", "database_id": "<Phase1で確定>", "migrations_dir": "../../packages/db/migrations" }],
-  // "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "bitcraft-media" }]
+  "compatibility_date": "2024-09-23",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "bitcraft-cms",
+      "database_id": "1bc667c7-51e3-4df3-b2db-37bff85f6804",
+      "migrations_dir": "../../packages/db/migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "bitcraft-media"
+    }
+  ]
   // Phase 8 で Custom Domain (api.bitcraft.work) を接続する。
 }

@@ -6,9 +6,21 @@
   "assets": {
     "directory": "./public",
     "not_found_handling": "none"
-  }
-  // Phase 1 で Terraform 管理の D1/R2 リソースが作成された後、以下を追加する:
-  // "d1_databases": [{ "binding": "DB", "database_name": "bitcraft-cms", "database_id": "<Phase1で確定>" }],
-  // "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "bitcraft-media" }]
+  },
+  // 注意: apps/web はD1に対して読み取り専用で使う（コード規約上、SELECT以外は
+  // apps/api側からのみ発行する。マイグレーション適用もapps/api側のみが担う）。
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "bitcraft-cms",
+      "database_id": "1bc667c7-51e3-4df3-b2db-37bff85f6804"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "bitcraft-media"
+    }
+  ]
   // Phase 8 で Custom Domain (bitcraft.work) を接続する。
 }
