@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bitcraft-web",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-09-23",
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "none"
+  }
+  // Phase 1 で Terraform 管理の D1/R2 リソースが作成された後、以下を追加する:
+  // "d1_databases": [{ "binding": "DB", "database_name": "bitcraft-cms", "database_id": "<Phase1で確定>" }],
+  // "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "bitcraft-media" }]
+  // Phase 8 で Custom Domain (bitcraft.work) を接続する。
+}

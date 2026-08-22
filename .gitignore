@@ -5,3 +5,12 @@ service/seminar/**/img/layout.html
 service/seminar/**/img/speaker_image_cutout.png
 service/seminar/**/img/speaker_image.png
 tmp/
+# --- モノレポツーリング (Cloudflare WebApp/CMS API/MCP 移行, Phase 0〜) ---
+node_modules/
+.wrangler/
+dist/
+*.tsbuildinfo
+.dev.vars
+.dev.vars.*
+.env
+.env.*
