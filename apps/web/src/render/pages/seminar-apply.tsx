@@ -1,10 +1,11 @@
 import type { FC } from "hono/jsx";
 import type { SeminarRow } from "@bitcraft/db";
-import type { SeminarFormDefinition, SeminarFormField } from "@bitcraft/shared";
+import type { SeminarApplyForm, SeminarApplyFormField } from "@bitcraft/shared";
+import { mediaUrl } from "../../lib/media-url";
 
-function FieldInput({ field }: { field: SeminarFormField }) {
+function FieldInput({ field }: { field: SeminarApplyFormField }) {
   const commonProps = {
-    name: field.entryId,
+    name: field.id,
     class: "form-control",
     placeholder: field.placeholder,
   };
@@ -16,7 +17,7 @@ function FieldInput({ field }: { field: SeminarFormField }) {
     case "tel":
       return <input type="tel" {...commonProps} />;
     case "textarea":
-      return <textarea class="form-control" placeholder={field.placeholder} name={field.entryId} />;
+      return <textarea class="form-control" placeholder={field.placeholder} name={field.id} />;
     case "radio":
     case "checkbox":
       return (
@@ -25,7 +26,7 @@ function FieldInput({ field }: { field: SeminarFormField }) {
             <label class="check_label">
               <input
                 class={`${field.type} form-check-input`}
-                name={field.entryId}
+                name={field.id}
                 type={field.type}
                 value={opt}
                 required={field.required && field.type === "radio"}
@@ -39,7 +40,7 @@ function FieldInput({ field }: { field: SeminarFormField }) {
               <label class="check_label">
                 <input
                   class={`${field.type} form-check-input`}
-                  name={field.entryId}
+                  name={field.id}
                   type={field.type}
                   value="__other_option__"
                   data-other-trigger
@@ -50,7 +51,7 @@ function FieldInput({ field }: { field: SeminarFormField }) {
               <input
                 type="text"
                 class="form-control form-control--other"
-                name={`${field.entryId}.other_option_response`}
+                name={`${field.id}.other`}
                 placeholder=" その他の場合、具体的にご記入ください"
                 style="display: none;"
               />
@@ -63,8 +64,8 @@ function FieldInput({ field }: { field: SeminarFormField }) {
   }
 }
 
-function groupBySection(fields: SeminarFormField[]): { section: string; fields: SeminarFormField[] }[] {
-  const groups: { section: string; fields: SeminarFormField[] }[] = [];
+function groupBySection(fields: SeminarApplyFormField[]): { section: string; fields: SeminarApplyFormField[] }[] {
+  const groups: { section: string; fields: SeminarApplyFormField[] }[] = [];
   for (const field of fields) {
     const last = groups.at(-1);
     if (last && last.section === field.section) {
@@ -76,19 +77,20 @@ function groupBySection(fields: SeminarFormField[]): { section: string; fields: 
   return groups;
 }
 
-// フォーム送信自体は既存のパターン（Googleフォームのformイベントをno-corsで直POST）
-// を維持する（実装計画: contact-script.js/apply-script.jsの送信方式を踏襲）。
-// 旧サイトはセミナーごとに静的なapply-script.jsを複製していたが、SSR化により
-// GOOGLE_FORM_URLをサーバー側でこのインラインスクリプトに注入する1本化ができる。
-function applyInlineScript(googleFormUrl: string): string {
+// 申込フォームはGoogleフォームへのno-cors直POSTを廃止し、同一オリジンの
+// POST /service/seminar/:slug/apply/ へ送信する自前実装に置き換えた
+// （実装計画: apps/webがapps/apiへService Binding経由で委譲、ユーザー要望対応）。
+// no-corsではなくなったため、実際のレスポンス（成功/失敗）を読んで表示を切り替えられる
+// （旧実装は送信できたと仮定して「完了」表示を出すだけだった）。
+function applyInlineScript(): string {
   return `
 (function () {
-  var GOOGLE_FORM_URL = ${JSON.stringify(googleFormUrl)};
   var form = document.getElementById("apply-form");
   var thanks = document.getElementById("thanks-message");
+  var errorBox = document.getElementById("apply-error");
   if (!form) return;
 
-  document.querySelectorAll(".form-group, .form-content > div").forEach(function (group) {
+  document.querySelectorAll(".form-group").forEach(function (group) {
     var otherTriggers = group.querySelectorAll("[data-other-trigger]");
     var otherInput = group.querySelector(".form-control--other");
     if (!otherTriggers.length || !otherInput) return;
@@ -103,17 +105,56 @@ function applyInlineScript(googleFormUrl: string): string {
     sync();
   });
 
+  function buildAnswers() {
+    var answers = {};
+    var formData = new FormData(form);
+    formData.forEach(function (value, key) {
+      if (value === "__other_option__") return; // 「その他」トリガー自体は送らない
+      if (answers[key] === undefined) {
+        answers[key] = value;
+      } else if (Array.isArray(answers[key])) {
+        answers[key].push(value);
+      } else {
+        answers[key] = [answers[key], value];
+      }
+    });
+    return answers;
+  }
+
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    var formData = new FormData(form);
-    fetch(GOOGLE_FORM_URL, { method: "POST", mode: "no-cors", body: formData })
-      .then(function () {
+    if (errorBox) { errorBox.style.display = "none"; errorBox.textContent = ""; }
+
+    fetch(window.location.pathname, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ answers: buildAnswers() }),
+    })
+      .then(function (res) {
+        return res.json().then(function (data) { return { ok: res.ok, data: data }; });
+      })
+      .then(function (result) {
+        if (!result.ok) {
+          var message = result.data && result.data.error ? result.data.error : "送信に失敗しました。再度お試しください。";
+          if (errorBox) {
+            errorBox.textContent = message;
+            errorBox.style.display = "block";
+          } else {
+            alert(message);
+          }
+          return;
+        }
         form.style.display = "none";
         if (thanks) thanks.style.display = "block";
         window.scrollTo({ top: 0, behavior: "smooth" });
       })
       .catch(function () {
-        alert("送信に失敗しました。再度お試しください。");
+        if (errorBox) {
+          errorBox.textContent = "送信に失敗しました。再度お試しください。";
+          errorBox.style.display = "block";
+        } else {
+          alert("送信に失敗しました。再度お試しください。");
+        }
       });
   });
 })();
@@ -122,14 +163,20 @@ function applyInlineScript(googleFormUrl: string): string {
 
 export const SeminarApplyPage: FC<{
   seminar: SeminarRow;
-  form: SeminarFormDefinition;
+  form: SeminarApplyForm;
   registrationClosed: boolean;
 }> = ({ seminar, form, registrationClosed }) => {
   const groups = groupBySection(form.fields);
+  const heroImage = mediaUrl(seminar.heroImageKey);
 
   return (
     <main>
       <div class="top">
+        {heroImage ? (
+          <div class="title-image">
+            <img src={heroImage} alt={seminar.title.replace(/<br>/g, "")} />
+          </div>
+        ) : null}
         <div class="title">
           <h1>参加申し込み</h1>
           <p>
@@ -159,6 +206,10 @@ export const SeminarApplyPage: FC<{
         <>
           <form class="content" id="apply-form">
             <div class="form-content">
+              <div
+                id="apply-error"
+                style="display: none; margin-bottom: 20px; padding: 12px 16px; background: #ffebee; color: #c62828; border-radius: 4px;"
+              ></div>
               {groups.map((group) => (
                 <>
                   <div class="form-section-title">{group.section}</div>
@@ -169,7 +220,7 @@ export const SeminarApplyPage: FC<{
                       </label>
                       {field.section === "同意" ? (
                         <label class="check_label">
-                          <input class="checkbox form-check-input" name={field.entryId} type="checkbox" value={field.options?.[0]} required={field.required} />
+                          <input class="checkbox form-check-input" name={field.id} type="checkbox" value={field.options?.[0]} required={field.required} />
                           <span class="checkbox-icon"></span>
                           <a href="/policy/" target="_blank">
                             プライバシーポリシー
@@ -204,7 +255,7 @@ export const SeminarApplyPage: FC<{
             </div>
           </div>
 
-          <script dangerouslySetInnerHTML={{ __html: applyInlineScript(seminar.googleFormUrl ?? "") }} />
+          <script dangerouslySetInnerHTML={{ __html: applyInlineScript() }} />
         </>
       )}
     </main>

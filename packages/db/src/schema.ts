@@ -73,9 +73,10 @@ export const seminars = sqliteTable(
     cardImageKey: text("card_image_key"), // R2キー（一覧カード/OGP兼用）
     venueSummary: text("venue_summary"),
     sectionsJson: text("sections_json").notNull(), // SeminarSections型(packages/shared)のJSON
-    googleFormUrl: text("google_form_url"), // formResponse エンドポイント。未接続はNULL
-    googleFormFieldsJson: text("google_form_fields_json"), // {"name":"entry.xxxx", ...}
-    gasConfigured: integer("gas_configured").notNull().default(0),
+    // 申込フォーム定義(SeminarApplyForm型)。Googleフォームは廃止し、CMS API経由で
+    // D1(applicationsテーブル)へ直接保存する自前実装に置き換えた（実装計画4章）。
+    // セミナーごとに入力項目を自由に設定できる(PATCH /v1/seminars/:slug/apply-form)。
+    applyFormJson: text("apply_form_json"),
     metaDescription: text("meta_description").notNull(),
     metaKeywords: text("meta_keywords"),
     createdAt: text("created_at")
@@ -93,6 +94,38 @@ export const seminars = sqliteTable(
       sql`${table.status} IN ('draft', 'before_registration', 'open', 'closed')`,
     ),
     detailPageCheck: check("seminars_detail_page_check", sql`${table.detailPage} IN (0, 1)`),
+  }),
+);
+
+// applications（セミナー申込。Googleフォームを廃止しD1へ直接保存する）------------
+
+export const applications = sqliteTable(
+  "applications",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    seminarId: integer("seminar_id")
+      .notNull()
+      .references(() => seminars.id),
+    seminarSlug: text("seminar_slug").notNull(), // 冗長だが一覧・検索の簡略化のため保持
+    answersJson: text("answers_json").notNull(), // ApplicationAnswers型(packages/shared)のJSON
+    applicantName: text("applicant_name"), // 一覧表示・通知用に頻出項目を正規化（任意）
+    applicantEmail: text("applicant_email"),
+    status: text("status", { enum: ["received", "confirmed", "cancelled"] })
+      .notNull()
+      .default("received"),
+    submittedAt: text("submitted_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    seminarSubmittedIdx: index("idx_applications_seminar_submitted").on(
+      table.seminarSlug,
+      table.submittedAt,
+    ),
+    statusCheck: check(
+      "applications_status_check",
+      sql`${table.status} IN ('received', 'confirmed', 'cancelled')`,
+    ),
   }),
 );
 
@@ -139,6 +172,9 @@ export type NewNewsRow = typeof news.$inferInsert;
 
 export type SeminarRow = typeof seminars.$inferSelect;
 export type NewSeminarRow = typeof seminars.$inferInsert;
+
+export type ApplicationRow = typeof applications.$inferSelect;
+export type NewApplicationRow = typeof applications.$inferInsert;
 
 export type MediaRow = typeof media.$inferSelect;
 export type NewMediaRow = typeof media.$inferInsert;

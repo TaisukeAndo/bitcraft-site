@@ -1,7 +1,7 @@
 import type { Hono } from "hono";
 import { eq } from "drizzle-orm";
 import { seminars } from "@bitcraft/db";
-import { isPastEvent, isRegistrationClosed, type SeminarFormDefinition, type SeminarSections } from "@bitcraft/shared";
+import { isPastEvent, isRegistrationClosed, type SeminarApplyForm, type SeminarSections } from "@bitcraft/shared";
 import type { Bindings } from "../lib/bindings";
 import { getDb } from "../lib/db";
 import { mediaUrl } from "../lib/media-url";
@@ -91,11 +91,11 @@ export function registerSeminarRoutes(app: Hono<{ Bindings: Bindings }>) {
     const slug = c.req.param("slug");
     const row = await db.select().from(seminars).where(eq(seminars.slug, slug)).get();
 
-    if (!row || !row.detailPage || !row.googleFormFieldsJson) {
+    if (!row || !row.detailPage || !row.applyFormJson) {
       return c.notFound();
     }
 
-    const form = JSON.parse(row.googleFormFieldsJson) as SeminarFormDefinition;
+    const form = JSON.parse(row.applyFormJson) as SeminarApplyForm;
     const registrationClosed = isRegistrationClosed(row.eventDate);
 
     return c.html(
@@ -110,5 +110,30 @@ export function registerSeminarRoutes(app: Hono<{ Bindings: Bindings }>) {
         </Layout>,
       ),
     );
+  });
+
+  // POST /service/seminar/:slug/apply/ : 申込データをapps/apiへService Binding経由で
+  // 委譲する（apps/webはD1に書き込まない、実装計画のコード規約に従う）。
+  // Custom Domain未接続の現段階でも同一アカウント内Worker間で疎通できる。
+  app.post("/service/seminar/:slug/apply/", async (c) => {
+    const slug = c.req.param("slug");
+    let body: unknown;
+    try {
+      body = await c.req.json();
+    } catch {
+      return c.json({ error: "リクエストの形式が正しくありません" }, 400);
+    }
+
+    const apiRes = await c.env.API.fetch(`https://internal/v1/seminars/${slug}/applications`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    const resBody = await apiRes.text();
+    return new Response(resBody, {
+      status: apiRes.status,
+      headers: { "content-type": "application/json" },
+    });
   });
 }
