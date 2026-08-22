@@ -1,0 +1,95 @@
+/* 画像が明るく文字が読みにくいため、暗めのオーバーレイを重ねる */
+.top.top--news::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.35) 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.top.top--news .title {
+    z-index: 2;
+}
+
+/* ===========================
+   News List Section
+   =========================== */
+.news-list-section {
+    padding: 80px 0 100px;
+}
+
+.content h2.news-list-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin: 50px 0 40px;
+    color: #000;
+}
+
+.news-list-section .news-list {
+    top: 0;
+}
+
+.news-list-section .news-item-link {
+    align-items: center;
+    gap: 24px;
+    padding: 32px 0;
+}
+
+.news-list-section .news-item-main {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.news-list-section .news-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.news-list-section .news-date,
+.news-list-section .news-tag {
+    flex: 0 0 auto;
+    margin-right: 0;
+}
+
+.news-list-section .news-item-title {
+    flex: 0 0 auto;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.news-list-section .news-item-desc {
+    margin: 0;
+    color: var(--base-deep-color);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.news-list-section .news-item-link i {
+    flex: 0 0 auto;
+    margin-left: 0;
+    color: var(--base-deep-color);
+}
+
+@media screen and (max-width: 649px) {
+    .content h2.news-list-title {
+        font-size: 26px;
+    }
+    .news-list-section {
+        padding: 60px 0 80px;
+    }
+    .news-list-section .news-item-link {
+        gap: 12px;
+        padding: 24px 0;
+    }
+    .news-list-section .news-item-title {
+        font-size: 15px;
+    }
+    .news-list-section .news-item-desc {
+        font-size: 12px;
+    }
+}

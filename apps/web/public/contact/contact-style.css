@@ -1,0 +1,94 @@
+form{
+    position: relative;
+    top:100px;
+    height: 1200px;/*仮*/
+    margin-bottom: 100px;
+    padding-bottom: 100px;
+}
+.form-content{
+    margin: 0 auto;
+    margin-top: 30px;
+    width: 700px;
+    text-align: center;
+}
+.form-group{
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+}
+.form-group .title{
+    margin-bottom: 10px;
+}
+.form-group label{
+    text-align: left;
+}
+.form-control{
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;/*paddingやborderもサイズに含める*/
+    height: 50px;
+    width: 100%;
+    background: var(--background-color);
+    font-size: 16px;
+    padding: 10px;
+}
+.form-group textarea{
+    height: 100px;
+}
+.form-group a{
+    color: var(--base-deep-color);
+}
+.btn{
+    border: none;
+    width: 200px;
+    background-color: var(--base-color);
+    height: 50px;
+    color: var(--background-color);
+    font-size: 16px;
+    font-weight: 400;
+    border-radius: 50px;
+    margin-top: 20px;
+}
+.submit{
+    display: none;
+    margin-top: 150px;
+    height: 600px;
+}
+.submit .title{
+    display: flex;
+    width: fit-content;
+    margin: 0 auto;
+}
+.submit .title h2{
+    font-size: 30px;
+}
+.submit .title i{
+    font-size: 30px;
+    margin: auto 0;
+    margin-right: 20px;
+}
+.submit p{
+    margin-bottom: 50px;
+}
+.submit .button{
+    width: 200px;
+    background-color: var(--base-color);
+    height: 50px;
+    color: var(--background-color);
+    padding: 13px 40px;
+    font-size: 16px;
+    font-weight: 400;
+    border-radius: 50px;
+    margin-top: 50px;
+}
+
+@media screen and (max-width: 959px) {
+    .form-content{
+        width: 580px;
+    }
+}
+@media screen and (max-width: 649px) {
+    .form-content{
+        width: 100%;
+    }
+}

@@ -24,3 +24,16 @@ export function computeDeadline(eventDateISO: string): Date {
 export function isRegistrationClosed(eventDateISO: string, now: Date = new Date()): boolean {
   return now.getTime() > computeDeadline(eventDateISO).getTime();
 }
+
+/**
+ * 「開催予定/過去開催」振り分け用の判定。event_date(JST calendar date)が
+ * 今日(JST)より過去かどうかを文字列比較で判定する（ISO 'YYYY-MM-DD'は
+ * 辞書順比較がそのまま日付順比較になるため）。
+ *
+ * apps/webのレンダリング時に都度計算する派生値であり、DBには保存しない
+ * （実装計画 2章）。
+ */
+export function isPastEvent(eventDateISO: string, now: Date = new Date()): boolean {
+  const todayJstIso = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tokyo" }).format(now);
+  return eventDateISO < todayJstIso;
+}

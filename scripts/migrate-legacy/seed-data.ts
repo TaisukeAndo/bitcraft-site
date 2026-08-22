@@ -14,7 +14,7 @@
 //   sections_json は空のプレースホルダー、meta descriptionはカード説明文を流用。
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import type { SeminarSections } from "../../packages/shared/src/types";
+import type { SeminarFormDefinition, SeminarSections } from "../../packages/shared/src/types";
 
 function sqlString(value: string | null): string {
   if (value === null) return "NULL";
@@ -343,7 +343,7 @@ const seminarRows: {
   venueSummary: string | null;
   sections: SeminarSections;
   googleFormUrl: string | null;
-  googleFormFields: Record<string, string> | null;
+  googleFormFields: SeminarFormDefinition | null;
   gasConfigured: number;
   metaDescription: string;
   metaKeywords: string | null;
@@ -372,25 +372,72 @@ const seminarRows: {
     googleFormUrl:
       "https://docs.google.com/forms/d/e/1FAIpQLScDbru2yfQwWov5n5heSOexj0-xeDSZMldRmxB8Dw7Mh9poHw/formResponse",
     googleFormFields: {
-      name: "entry.205820999",
-      email: "entry.2104214894",
-      tel: "entry.1793219310",
-      company: "entry.1094658355",
-      occupation: "entry.533540802",
-      "occupation.other": "entry.533540802.other_option_response",
-      aiUsageLevel: "entry.534106054",
-      aiTools: "entry.415787217",
-      "aiTools.other": "entry.415787217.other_option_response",
-      aiPurpose: "entry.1964328202",
-      automationAreas: "entry.1572322710",
-      "automationAreas.other": "entry.1572322710.other_option_response",
-      googleServices: "entry.1781068288",
-      microsoftServices: "entry.432587233",
-      otherTools: "entry.918529685",
-      expectations: "entry.1304167824",
-      automationDetail: "entry.1865271042",
-      questions: "entry.466496510",
-      privacyConsent: "entry.972091842",
+      fields: [
+        { section: "基本情報", label: "お名前", entryId: "entry.205820999", type: "text", required: true, placeholder: "例）山田 太郎" },
+        { section: "基本情報", label: "メールアドレス", entryId: "entry.2104214894", type: "email", required: true, placeholder: "例）example@mail.com" },
+        { section: "基本情報", label: "電話番号", entryId: "entry.1793219310", type: "tel", placeholder: "例）090-1234-5678" },
+        { section: "基本情報", label: "会社名・団体名", entryId: "entry.1094658355", type: "text", placeholder: "例）株式会社〇〇" },
+        {
+          section: "基本情報",
+          label: "ご職業・ご所属",
+          entryId: "entry.533540802",
+          type: "radio",
+          required: true,
+          otherOption: true,
+          options: ["経営者・役員", "情報システム部門", "事業部門（マーケティング・営業など）", "管理部門（総務・人事・経理など）", "個人事業主・フリーランス"],
+        },
+        {
+          section: "AI活用状況",
+          label: "現在AIツールをどの程度業務で活用していますか？",
+          entryId: "entry.534106054",
+          type: "radio",
+          required: true,
+          options: ["ほぼ毎日使っている", "週に数回使っている", "月に数回程度", "ほとんど使っていない", "まだ使ったことがない"],
+        },
+        {
+          section: "AI活用状況",
+          label: "現在利用しているAIツール（複数選択可）",
+          entryId: "entry.415787217",
+          type: "checkbox",
+          otherOption: true,
+          options: ["ChatGPT", "Gemini", "Claude", "Copilot", "NotebookLM", "Canva AI", "Adobe Firefly", "Manus", "genspark", "Claude Code", "Cowork", "ChatGPT Work", "Codex", "Antigravity", "Gemini Spark"],
+        },
+        { section: "AI活用状況", label: "AIを主にどんな用途で使っていますか？", entryId: "entry.1964328202", type: "textarea", placeholder: "例）文章の校正、アイデア出し、資料作成の下書き など" },
+        {
+          section: "業務・ツール環境",
+          label: "社内で自動化・効率化したい業務領域（複数選択可）",
+          entryId: "entry.1572322710",
+          type: "checkbox",
+          otherOption: true,
+          options: ["資料・提案書の作成", "請求・経理・会計業務", "問い合わせ・メール対応", "データ集計・レポート作成", "スケジュール・タスク管理", "特に決まっていない"],
+        },
+        {
+          section: "業務・ツール環境",
+          label: "Googleのサービスで業務利用しているもの（複数選択可）",
+          entryId: "entry.1781068288",
+          type: "checkbox",
+          options: ["Gmail", "Google Drive", "Google スプレッドシート", "Google ドキュメント", "Google カレンダー", "Google Meet", "Google Workspace（有料）", "使っていない"],
+        },
+        {
+          section: "業務・ツール環境",
+          label: "Microsoftのサービスで業務利用しているもの（複数選択可）",
+          entryId: "entry.432587233",
+          type: "checkbox",
+          options: ["Outlook", "Excel", "Word", "PowerPoint", "Microsoft Teams", "OneDrive", "Microsoft 365（有料）", "使っていない"],
+        },
+        { section: "業務・ツール環境", label: "その他よく使う業務ツール・サービス", entryId: "entry.918529685", type: "text", placeholder: "例）Notion、Slack、Salesforce、kintone など" },
+        {
+          section: "セミナーへの期待",
+          label: "このセミナーで最も解決したい課題・知りたいことは何ですか？",
+          entryId: "entry.1304167824",
+          type: "checkbox",
+          required: true,
+          options: ["資料・提案書作成の効率化", "請求・会計業務の自動化", "スケジュール・タスク管理の効率化", "メール対応・文章作成の効率化", "Claude Codeの基本的な使い方", "自社の業務に合ったAIエージェントの構築方法", "プロンプト設計・AIへの指示の出し方", "社内へのAI活用推進・展開方法"],
+        },
+        { section: "セミナーへの期待", label: "自動化・効率化したい具体的な業務があれば教えてください", entryId: "entry.1865271042", type: "textarea", placeholder: "例）毎月の請求書を手入力しているので自動化したい、週次レポートを自動で作りたい など" },
+        { section: "セミナーへの期待", label: "講師・運営への質問・事前に伝えたいことがあればご記入ください", entryId: "entry.466496510", type: "textarea", placeholder: "例）PCのOSはWindowsです、当日遅刻する可能性があります など" },
+        { section: "同意", label: "プライバシーポリシーに同意します。", entryId: "entry.972091842", type: "checkbox", required: true, options: ["プライバシーポリシーに同意します。"] },
+      ],
     },
     gasConfigured: 1,
     metaDescription:
@@ -421,22 +468,69 @@ const seminarRows: {
     googleFormUrl:
       "https://docs.google.com/forms/u/0/d/e/1FAIpQLScfh0RytGYaCDME32fxCtmYFTSYOK2axD46jZmSIbyeYiKM0A/formResponse",
     googleFormFields: {
-      name: "entry.1046348761",
-      email: "entry.711113366",
-      tel: "entry.2147140863",
-      occupation: "entry.2125373593",
-      industry: "entry.1573105122",
-      aiUsageLevel: "entry.1521330138",
-      aiTools: "entry.1462533075",
-      aiPurpose: "entry.1106682812",
-      accountingTools: "entry.1755619368",
-      googleServices: "entry.1824330249",
-      microsoftServices: "entry.1938327397",
-      otherTools: "entry.1617688847",
-      expectations: "entry.1037635033",
-      automationDetail: "entry.1387595515",
-      questions: "entry.781250550",
-      privacyConsent: "entry.1015516558",
+      fields: [
+        { section: "基本情報", label: "お名前", entryId: "entry.1046348761", type: "text", required: true, placeholder: "例）山田 太郎" },
+        { section: "基本情報", label: "メールアドレス", entryId: "entry.711113366", type: "email", required: true, placeholder: "例）example@mail.com" },
+        { section: "基本情報", label: "電話番号", entryId: "entry.2147140863", type: "tel", placeholder: "例）090-1234-5678" },
+        {
+          section: "基本情報",
+          label: "ご職業・ご所属",
+          entryId: "entry.2125373593",
+          type: "radio",
+          required: true,
+          options: ["フリーランス", "個人事業主", "会社員（副業あり）", "会社員（副業なし）", "経営者・役員", "学生", "その他"],
+        },
+        { section: "基本情報", label: "業種・専門分野", entryId: "entry.1573105122", type: "text", placeholder: "例）Webデザイン、経理・会計、マーケティング など" },
+        {
+          section: "AI活用状況",
+          label: "現在AIツールをどの程度業務で活用していますか？",
+          entryId: "entry.1521330138",
+          type: "radio",
+          required: true,
+          options: ["ほぼ毎日使っている", "週に数回使っている", "月に数回程度", "ほとんど使っていない", "まだ使ったことがない"],
+        },
+        {
+          section: "AI活用状況",
+          label: "現在利用しているAIツール（複数選択可）",
+          entryId: "entry.1462533075",
+          type: "checkbox",
+          options: ["ChatGPT", "Claude（Anthropic）", "Gemini（Google）", "Microsoft Copilot", "Perplexity", "その他", "使っていない"],
+        },
+        { section: "AI活用状況", label: "AIを主にどんな用途で使っていますか？", entryId: "entry.1106682812", type: "textarea", placeholder: "例）文章の校正、アイデア出し、コードのエラー解決 など" },
+        {
+          section: "業務・ツール環境",
+          label: "会計・請求管理に利用しているサービス（複数選択可）",
+          entryId: "entry.1755619368",
+          type: "checkbox",
+          options: ["freee", "マネーフォワード クラウド", "弥生会計", "Misoca（請求書）", "Excelで手作業", "特に使っていない", "その他"],
+        },
+        {
+          section: "業務・ツール環境",
+          label: "Googleのサービスで業務利用しているもの（複数選択可）",
+          entryId: "entry.1824330249",
+          type: "checkbox",
+          options: ["Gmail", "Google Drive", "Google スプレッドシート", "Google ドキュメント", "Google カレンダー", "Google Meet", "Google Workspace（有料）", "使っていない"],
+        },
+        {
+          section: "業務・ツール環境",
+          label: "Microsoftのサービスで業務利用しているもの（複数選択可）",
+          entryId: "entry.1938327397",
+          type: "checkbox",
+          options: ["Outlook", "Excel", "Word", "PowerPoint", "Microsoft Teams", "OneDrive", "Microsoft 365（有料）", "使っていない"],
+        },
+        { section: "業務・ツール環境", label: "その他よく使う業務ツール・サービス", entryId: "entry.1617688847", type: "text", placeholder: "例）Notion、Slack、Trello、Zoom など" },
+        {
+          section: "セミナーへの期待",
+          label: "このセミナーで最も解決したい課題・知りたいことは何ですか？",
+          entryId: "entry.1037635033",
+          type: "checkbox",
+          required: true,
+          options: ["資料・提案書作成の効率化", "請求・会計業務の自動化", "スケジュール・タスク管理の効率化", "メール対応・文章作成の効率化", "Claude Codeの基本的な使い方", "自分の業務に合ったツール・仕組みの構築方法", "プロンプト設計・AIへの指示の出し方"],
+        },
+        { section: "セミナーへの期待", label: "自動化・効率化したい具体的な業務があれば教えてください", entryId: "entry.1387595515", type: "textarea", placeholder: "例）毎月の請求書を手入力しているので自動化したい、週次レポートを自動で作りたい など" },
+        { section: "セミナーへの期待", label: "講師・運営への質問・事前に伝えたいことがあればご記入ください", entryId: "entry.781250550", type: "textarea", placeholder: "例）PCのOSはWindowsです、当日遅刻する可能性があります など" },
+        { section: "同意", label: "プライバシーポリシーに同意します。", entryId: "entry.1015516558", type: "checkbox", required: true, options: ["プライバシーポリシーに同意します。"] },
+      ],
     },
     gasConfigured: 0,
     // 注意: 元ページのmeta descriptionは「2025年5月25日開催・参加費10,000円（税別）」という、
@@ -529,7 +623,11 @@ const seminarRows: {
 // SQL生成
 // ---------------------------------------------------------------------------
 
-const statements: string[] = [];
+// このスクリプトは再実行可能にする（seed-data.ts更新時にD1へ入れ直せるように）。
+// slugのUNIQUE制約と衝突しないよう、既存の移行対象行を一度全削除してから入れ直す
+// （news/seminarsとも件数が少なく、CMS API経由の本番データはまだ存在しない前提のため
+// 安全に行える。実データがAPI経由で増えた後にこのスクリプトを再実行しないこと）。
+const statements: string[] = ["DELETE FROM news;", "DELETE FROM seminars;"];
 
 for (const n of newsRows) {
   statements.push(

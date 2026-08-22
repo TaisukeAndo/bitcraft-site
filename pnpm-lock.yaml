@@ -66,9 +66,15 @@ importers:
 
   apps/web:
     dependencies:
+      '@bitcraft/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@bitcraft/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      drizzle-orm:
+        specifier: ^0.36.4
+        version: 0.36.4(@cloudflare/workers-types@5.20260821.1)
       hono:
         specifier: ^4.6.13
         version: 4.13.3
