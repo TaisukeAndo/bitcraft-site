@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bitcraft-mcp",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-09-23"
+  // Phase 6 で agents/mcp の McpAgent 用に以下を追加する:
+  // "durable_objects": { "bindings": [{ "name": "MCP_OBJECT", "class_name": "BitcraftMcp" }] },
+  // "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BitcraftMcp"] }],
+  // "services": [{ "binding": "API", "service": "bitcraft-api" }]
+  // Phase 8 で Custom Domain (mcp.bitcraft.work) を接続する。
+}
