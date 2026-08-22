@@ -21,6 +21,15 @@
       "binding": "MEDIA",
       "bucket_name": "bitcraft-media"
     }
+  ],
+  // セミナー申込のPOSTをapps/apiへ委譲するためのService Binding。
+  // ネットワークホップなしで呼び出せ、Custom Domain未接続の現段階でも
+  // 同一アカウント内のWorker間で疎通できる。
+  "services": [
+    {
+      "binding": "API",
+      "service": "bitcraft-api"
+    }
   ]
   // Phase 8 で Custom Domain (bitcraft.work) を接続する。
 }
