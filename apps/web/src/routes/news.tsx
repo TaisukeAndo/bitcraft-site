@@ -4,7 +4,7 @@ import { news } from "@bitcraft/db";
 import type { Bindings } from "../lib/bindings";
 import { getDb } from "../lib/db";
 import { mediaUrl } from "../lib/media-url";
-import { Layout } from "../render/layout";
+import { Layout, renderPage } from "../render/layout";
 import { NewsListPage } from "../render/pages/news-list";
 import { NewsDetailPage } from "../render/pages/news-detail";
 
@@ -24,15 +24,17 @@ export function registerNewsRoutes(app: Hono<{ Bindings: Bindings }>) {
       .orderBy(desc(news.date));
 
     return c.html(
-      <Layout
-        title="News | bitcraft"
-        description="bitcraftからのお知らせ・最新情報の一覧です。サービスやセミナーに関するお知らせを掲載しています。"
-        keywords="bitcraft,お知らせ,News,安藤太亮"
-        canonicalPath="/news/"
-        extraStyles={["/news/news-style.css"]}
-      >
-        <NewsListPage items={rows} />
-      </Layout>,
+      renderPage(
+        <Layout
+          title="News | bitcraft"
+          description="bitcraftからのお知らせ・最新情報の一覧です。サービスやセミナーに関するお知らせを掲載しています。"
+          keywords="bitcraft,お知らせ,News,安藤太亮"
+          canonicalPath="/news/"
+          extraStyles={["/news/news-style.css"]}
+        >
+          <NewsListPage items={rows} />
+        </Layout>,
+      ),
     );
   });
 
@@ -54,27 +56,29 @@ export function registerNewsRoutes(app: Hono<{ Bindings: Bindings }>) {
     const ogImage = mediaUrl(row.ogImageKey) ?? undefined;
 
     return c.html(
-      <Layout
-        title={`${row.title} | bitcraft`}
-        description={row.metaDescription}
-        keywords={row.metaKeywords ?? undefined}
-        canonicalPath={`/news/${row.slug}/`}
-        ogType="article"
-        ogImage={ogImage ? `https://bitcraft.work${ogImage}` : undefined}
-        extraStyles={["/news/news-detail-style.css"]}
-        jsonLd={[
-          {
-            "@context": "https://schema.org",
-            "@type": "NewsArticle",
-            headline: row.title,
-            datePublished: row.date,
-            description: row.metaDescription,
-            author: { "@type": "Organization", name: "bitcraft" },
-          },
-        ]}
-      >
-        <NewsDetailPage title={row.title} date={displayDate} tag={row.tag} bodyHtml={row.bodyHtml} />
-      </Layout>,
+      renderPage(
+        <Layout
+          title={`${row.title} | bitcraft`}
+          description={row.metaDescription}
+          keywords={row.metaKeywords ?? undefined}
+          canonicalPath={`/news/${row.slug}/`}
+          ogType="article"
+          ogImage={ogImage ? `https://bitcraft.work${ogImage}` : undefined}
+          extraStyles={["/news/news-detail-style.css"]}
+          jsonLd={[
+            {
+              "@context": "https://schema.org",
+              "@type": "NewsArticle",
+              headline: row.title,
+              datePublished: row.date,
+              description: row.metaDescription,
+              author: { "@type": "Organization", name: "bitcraft" },
+            },
+          ]}
+        >
+          <NewsDetailPage title={row.title} date={displayDate} tag={row.tag} bodyHtml={row.bodyHtml} />
+        </Layout>,
+      ),
     );
   });
 }

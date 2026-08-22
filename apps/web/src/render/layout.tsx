@@ -1,4 +1,6 @@
 import type { FC, PropsWithChildren } from "hono/jsx";
+import type { JSX } from "hono/jsx/jsx-runtime";
+import { html } from "hono/html";
 import { Header } from "./components/header";
 import { Footer } from "./components/footer";
 
@@ -88,3 +90,13 @@ export const Layout: FC<LayoutProps> = ({
     </html>
   );
 };
+
+// c.html(<Layout>...</Layout>) は "<!DOCTYPE html>" を出力しないため、
+// ブラウザがquirksモードで描画してしまい、Lenisのスクロール量計算が崩れて
+// マウスホイール/トラックパッドでのスクロールが効かなくなる不具合を実機で確認した
+// （矢印キーでのネイティブスクロールは影響を受けないため気づきにくい）。
+// 全ルートは c.html(<Layout>...</Layout>) ではなく必ず renderPage(<Layout>...</Layout>)
+// を使うこと。
+export function renderPage(jsx: JSX.Element) {
+  return html`<!DOCTYPE html>${jsx}`;
+}
