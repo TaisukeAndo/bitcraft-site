@@ -9,12 +9,17 @@ export const SeminarDetailPage: FC<{
   registrationClosed: boolean;
 }> = ({ seminar, sections, registrationClosed }) => {
   const applyHref = registrationClosed ? undefined : `/service/seminar/${seminar.slug}/apply/`;
+  const heroImage = mediaUrl(seminar.heroImageKey);
 
   return (
     <main>
       {/* ===== HERO ===== */}
       <section class="sd-hero">
-        <div class="sd-hero__bg">
+        {/* seminar-detail-style.css の `.sd-hero__bg` は旧サイトの相対パス
+            (./img/hero-bg.png) を背景画像に指定しているが、画像本体はR2へ
+            移設したため参照先が存在しない。heroImageKeyをインラインstyleで
+            注入し、外部CSSの同一プロパティより優先させて上書きする。 */}
+        <div class="sd-hero__bg" style={heroImage ? { backgroundImage: `url('${heroImage}')` } : undefined}>
           <div class="sd-hero__noise"></div>
         </div>
         <div class="sd-hero__inner content">
@@ -249,7 +254,7 @@ export const SeminarDetailPage: FC<{
       {/* ===== CTA ===== */}
       {sections.cta.closing ? (
         <section class="sd-cta" id="apply">
-          <div class="sd-hero__bg"></div>
+          <div class="sd-hero__bg" style={heroImage ? { backgroundImage: `url('${heroImage}')` } : undefined}></div>
           <div class="sd-hero__noise"></div>
           <div class="content">
             <p class="sd-cta__closing" dangerouslySetInnerHTML={{ __html: sections.cta.closing }} />
