@@ -5,7 +5,7 @@ import { isPastEvent, isRegistrationClosed, type SeminarFormDefinition, type Sem
 import type { Bindings } from "../lib/bindings";
 import { getDb } from "../lib/db";
 import { mediaUrl } from "../lib/media-url";
-import { Layout } from "../render/layout";
+import { Layout, renderPage } from "../render/layout";
 import { SeminarListPage } from "../render/pages/seminar-list";
 import { SeminarDetailPage } from "../render/pages/seminar-detail";
 import { SeminarApplyPage } from "../render/pages/seminar-apply";
@@ -25,15 +25,17 @@ export function registerSeminarRoutes(app: Hono<{ Bindings: Bindings }>) {
       .sort((a, b) => b.eventDate.localeCompare(a.eventDate));
 
     return c.html(
-      <Layout
-        title="Seminar | bitcraft"
-        description="bitcraftが提供するセミナー・ワークショップ一覧。AIツールの活用、システム開発、デザインなど、実践的なスキルを身につけるための1Dayセミナーを開催しています。"
-        keywords="bitcraft,セミナー,AI,Claude Code,ワークショップ,安藤太亮"
-        canonicalPath="/service/seminar/"
-        extraStyles={["/service/seminar/seminar-style.css"]}
-      >
-        <SeminarListPage upcoming={upcoming} past={past} />
-      </Layout>,
+      renderPage(
+        <Layout
+          title="Seminar | bitcraft"
+          description="bitcraftが提供するセミナー・ワークショップ一覧。AIツールの活用、システム開発、デザインなど、実践的なスキルを身につけるための1Dayセミナーを開催しています。"
+          keywords="bitcraft,セミナー,AI,Claude Code,ワークショップ,安藤太亮"
+          canonicalPath="/service/seminar/"
+          extraStyles={["/service/seminar/seminar-style.css"]}
+        >
+          <SeminarListPage upcoming={upcoming} past={past} />
+        </Layout>,
+      ),
     );
   });
 
@@ -52,31 +54,33 @@ export function registerSeminarRoutes(app: Hono<{ Bindings: Bindings }>) {
     const ogImage = mediaUrl(row.cardImageKey);
 
     return c.html(
-      <Layout
-        title={`${row.title.replace(/<br>/g, "")} | bitcraft`}
-        description={row.metaDescription}
-        keywords={row.metaKeywords ?? undefined}
-        canonicalPath={`/service/seminar/${row.slug}/`}
-        ogImage={ogImage ? `https://bitcraft.work${ogImage}` : undefined}
-        extraStyles={[`/service/seminar/${row.slug}/seminar-detail-style.css`]}
-        bodyScripts={[]}
-        jsonLd={[
-          {
-            "@context": "https://schema.org",
-            "@type": "Event",
-            name: row.title.replace(/<br>/g, ""),
-            startDate: row.eventDate,
-            eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-            eventStatus: registrationClosed
-              ? "https://schema.org/EventScheduled"
-              : "https://schema.org/EventScheduled",
-            description: row.metaDescription,
-            organizer: { "@type": "Organization", name: "bitcraft", url: "https://bitcraft.work/" },
-          },
-        ]}
-      >
-        <SeminarDetailPage seminar={row} sections={sections} registrationClosed={registrationClosed} />
-      </Layout>,
+      renderPage(
+        <Layout
+          title={`${row.title.replace(/<br>/g, "")} | bitcraft`}
+          description={row.metaDescription}
+          keywords={row.metaKeywords ?? undefined}
+          canonicalPath={`/service/seminar/${row.slug}/`}
+          ogImage={ogImage ? `https://bitcraft.work${ogImage}` : undefined}
+          extraStyles={[`/service/seminar/${row.slug}/seminar-detail-style.css`]}
+          bodyScripts={[]}
+          jsonLd={[
+            {
+              "@context": "https://schema.org",
+              "@type": "Event",
+              name: row.title.replace(/<br>/g, ""),
+              startDate: row.eventDate,
+              eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+              eventStatus: registrationClosed
+                ? "https://schema.org/EventScheduled"
+                : "https://schema.org/EventScheduled",
+              description: row.metaDescription,
+              organizer: { "@type": "Organization", name: "bitcraft", url: "https://bitcraft.work/" },
+            },
+          ]}
+        >
+          <SeminarDetailPage seminar={row} sections={sections} registrationClosed={registrationClosed} />
+        </Layout>,
+      ),
     );
   });
 
@@ -95,14 +99,16 @@ export function registerSeminarRoutes(app: Hono<{ Bindings: Bindings }>) {
     const registrationClosed = isRegistrationClosed(row.eventDate);
 
     return c.html(
-      <Layout
-        title={`参加申し込み | ${row.title.replace(/<br>/g, "")}`}
-        description={`${row.title.replace(/<br>/g, "")}（${row.eventDateDisplay ?? row.eventDate}）の参加申し込みフォームです。`}
-        canonicalPath={`/service/seminar/${row.slug}/apply/`}
-        extraStyles={[`/service/seminar/${row.slug}/apply/apply-style.css`]}
-      >
-        <SeminarApplyPage seminar={row} form={form} registrationClosed={registrationClosed} />
-      </Layout>,
+      renderPage(
+        <Layout
+          title={`参加申し込み | ${row.title.replace(/<br>/g, "")}`}
+          description={`${row.title.replace(/<br>/g, "")}（${row.eventDateDisplay ?? row.eventDate}）の参加申し込みフォームです。`}
+          canonicalPath={`/service/seminar/${row.slug}/apply/`}
+          extraStyles={[`/service/seminar/${row.slug}/apply/apply-style.css`]}
+        >
+          <SeminarApplyPage seminar={row} form={form} registrationClosed={registrationClosed} />
+        </Layout>,
+      ),
     );
   });
 }
