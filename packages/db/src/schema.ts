@@ -8,7 +8,7 @@
 // 生成し、適用は `wrangler d1 migrations apply bitcraft-cms --remote` で行う
 // （Drizzle Kitでは適用しない。履歴管理をWranglerの d1_migrations テーブルに一本化するため）。
 import { sql } from "drizzle-orm";
-import { check, index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { check, index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 // news ------------------------------------------------------------------
 
@@ -77,9 +77,11 @@ export const seminars = sqliteTable(
     // D1(applicationsテーブル)へ直接保存する自前実装に置き換えた（実装計画4章）。
     // セミナーごとに入力項目を自由に設定できる(PATCH /v1/seminars/:slug/apply-form)。
     applyFormJson: text("apply_form_json"),
-    // 申込確認メールのテンプレート(ApplicationEmailTemplate型)。未設定の場合は
-    // packages/shared の DEFAULT_APPLICATION_EMAIL_TEMPLATE を使う
-    // (PATCH /v1/seminars/:slug/confirmation-email で更新)。
+    // 非推奨・未使用: 単一の申込確認メールのみを想定していた旧カラム。
+    // email_templatesテーブル（申込確認・事前準備案内・前日リマインド等、
+    // セミナーごとに複数のメールを配信タイミング付きで設定できる仕組み）に
+    // 置き換えた。既存データが無い前提のため、CHECK制約を伴うテーブル再作成の
+    // リスクを避けてカラム自体は残し、コード側で参照しない扱いにしている。
     confirmationEmailJson: text("confirmation_email_json"),
     metaDescription: text("meta_description").notNull(),
     metaKeywords: text("meta_keywords"),
@@ -117,8 +119,8 @@ export const applications = sqliteTable(
     status: text("status", { enum: ["received", "confirmed", "cancelled"] })
       .notNull()
       .default("received"),
-    // 確認メールの送信結果。管理者API(GET /v1/seminars/:slug/applications)から
-    // 送信失敗を検知できるようにする（送信失敗しても申込自体は保存済みとして扱う）。
+    // 非推奨・未使用: 単一の確認メール送信結果のみを想定していた旧カラム。
+    // 複数メール対応のapplication_email_sendsテーブルに置き換えた（confirmationEmailJsonと同じ理由でカラム自体は残す）。
     confirmationEmailStatus: text("confirmation_email_status", { enum: ["sent", "failed"] }),
     confirmationEmailError: text("confirmation_email_error"),
     submittedAt: text("submitted_at")
@@ -137,6 +139,73 @@ export const applications = sqliteTable(
     // confirmation_email_status には意図的にCHECK制約を付けない。既存テーブルへの
     // 追加時にSQLiteの制約上テーブル再作成(rebuild)を要求され、それが本番D1で
     // 原因不明のCHECK違反エラーを起こしたため。値の妥当性はAPI層(zod)でのみ担保する。
+  }),
+);
+
+// email_templates（セミナーごとに複数設定できるメール。申込確認・事前準備案内・
+// 前日リマインド等。トリガー種別はpackages/shared の EmailTrigger 型を参照）--------
+
+export const emailTemplates = sqliteTable(
+  "email_templates",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    seminarId: integer("seminar_id")
+      .notNull()
+      .references(() => seminars.id),
+    seminarSlug: text("seminar_slug").notNull(), // 冗長だが一覧・検索の簡略化のため保持
+    key: text("key").notNull(), // セミナー内で一意な識別子（例: 'confirmation', 'reminder_3d'）
+    label: text("label").notNull(), // 管理用の表示名（例: "前日リマインド"）
+    enabled: integer("enabled").notNull().default(1),
+    triggerType: text("trigger_type", { enum: ["on_submit", "relative_to_event", "absolute"] }).notNull(),
+    triggerOffsetDays: integer("trigger_offset_days"), // relative_to_eventのみ使用（負=開催前、正=開催後）
+    triggerTimeJst: text("trigger_time_jst"), // relative_to_eventのみ使用。"HH:MM"(JST)
+    triggerAt: text("trigger_at"), // absoluteのみ使用。ISO datetime(UTC)
+    fromName: text("from_name").notNull(),
+    fromEmail: text("from_email").notNull(),
+    subject: text("subject").notNull(),
+    bodyText: text("body_text").notNull(),
+    bodyHtml: text("body_html"),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    seminarKeyUnique: uniqueIndex("email_templates_seminar_key_unique").on(table.seminarId, table.key),
+    seminarIdx: index("idx_email_templates_seminar").on(table.seminarSlug),
+    triggerTypeCheck: check(
+      "email_templates_trigger_type_check",
+      sql`${table.triggerType} IN ('on_submit', 'relative_to_event', 'absolute')`,
+    ),
+  }),
+);
+
+// application_email_sends（申込者ごと・テンプレートごとの送信履歴。cronスイープでの
+// 二重送信防止に使う。UNIQUE制約自体が最終防衛線）--------------------------------
+
+export const applicationEmailSends = sqliteTable(
+  "application_email_sends",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    applicationId: integer("application_id")
+      .notNull()
+      .references(() => applications.id),
+    emailTemplateId: integer("email_template_id")
+      .notNull()
+      .references(() => emailTemplates.id),
+    status: text("status", { enum: ["sent", "failed"] }).notNull(),
+    error: text("error"),
+    sentAt: text("sent_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    applicationTemplateUnique: uniqueIndex("application_email_sends_unique").on(
+      table.applicationId,
+      table.emailTemplateId,
+    ),
   }),
 );
 
@@ -186,6 +255,12 @@ export type NewSeminarRow = typeof seminars.$inferInsert;
 
 export type ApplicationRow = typeof applications.$inferSelect;
 export type NewApplicationRow = typeof applications.$inferInsert;
+
+export type EmailTemplateRow = typeof emailTemplates.$inferSelect;
+export type NewEmailTemplateRow = typeof emailTemplates.$inferInsert;
+
+export type ApplicationEmailSendRow = typeof applicationEmailSends.$inferSelect;
+export type NewApplicationEmailSendRow = typeof applicationEmailSends.$inferInsert;
 
 export type MediaRow = typeof media.$inferSelect;
 export type NewMediaRow = typeof media.$inferInsert;
