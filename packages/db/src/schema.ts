@@ -245,6 +245,39 @@ export const apiKeys = sqliteTable("api_keys", {
   revokedAt: text("revoked_at"),
 });
 
+// contacts（お問い合わせフォーム。Googleフォームを廃止しD1へ直接保存する。
+// セミナー申込と異なりフォーム項目はセミナーごとに変わらない固定形式のため、
+// apply_form_jsonのような可変スキーマは持たず、通常のカラムで表現する）--------
+
+export const contacts = sqliteTable(
+  "contacts",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    affiliation: text("affiliation").notNull(), // ご所属
+    inquiryType: text("inquiry_type").notNull(), // お問い合わせ種別（contact.tsxの選択肢と対応。UI側の文言変更に追従しやすいようCHECK制約は付けない）
+    message: text("message").notNull(), // ご相談内容
+    privacyConsent: integer("privacy_consent").notNull(), // プライバシーポリシー同意（常に1。監査目的で保持）
+    status: text("status", { enum: ["received", "replied", "closed"] })
+      .notNull()
+      .default("received"),
+    // 通知メール(運用者宛)・確認メール(問い合わせ者宛)は内容が固定のため、
+    // seminarsのようなemail_templatesテーブルは持たず、送信結果のみをここに記録する。
+    notificationEmailStatus: text("notification_email_status", { enum: ["sent", "failed"] }),
+    notificationEmailError: text("notification_email_error"),
+    confirmationEmailStatus: text("confirmation_email_status", { enum: ["sent", "failed"] }),
+    confirmationEmailError: text("confirmation_email_error"),
+    submittedAt: text("submitted_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    submittedIdx: index("idx_contacts_submitted").on(table.submittedAt),
+    statusCheck: check("contacts_status_check", sql`${table.status} IN ('received', 'replied', 'closed')`),
+  }),
+);
+
 // 型 ------------------------------------------------------------------------
 
 export type NewsRow = typeof news.$inferSelect;
@@ -267,3 +300,6 @@ export type NewMediaRow = typeof media.$inferInsert;
 
 export type ApiKeyRow = typeof apiKeys.$inferSelect;
 export type NewApiKeyRow = typeof apiKeys.$inferInsert;
+
+export type ContactRow = typeof contacts.$inferSelect;
+export type NewContactRow = typeof contacts.$inferInsert;

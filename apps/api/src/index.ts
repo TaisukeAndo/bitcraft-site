@@ -8,12 +8,25 @@ import { registerEmailTemplateRoutes } from "./routes/emails";
 import { registerNewsRoutes } from "./routes/news";
 import { registerMediaRoutes } from "./routes/media";
 import { registerApiKeyRoutes } from "./routes/api-keys";
+import { registerContactRoutes } from "./routes/contacts";
 import { runScheduledEmailSweep } from "./scheduled";
 
 // CMS API（実装計画 4章）。OpenAPIHonoによるSwagger UI (/v1/docs) の配線・
 // ヘルスチェック・認証確認に加え、news/seminars本体のCRUD・セミナー申込/
 // メールテンプレート・メディアアップロード・APIキー管理の各エンドポイントを持つ。
-const app = new OpenAPIHono<{ Bindings: Bindings }>();
+const app = new OpenAPIHono<{ Bindings: Bindings }>({
+  // デフォルトのバリデーション失敗レスポンスは生のZodError({success:false,
+  // error:{issues:[...]}})をそのまま返すため、お問い合わせ・セミナー申込のような
+  // ブラウザ直POSTのエンドポイントでエラーメッセージを文字列として表示できない
+  // （result.data.error がオブジェクトになってしまう）。全ルート共通で
+  // {error: "<読める文言>"} 形式に正規化する。
+  defaultHook: (result, c) => {
+    if (!result.success) {
+      const message = result.error.issues[0]?.message ?? "入力内容に誤りがあります";
+      return c.json({ error: message, issues: result.error.issues }, 400);
+    }
+  },
+});
 
 const healthRoute = createRoute({
   method: "get",
@@ -58,6 +71,7 @@ registerSeminarApplicationRoutes(app);
 registerEmailTemplateRoutes(app);
 registerMediaRoutes(app);
 registerApiKeyRoutes(app);
+registerContactRoutes(app);
 
 const emailSweepRoute = createRoute({
   method: "post",
@@ -96,7 +110,8 @@ app.doc("/v1/openapi.json", {
 app.openAPIRegistry.registerComponent("securitySchemes", "bearerAuth", {
   type: "http",
   scheme: "bearer",
-  description: "api_keysテーブルで管理するAPIトークン。POST /v1/seminars/{slug}/applications（申込受付）のみ認証不要。",
+  description:
+    "api_keysテーブルで管理するAPIトークン。POST /v1/seminars/{slug}/applications（申込受付）とPOST /v1/contacts（お問い合わせ送信）のみ認証不要。",
 });
 app.get("/v1/docs", swaggerUI({ url: "/v1/openapi.json" }));
 

@@ -175,3 +175,33 @@ export const seminarUpdateSchema = seminarCreateSchema.omit({ slug: true }).part
 export const seminarStatusUpdateSchema = z.object({
   status: z.enum(["draft", "before_registration", "open", "closed"]),
 });
+
+// お問い合わせフォーム（POST /v1/contacts、公開・認証不要）の入力バリデーション。
+// セミナー申込と異なりフォーム項目は固定のため、apply_form_jsonのような
+// 可変スキーマではなく通常のフィールドとして定義する。
+// 選択肢はapps/web/src/render/pages/contact.tsxの表示順と一致させること。
+export const CONTACT_INQUIRY_TYPES = [
+  "システム開発のご相談",
+  "Webサイト制作のご依頼",
+  "UI・UXデザインのご相談",
+  "3DCG制作のご相談",
+  "プログラミング・デザイン教育のご依頼",
+  "プロジェクト管理・マネジメントのご相談",
+  "事業アイデア・企画に関するご相談",
+  "その他のお問い合わせ",
+] as const;
+
+export const submitContactSchema = z.object({
+  name: z.string().min(1),
+  email: z.string().email(),
+  affiliation: z.string().min(1),
+  inquiryType: z.enum(CONTACT_INQUIRY_TYPES),
+  message: z.string().min(1),
+  privacyConsent: z.boolean().refine((v) => v === true, {
+    message: "プライバシーポリシーへの同意が必要です",
+  }),
+});
+
+export const contactStatusUpdateSchema = z.object({
+  status: z.enum(["received", "replied", "closed"]),
+});
