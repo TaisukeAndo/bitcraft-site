@@ -23,6 +23,12 @@
     {
       "name": "EMAIL"
     }
-  ]
+  ],
+  // 開催日基準/絶対日時のメール(email_templates)の配信要否を定期チェックする。
+  // 15分間隔。実際の配信時刻の精度はこの間隔に依存する
+  // （例: JST 10:00指定でも実際の送信はJST 10:00〜10:15の間になりうる）。
+  "triggers": {
+    "crons": ["*/15 * * * *"]
+  }
   // Phase 8 で Custom Domain (api.bitcraft.work) を接続する。
 }
