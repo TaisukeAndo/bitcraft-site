@@ -4,12 +4,15 @@ import { seminars, applications } from "@bitcraft/db";
 import {
   submitApplicationSchema,
   updateApplyFormSchema,
+  updateConfirmationEmailSchema,
   validateApplyFormAnswers,
+  type ApplicationAnswers,
   type SeminarApplyForm,
 } from "@bitcraft/shared";
 import type { Bindings } from "../lib/bindings";
 import { getDb } from "../lib/db";
 import { checkApiKey } from "../middleware/auth";
+import { sendConfirmationEmail } from "../lib/confirmation-email";
 
 const applicationAnswersSchema = z.record(z.string(), z.union([z.string(), z.array(z.string())]));
 
@@ -20,6 +23,8 @@ const applicationResponseSchema = z.object({
   applicantName: z.string().nullable(),
   applicantEmail: z.string().nullable(),
   status: z.enum(["received", "confirmed", "cancelled"]),
+  confirmationEmailStatus: z.enum(["sent", "failed"]).nullable(),
+  confirmationEmailError: z.string().nullable(),
   submittedAt: z.string(),
 });
 
@@ -67,6 +72,55 @@ export function registerSeminarApplicationRoutes(app: OpenAPIHono<{ Bindings: Bi
     await db
       .update(seminars)
       .set({ applyFormJson: JSON.stringify(body), updatedAt: new Date().toISOString() })
+      .where(eq(seminars.slug, slug))
+      .run();
+
+    return c.json(body, 200);
+  });
+
+  // PATCH /v1/seminars/{slug}/confirmation-email ---------------------------
+  // セミナーごとに申込確認メールの差出人名・アドレス・件名・本文を自由に
+  // 設定できる管理者向けAPI（ユーザー要望対応）。未設定のセミナーは
+  // DEFAULT_APPLICATION_EMAIL_TEMPLATE(packages/shared)にフォールバックする。
+  const updateConfirmationEmailRoute = createRoute({
+    method: "patch",
+    path: "/v1/seminars/{slug}/confirmation-email",
+    summary: "セミナーの申込確認メールのテンプレートを更新",
+    tags: ["seminars"],
+    security: [{ bearerAuth: [] }],
+    request: {
+      params: z.object({ slug: z.string() }),
+      body: {
+        content: { "application/json": { schema: updateConfirmationEmailSchema } },
+      },
+    },
+    responses: {
+      200: {
+        description: "更新後のテンプレート",
+        content: { "application/json": { schema: updateConfirmationEmailSchema } },
+      },
+      400: { description: "バリデーションエラー（fromEmailのドメイン不一致等）" },
+      401: { description: "認証エラー" },
+      404: { description: "セミナーが見つからない" },
+    },
+  });
+
+  app.openapi(updateConfirmationEmailRoute, async (c) => {
+    const authError = await checkApiKey(c);
+    if (authError) return authError;
+
+    const { slug } = c.req.valid("param");
+    const body = c.req.valid("json");
+    const db = getDb(c.env);
+
+    const existing = await db.select({ id: seminars.id }).from(seminars).where(eq(seminars.slug, slug)).get();
+    if (!existing) {
+      return c.json({ error: "Not Found" }, 404);
+    }
+
+    await db
+      .update(seminars)
+      .set({ confirmationEmailJson: JSON.stringify(body), updatedAt: new Date().toISOString() })
       .where(eq(seminars.slug, slug))
       .run();
 
@@ -130,6 +184,8 @@ export function registerSeminarApplicationRoutes(app: OpenAPIHono<{ Bindings: Bi
     const emailField = form.fields.find((f) => f.type === "email");
     const applicantName = nameField ? answers[nameField.id] : undefined;
     const applicantEmail = emailField ? answers[emailField.id] : undefined;
+    const applicantNameStr = typeof applicantName === "string" ? applicantName : null;
+    const applicantEmailStr = typeof applicantEmail === "string" ? applicantEmail : null;
 
     const inserted = await db
       .insert(applications)
@@ -137,8 +193,8 @@ export function registerSeminarApplicationRoutes(app: OpenAPIHono<{ Bindings: Bi
         seminarId: seminar.id,
         seminarSlug: seminar.slug,
         answersJson: JSON.stringify(answers),
-        applicantName: typeof applicantName === "string" ? applicantName : null,
-        applicantEmail: typeof applicantEmail === "string" ? applicantEmail : null,
+        applicantName: applicantNameStr,
+        applicantEmail: applicantEmailStr,
       })
       .returning({ id: applications.id, submittedAt: applications.submittedAt });
 
@@ -146,6 +202,27 @@ export function registerSeminarApplicationRoutes(app: OpenAPIHono<{ Bindings: Bi
     if (!row) {
       return c.json({ error: "申込の保存に失敗しました" }, 400);
     }
+
+    // 確認メール送信は申込の成否に影響させない（ベストエフォート）。送信結果は
+    // applicationsに記録し、管理者APIから失敗を検知できるようにする。
+    const emailResult = await sendConfirmationEmail(
+      c.env,
+      seminar,
+      answers as ApplicationAnswers,
+      applicantNameStr,
+      applicantEmailStr,
+    );
+    if (emailResult.status !== "skipped") {
+      await db
+        .update(applications)
+        .set({
+          confirmationEmailStatus: emailResult.status,
+          confirmationEmailError: emailResult.status === "failed" ? emailResult.error : null,
+        })
+        .where(eq(applications.id, row.id))
+        .run();
+    }
+
     return c.json({ id: row.id, submittedAt: row.submittedAt }, 201);
   });
 
@@ -195,6 +272,8 @@ export function registerSeminarApplicationRoutes(app: OpenAPIHono<{ Bindings: Bi
         applicantName: r.applicantName,
         applicantEmail: r.applicantEmail,
         status: r.status,
+        confirmationEmailStatus: r.confirmationEmailStatus,
+        confirmationEmailError: r.confirmationEmailError,
         submittedAt: r.submittedAt,
       })),
       200,
