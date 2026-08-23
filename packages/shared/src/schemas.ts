@@ -73,3 +73,105 @@ export const createEmailTemplateSchema = emailContentSchema.extend({
 });
 
 export const updateEmailTemplateSchema = emailContentSchema.partial();
+
+// news の入力バリデーション（POST/PATCH /v1/news[/{slug}]）。
+const slugSchema = z
+  .string()
+  .min(1)
+  .regex(/^[a-z0-9-]+$/, { message: "slugは英小文字・数字・ハイフンのみ使用できます" });
+const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "YYYY-MM-DD形式である必要があります" });
+
+export const newsCreateSchema = z.object({
+  slug: slugSchema,
+  status: z.enum(["draft", "published"]).optional(),
+  date: isoDateSchema,
+  tag: z.string().min(1),
+  title: z.string().min(1),
+  summary: z.string().optional(),
+  metaDescription: z.string().min(1),
+  metaKeywords: z.string().optional(),
+  ogImageKey: z.string().optional(),
+  bodyHtml: z.string().min(1),
+  relatedSeminarSlug: z.string().optional(),
+});
+
+export const newsUpdateSchema = newsCreateSchema.omit({ slug: true }).partial();
+
+// seminars.sections_json の入力バリデーション（POST/PATCH /v1/seminars[/{slug}]）。
+// SeminarSections（types.ts）と形を一致させる。
+export const seminarSectionsSchema = z.object({
+  target: z.object({
+    title: z.string(),
+    items: z.array(z.object({ text: z.string() })),
+  }),
+  benefits: z.object({
+    items: z.array(z.object({ num: z.string(), title: z.string(), desc: z.string() })),
+  }),
+  timeline: z.object({
+    items: z.array(
+      z.object({
+        time: z.string(),
+        title: z.string(),
+        desc: z.string().optional(),
+        modifier: z.enum(["break", "end"]).optional(),
+      }),
+    ),
+  }),
+  voices: z.object({
+    items: z.array(z.object({ text: z.string(), name: z.string(), job: z.string() })),
+    note: z.string().optional(),
+  }),
+  speakers: z.object({
+    items: z.array(
+      z.object({
+        photoKey: z.string().optional(),
+        tags: z.array(z.string()),
+        name: z.string(),
+        kana: z.string(),
+        affil: z.string(),
+        desc: z.string(),
+      }),
+    ),
+  }),
+  overview: z.object({
+    rows: z.array(z.object({ label: z.string(), valueHtml: z.string() })),
+  }),
+  faq: z.object({
+    items: z.array(z.object({ question: z.string(), answer: z.string() })),
+  }),
+  cta: z.object({
+    closing: z.string(),
+    sub: z.string(),
+    meta: z.string().optional(),
+    btnLabel: z.string(),
+  }),
+});
+
+export const seminarCreateSchema = z.object({
+  slug: slugSchema,
+  status: z.enum(["draft", "before_registration", "open", "closed"]).optional(),
+  detailPage: z.boolean().optional(), // true=詳細ページあり(既定)、false=過去実績のカードのみ
+  eventDate: isoDateSchema,
+  eventDateDisplay: z.string().optional(),
+  seminarType: z.string().min(1),
+  title: z.string().min(1),
+  catchLine: z.string().optional(),
+  heroSub: z.string().optional(),
+  description: z.string().min(1),
+  priceDisplay: z.string().optional(),
+  priceNote: z.string().optional(),
+  capacity: z.number().int().positive().optional(),
+  seatsLeft: z.number().int().nonnegative().optional(),
+  heroImageKey: z.string().optional(),
+  cardImageKey: z.string().optional(),
+  venueSummary: z.string().optional(),
+  sections: seminarSectionsSchema,
+  metaDescription: z.string().min(1),
+  metaKeywords: z.string().optional(),
+});
+
+export const seminarUpdateSchema = seminarCreateSchema.omit({ slug: true }).partial();
+
+export const seminarStatusUpdateSchema = z.object({
+  status: z.enum(["draft", "before_registration", "open", "closed"]),
+});
