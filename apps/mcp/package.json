@@ -8,7 +8,11 @@
     "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.0.0",
+    "agents": "^0.21.0",
+    "zod": "^4.0.0"
+  },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260821.1",
     "typescript": "^5.7.2",

@@ -2,10 +2,21 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "bitcraft-mcp",
   "main": "src/index.ts",
-  "compatibility_date": "2024-09-23"
-  // Phase 6 で agents/mcp の McpAgent 用に以下を追加する:
-  // "durable_objects": { "bindings": [{ "name": "MCP_OBJECT", "class_name": "BitcraftMcp" }] },
-  // "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BitcraftMcp"] }],
-  // "services": [{ "binding": "API", "service": "bitcraft-api" }]
+  "compatibility_date": "2024-09-23",
+  // agents(agents/mcp/server)がnode:async_hooksに依存するため必須
+  // （付けない場合、ビルド時に警告が出てランタイムでエラーになりうる）。
+  "compatibility_flags": ["nodejs_compat"],
+  // apps/apiへの委譲用Service Binding。apps/mcpはD1を一切扱わず、
+  // 認証確認・コンテンツ操作はすべてこのBinding経由でapps/apiに委譲する
+  // （実装計画5章）。
+  "services": [
+    {
+      "binding": "API",
+      "service": "bitcraft-api"
+    }
+  ]
+  // ステートレスなcreateMcpHandler()を採用しているため、McpAgent(legacy)が
+  // 前提としていたDurable Objects関連の設定(durable_objects/migrations)は
+  // 不要（agents SDK 0.21時点。詳細はsrc/index.tsのコメント参照）。
   // Phase 8 で Custom Domain (mcp.bitcraft.work) を接続する。
 }
