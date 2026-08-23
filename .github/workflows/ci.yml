@@ -1,0 +1,38 @@
+name: CI
+
+# apps/*・packages/*・scripts/*の変更に対する機械チェック（実装計画7章）。
+# デプロイは行わない（それはdeploy.yml、push:mainのみ）。
+# wrangler deploy --dry-run はCloudflareへの認証無しでバンドル可否のみ検証できるため、
+# このワークフローにはCloudflareの認証情報を一切持たせていない。
+on:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm lint
+
+      - run: pnpm typecheck
+
+      - run: pnpm test
+
+      - name: Dry-run deploy (apps/api)
+        run: pnpm --filter @bitcraft/api exec wrangler deploy --dry-run
+
+      - name: Dry-run deploy (apps/mcp)
+        run: pnpm --filter @bitcraft/mcp exec wrangler deploy --dry-run
+
+      - name: Dry-run deploy (apps/web)
+        run: pnpm --filter @bitcraft/web exec wrangler deploy --dry-run

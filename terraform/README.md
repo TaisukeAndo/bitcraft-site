@@ -82,3 +82,24 @@ terraform apply
 - `enable_custom_domains` を切り替えるのはPhase 8のカットオーバー作業時のみ。それ以外で
   誤って `true` にすると本番の `bitcraft.work` ルーティングが未完成のWorkerへ切り替わるため
   注意する。
+
+## CI/CD（GitHub Actions、実装計画7章）
+
+`terraform/**` を変更するPRでは `.github/workflows/terraform-plan.yml` が自動的に
+`terraform plan` を実行し、結果をPRコメントとして投稿する（applyはしない）。
+`main` への push（PRのsquash merge）では `.github/workflows/deploy.yml` が
+`terraform/**` に変更があった場合のみ `terraform apply -auto-approve` を実行する
+（無ければこのステップ自体skipされる）。
+
+これらのワークフローが使うGitHubリポジトリシークレット（上記1〜3の認証情報と対応）:
+
+| シークレット名 | 対応する値 |
+|---|---|
+| `CLOUDFLARE_API_TOKEN` | 手順2で発行したCloudflare APIトークン |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflareアカウント ID（`terraform.tfvars` の `account_id` と同じ値） |
+| `TF_STATE_R2_ACCESS_KEY_ID` | 手順3で発行したR2 S3互換トークンのAccess Key ID |
+| `TF_STATE_R2_SECRET_ACCESS_KEY` | 手順3で発行したR2 S3互換トークンのSecret Access Key |
+
+いずれもTerraform state用の `bitcraft-tfstate` バケットや `enable_custom_domains`
+の既定値（false）とは独立しており、CI側から `enable_custom_domains` を上書きする
+ことは無い（Phase 8のカットオーバーは常に手動apply）。
