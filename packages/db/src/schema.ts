@@ -77,6 +77,10 @@ export const seminars = sqliteTable(
     // D1(applicationsテーブル)へ直接保存する自前実装に置き換えた（実装計画4章）。
     // セミナーごとに入力項目を自由に設定できる(PATCH /v1/seminars/:slug/apply-form)。
     applyFormJson: text("apply_form_json"),
+    // 申込確認メールのテンプレート(ApplicationEmailTemplate型)。未設定の場合は
+    // packages/shared の DEFAULT_APPLICATION_EMAIL_TEMPLATE を使う
+    // (PATCH /v1/seminars/:slug/confirmation-email で更新)。
+    confirmationEmailJson: text("confirmation_email_json"),
     metaDescription: text("meta_description").notNull(),
     metaKeywords: text("meta_keywords"),
     createdAt: text("created_at")
@@ -113,6 +117,10 @@ export const applications = sqliteTable(
     status: text("status", { enum: ["received", "confirmed", "cancelled"] })
       .notNull()
       .default("received"),
+    // 確認メールの送信結果。管理者API(GET /v1/seminars/:slug/applications)から
+    // 送信失敗を検知できるようにする（送信失敗しても申込自体は保存済みとして扱う）。
+    confirmationEmailStatus: text("confirmation_email_status", { enum: ["sent", "failed"] }),
+    confirmationEmailError: text("confirmation_email_error"),
     submittedAt: text("submitted_at")
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
@@ -126,6 +134,9 @@ export const applications = sqliteTable(
       "applications_status_check",
       sql`${table.status} IN ('received', 'confirmed', 'cancelled')`,
     ),
+    // confirmation_email_status には意図的にCHECK制約を付けない。既存テーブルへの
+    // 追加時にSQLiteの制約上テーブル再作成(rebuild)を要求され、それが本番D1で
+    // 原因不明のCHECK違反エラーを起こしたため。値の妥当性はAPI層(zod)でのみ担保する。
   }),
 );
 

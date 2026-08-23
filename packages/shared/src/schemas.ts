@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { APPLICATION_EMAIL_SENDER_DOMAIN } from "./email-template";
 
 // seminars.apply_form_json の入力バリデーション（PATCH /v1/seminars/:slug/apply-form）。
 // SeminarApplyFormField/SeminarApplyForm（types.ts）と形を一致させる。
@@ -26,4 +27,20 @@ export const updateApplyFormSchema = z.object({
 // validateApplyFormAnswers（apply-form.ts）で別途検証する。
 export const submitApplicationSchema = z.object({
   answers: z.record(z.string(), z.union([z.string(), z.array(z.string())])),
+});
+
+// seminars.confirmation_email_json の入力バリデーション
+// （PATCH /v1/seminars/:slug/confirmation-email）。
+// fromEmailはEmail Sendingで認証済みのドメイン(bitcraft.work)のアドレスのみ許可する。
+export const updateConfirmationEmailSchema = z.object({
+  fromName: z.string().min(1),
+  fromEmail: z
+    .string()
+    .email()
+    .refine((v) => v.toLowerCase().endsWith(`@${APPLICATION_EMAIL_SENDER_DOMAIN}`), {
+      message: `fromEmailは @${APPLICATION_EMAIL_SENDER_DOMAIN} のアドレスである必要があります`,
+    }),
+  subject: z.string().min(1),
+  bodyText: z.string().min(1),
+  bodyHtml: z.string().optional(),
 });

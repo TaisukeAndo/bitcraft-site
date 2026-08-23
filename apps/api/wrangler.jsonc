@@ -16,6 +16,13 @@
       "binding": "MEDIA",
       "bucket_name": "bitcraft-media"
     }
+  ],
+  // セミナー申込の確認メール送信用。bitcraft.work はEmail Sendingで認証済み
+  // （fromはこのドメインのアドレスのみ使用可能）。
+  "send_email": [
+    {
+      "name": "EMAIL"
+    }
   ]
   // Phase 8 で Custom Domain (api.bitcraft.work) を接続する。
 }
