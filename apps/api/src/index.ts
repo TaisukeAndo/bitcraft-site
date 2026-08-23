@@ -3,12 +3,16 @@ import { swaggerUI } from "@hono/swagger-ui";
 import type { Bindings } from "./lib/bindings";
 import { checkApiKey } from "./middleware/auth";
 import { registerSeminarApplicationRoutes } from "./routes/seminars";
+import { registerSeminarCrudRoutes } from "./routes/seminars-crud";
 import { registerEmailTemplateRoutes } from "./routes/emails";
+import { registerNewsRoutes } from "./routes/news";
+import { registerMediaRoutes } from "./routes/media";
+import { registerApiKeyRoutes } from "./routes/api-keys";
 import { runScheduledEmailSweep } from "./scheduled";
 
-// CMS API。news/seminarsのCRUD等はPhase 5で引き続き実装していく
-// （実装計画 4章）。ここではOpenAPIHonoによるSwagger UI (/v1/docs) の配線・
-// ヘルスチェック・認証確認・セミナー申込/メールテンプレート関連エンドポイントを持つ。
+// CMS API（実装計画 4章）。OpenAPIHonoによるSwagger UI (/v1/docs) の配線・
+// ヘルスチェック・認証確認に加え、news/seminars本体のCRUD・セミナー申込/
+// メールテンプレート・メディアアップロード・APIキー管理の各エンドポイントを持つ。
 const app = new OpenAPIHono<{ Bindings: Bindings }>();
 
 const healthRoute = createRoute({
@@ -48,8 +52,12 @@ app.openapi(authVerifyRoute, async (c) => {
   return c.json({ ok: true });
 });
 
+registerNewsRoutes(app);
+registerSeminarCrudRoutes(app);
 registerSeminarApplicationRoutes(app);
 registerEmailTemplateRoutes(app);
+registerMediaRoutes(app);
+registerApiKeyRoutes(app);
 
 const emailSweepRoute = createRoute({
   method: "post",
