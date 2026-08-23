@@ -280,7 +280,7 @@ export const TopPage: FC<{ latestNews: NewsRow[] }> = ({ latestNews }) => {
               <a class="contact-button white" href="mailto:ando1202taisuke@gmail.com">
                 メールを送る
               </a>
-              <a class="contact-button black" href="/contact" alt="お問い合わせフォーム">
+              <a class="contact-button black" href="/contact/" alt="お問い合わせフォーム">
                 お問い合わせ
               </a>
             </div>

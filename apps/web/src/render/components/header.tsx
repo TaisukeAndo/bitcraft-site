@@ -40,7 +40,7 @@ export function Header({ isHome = false }: { isHome?: boolean } = {}) {
             </a>
           </li>
           <li class="right">
-            <a class="contact-button" href="/contact">
+            <a class="contact-button" href="/contact/">
               <i class="fa-solid fa-envelope"></i>
               <p>Contact</p>
             </a>
