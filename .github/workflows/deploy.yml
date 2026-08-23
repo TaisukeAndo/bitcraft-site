@@ -1,0 +1,113 @@
+name: Deploy
+
+# main への push（= PRのsquash merge）で本番へ反映する（実装計画7章）。
+# var.enable_custom_domains が false のままの間（既定値）は、ここでapps/*を
+# デプロイしてもbitcraft.workの実際のルーティング（GitHub Pages legacy build）には
+# 影響しない。カットオーバー(Phase 8)はこのワークフローではなく、
+# `-var enable_custom_domains=true` を明示指定した手動apply（レビュー可能な
+# variables.tfの既定値変更を伴う）で行う。
+#
+# 失敗時はワークフローを失敗させて通知するのみで自動ロールバックはしない。
+# 手動復旧は `wrangler rollback`（各apps/*ディレクトリで実行）を使う。
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      terraform: ${{ steps.check.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      # このリポジトリはPRを常にsquash mergeする運用(release-pr Skill)のため、
+      # push:mainは常にちょうど1コミット分の差分になる。それを前提にHEAD^との
+      # 差分でterraform/**の変更有無を判定する（サードパーティのpaths-filter
+      # actionを使わず、標準のgit diffのみで完結させる）。
+      - id: check
+        run: |
+          if git diff --name-only HEAD^ HEAD | grep -q '^terraform/'; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  terraform-apply:
+    needs: changes
+    if: needs.changes.outputs.terraform == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TF_VAR_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.TF_STATE_R2_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_STATE_R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform init -input=false
+      - run: terraform apply -input=false -auto-approve
+
+  deploy-workers:
+    needs: [changes, terraform-apply]
+    # terraform-applyがskip(terraform/**変更無し)でもsuccess(変更ありapply成功)でも進む。
+    # terraform-applyがfailureの場合のみブロックする。
+    if: |
+      always() &&
+      needs.changes.result == 'success' &&
+      (needs.terraform-apply.result == 'success' || needs.terraform-apply.result == 'skipped')
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # D1マイグレーションはapps/apiのWorkerコードデプロイより先に適用する
+      # （migrations_dirはapps/api/wrangler.jsoncにのみ設定。実装計画2章）。
+      - name: Apply D1 migrations
+        run: pnpm --filter @bitcraft/api exec wrangler d1 migrations apply bitcraft-cms --remote
+
+      # 依存断絶を避けるため api → mcp → web の順でデプロイする（実装計画7章）。
+      - name: Deploy apps/api
+        run: pnpm --filter @bitcraft/api exec wrangler deploy
+
+      - name: Deploy apps/mcp
+        run: pnpm --filter @bitcraft/mcp exec wrangler deploy
+
+      - name: Deploy apps/web
+        run: pnpm --filter @bitcraft/web exec wrangler deploy
+
+      # workers.dev URLでの簡易疎通確認（Custom Domain未接続のPhase 8以前はこちらを使う）。
+      - name: Smoke test
+        run: |
+          set -e
+          curl -sf https://bitcraft-api.ando1202taisuke.workers.dev/v1/health
+          curl -sf -o /dev/null https://bitcraft-web.ando1202taisuke.workers.dev/
+          status=$(curl -s -o /dev/null -w "%{http_code}" https://bitcraft-mcp.ando1202taisuke.workers.dev/mcp)
+          if [ "$status" != "401" ]; then
+            echo "expected 401 (unauthenticated) from /mcp, got $status" >&2
+            exit 1
+          fi
