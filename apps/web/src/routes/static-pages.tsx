@@ -14,7 +14,8 @@ export function registerStaticPageRoutes(app: Hono<{ Bindings: Bindings }>) {
           description="bitcraftは「n=1から幸せにする」をミッションに掲げています。最初から広く汎用性を求めると、誰の幸せにもつながらないことがあります。だからこそ、一人の心からの幸せを大切にし、それが多くの人に愛されるサービスへと広がると信じています。"
           keywords="bitcraft,IT,design,島根,システム開発,webサイト,3DCG,安藤太亮"
           canonicalPath="/contact/"
-          extraStyles={["/contact/contact-style.css"]}
+          extraStyles={["/contact/contact-style.css", "/css/form-submit.css"]}
+          bodyScripts={["/js/form-submit.js"]}
         >
           <ContactPage />
         </Layout>,

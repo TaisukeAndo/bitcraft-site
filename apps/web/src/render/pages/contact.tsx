@@ -5,59 +5,33 @@ import { CONTACT_INQUIRY_TYPES } from "@bitcraft/shared";
 // POST /contact/ へ送信する自前実装に置き換えた（セミナー申込
 // (seminar-apply.tsx)と同じ構造。実装計画・ユーザー要望対応）。
 // no-corsではなくなったため、実際のレスポンス（成功/失敗）を読んで表示を切り替えられる。
+//
+// 送信中の二重送信防止・ローディング表示は共通コンポーネント
+// (public/js/form-submit.js + public/css/form-submit.css)に委譲する
+// （元々ボタンを押しても状態が変わらず何度でも送信できてしまう不具合があったため、
+// セミナー申込フォームとも共通化した。ユーザー要望対応）。
 function contactInlineScript(): string {
   return `
 (function () {
-  var form = document.getElementById("contact-form");
-  var thanks = document.getElementById("thanks-message");
-  var errorBox = document.getElementById("contact-error");
-  if (!form) return;
-
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    if (errorBox) { errorBox.style.display = "none"; errorBox.textContent = ""; }
-
-    var formData = new FormData(form);
-    var body = {
-      name: formData.get("name") || "",
-      email: formData.get("email") || "",
-      affiliation: formData.get("affiliation") || "",
-      inquiryType: formData.get("inquiryType") || "",
-      message: formData.get("message") || "",
-      privacyConsent: formData.get("privacyConsent") === "true",
-    };
-
-    fetch(window.location.pathname, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(body),
-    })
-      .then(function (res) {
-        return res.json().then(function (data) { return { ok: res.ok, data: data }; });
-      })
-      .then(function (result) {
-        if (!result.ok) {
-          var message = result.data && result.data.error ? result.data.error : "送信に失敗しました。再度お試しください。";
-          if (errorBox) {
-            errorBox.textContent = message;
-            errorBox.style.display = "block";
-          } else {
-            alert(message);
-          }
-          return;
-        }
-        form.style.display = "none";
-        if (thanks) thanks.style.display = "block";
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      })
-      .catch(function () {
-        if (errorBox) {
-          errorBox.textContent = "送信に失敗しました。再度お試しください。";
-          errorBox.style.display = "block";
-        } else {
-          alert("送信に失敗しました。再度お試しください。");
-        }
-      });
+  // bitcraftFormSubmitは/js/form-submit.js(defer読み込み)が定義するため、
+  // この位置のインラインscriptより後に実行される。DOMContentLoaded後まで待つ
+  // ことで確実に定義済みの状態で呼び出す。
+  document.addEventListener("DOMContentLoaded", function () {
+    window.bitcraftFormSubmit({
+      formId: "contact-form",
+      errorBoxId: "contact-error",
+      thanksId: "thanks-message",
+      buildBody: function (formData) {
+        return {
+          name: formData.get("name") || "",
+          email: formData.get("email") || "",
+          affiliation: formData.get("affiliation") || "",
+          inquiryType: formData.get("inquiryType") || "",
+          message: formData.get("message") || "",
+          privacyConsent: formData.get("privacyConsent") === "true",
+        };
+      },
+    });
   });
 })();
 `;

@@ -104,7 +104,8 @@ export function registerSeminarRoutes(app: Hono<{ Bindings: Bindings }>) {
           title={`参加申し込み | ${row.title.replace(/<br>/g, "")}`}
           description={`${row.title.replace(/<br>/g, "")}（${row.eventDateDisplay ?? row.eventDate}）の参加申し込みフォームです。`}
           canonicalPath={`/service/seminar/${row.slug}/apply/`}
-          extraStyles={[`/service/seminar/${row.slug}/apply/apply-style.css`]}
+          extraStyles={[`/service/seminar/${row.slug}/apply/apply-style.css`, "/css/form-submit.css"]}
+          bodyScripts={["/js/form-submit.js"]}
         >
           <SeminarApplyPage seminar={row} form={form} registrationClosed={registrationClosed} />
         </Layout>,

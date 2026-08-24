@@ -82,80 +82,59 @@ function groupBySection(fields: SeminarApplyFormField[]): { section: string; fie
 // （実装計画: apps/webがapps/apiへService Binding経由で委譲、ユーザー要望対応）。
 // no-corsではなくなったため、実際のレスポンス（成功/失敗）を読んで表示を切り替えられる
 // （旧実装は送信できたと仮定して「完了」表示を出すだけだった）。
+//
+// 送信中の二重送信防止・ローディング表示は共通コンポーネント
+// (public/js/form-submit.js + public/css/form-submit.css)に委譲する
+// （元々ボタンを押しても状態が変わらず何度でも送信できてしまう不具合があったため、
+// お問い合わせフォームとも共通化した。ユーザー要望対応）。
 function applyInlineScript(): string {
   return `
 (function () {
-  var form = document.getElementById("apply-form");
-  var thanks = document.getElementById("thanks-message");
-  var errorBox = document.getElementById("apply-error");
-  if (!form) return;
+  // bitcraftFormSubmitは/js/form-submit.js(defer読み込み)が定義するため、
+  // この位置のインラインscriptより後に実行される。DOMContentLoaded後まで待つ
+  // ことで確実に定義済みの状態で呼び出す。
+  document.addEventListener("DOMContentLoaded", function () {
+    var form = document.getElementById("apply-form");
+    if (!form) return;
 
-  document.querySelectorAll(".form-group").forEach(function (group) {
-    var otherTriggers = group.querySelectorAll("[data-other-trigger]");
-    var otherInput = group.querySelector(".form-control--other");
-    if (!otherTriggers.length || !otherInput) return;
-    function sync() {
-      var checked = Array.prototype.some.call(otherTriggers, function (input) { return input.checked; });
-      otherInput.style.display = checked ? "block" : "none";
-      if (!checked) otherInput.value = "";
-    }
-    group.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(function (input) {
-      input.addEventListener("change", sync);
-    });
-    sync();
-  });
-
-  function buildAnswers() {
-    var answers = {};
-    var formData = new FormData(form);
-    formData.forEach(function (value, key) {
-      if (value === "__other_option__") return; // 「その他」トリガー自体は送らない
-      if (answers[key] === undefined) {
-        answers[key] = value;
-      } else if (Array.isArray(answers[key])) {
-        answers[key].push(value);
-      } else {
-        answers[key] = [answers[key], value];
+    document.querySelectorAll(".form-group").forEach(function (group) {
+      var otherTriggers = group.querySelectorAll("[data-other-trigger]");
+      var otherInput = group.querySelector(".form-control--other");
+      if (!otherTriggers.length || !otherInput) return;
+      function sync() {
+        var checked = Array.prototype.some.call(otherTriggers, function (input) { return input.checked; });
+        otherInput.style.display = checked ? "block" : "none";
+        if (!checked) otherInput.value = "";
       }
+      group.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(function (input) {
+        input.addEventListener("change", sync);
+      });
+      sync();
     });
-    return answers;
-  }
 
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    if (errorBox) { errorBox.style.display = "none"; errorBox.textContent = ""; }
-
-    fetch(window.location.pathname, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ answers: buildAnswers() }),
-    })
-      .then(function (res) {
-        return res.json().then(function (data) { return { ok: res.ok, data: data }; });
-      })
-      .then(function (result) {
-        if (!result.ok) {
-          var message = result.data && result.data.error ? result.data.error : "送信に失敗しました。再度お試しください。";
-          if (errorBox) {
-            errorBox.textContent = message;
-            errorBox.style.display = "block";
-          } else {
-            alert(message);
-          }
-          return;
-        }
-        form.style.display = "none";
-        if (thanks) thanks.style.display = "block";
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      })
-      .catch(function () {
-        if (errorBox) {
-          errorBox.textContent = "送信に失敗しました。再度お試しください。";
-          errorBox.style.display = "block";
+    function buildAnswers(formData) {
+      var answers = {};
+      formData.forEach(function (value, key) {
+        if (value === "__other_option__") return; // 「その他」トリガー自体は送らない
+        if (answers[key] === undefined) {
+          answers[key] = value;
+        } else if (Array.isArray(answers[key])) {
+          answers[key].push(value);
         } else {
-          alert("送信に失敗しました。再度お試しください。");
+          answers[key] = [answers[key], value];
         }
       });
+      return answers;
+    }
+
+    window.bitcraftFormSubmit({
+      formId: "apply-form",
+      errorBoxId: "apply-error",
+      thanksId: "thanks-message",
+      buildBody: function (formData) {
+        return { answers: buildAnswers(formData) };
+      },
+    });
   });
 })();
 `;
