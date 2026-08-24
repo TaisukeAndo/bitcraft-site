@@ -108,6 +108,12 @@ export function registerContactRoutes(app: OpenAPIHono<{ Bindings: Bindings }>) 
 
     // 運用者への通知・問い合わせ者への確認、どちらもベストエフォート送信
     // （申込自体の成否には影響させない。セミナー申込と同じ方針）。
+    // メール送信(Cloudflare Email SendingへのHTTP往復)をレスポンス返却前に
+    // 待つと、フォーム送信のたびに数百ms〜数秒の体感遅延になり、その間に
+    // ユーザーが送信ボタンを連打してしまう一因になっていた。DB保存が
+    // 完了した時点で201を返し、メール送信自体はc.executionCtx.waitUntil()で
+    // レスポンス後もWorkerを生かしたままバックグラウンド実行する
+    // （auth.tsのlast_used_at更新と同じパターン）。
     const inquiryDetail = `お名前: ${body.name}
 メールアドレス: ${body.email}
 ご所属: ${body.affiliation}
@@ -116,13 +122,15 @@ export function registerContactRoutes(app: OpenAPIHono<{ Bindings: Bindings }>) 
 ご相談内容:
 ${body.message}`;
 
-    const [notification, confirmation] = await Promise.all([
-      sendEmail(c.env, ADMIN_NOTIFICATION_EMAIL, `【bitcraft】お問い合わせ: ${body.inquiryType}`, inquiryDetail),
-      sendEmail(
-        c.env,
-        body.email,
-        "【bitcraft】お問い合わせありがとうございます",
-        `${body.name} 様
+    c.executionCtx.waitUntil(
+      (async () => {
+        const [notification, confirmation] = await Promise.all([
+          sendEmail(c.env, ADMIN_NOTIFICATION_EMAIL, `【bitcraft】お問い合わせ: ${body.inquiryType}`, inquiryDetail),
+          sendEmail(
+            c.env,
+            body.email,
+            "【bitcraft】お問い合わせありがとうございます",
+            `${body.name} 様
 
 この度はお問い合わせいただき、誠にありがとうございます。
 以下の内容で受け付けいたしました。担当者より追ってご連絡いたしますので、今しばらくお待ちください。
@@ -135,19 +143,21 @@ ${body.message}
 --
 bitcraft
 https://bitcraft.work/`,
-      ),
-    ]);
+          ),
+        ]);
 
-    await db
-      .update(contacts)
-      .set({
-        notificationEmailStatus: notification.status,
-        notificationEmailError: notification.status === "failed" ? notification.error : null,
-        confirmationEmailStatus: confirmation.status,
-        confirmationEmailError: confirmation.status === "failed" ? confirmation.error : null,
-      })
-      .where(eq(contacts.id, row.id))
-      .run();
+        await db
+          .update(contacts)
+          .set({
+            notificationEmailStatus: notification.status,
+            notificationEmailError: notification.status === "failed" ? notification.error : null,
+            confirmationEmailStatus: confirmation.status,
+            confirmationEmailError: confirmation.status === "failed" ? confirmation.error : null,
+          })
+          .where(eq(contacts.id, row.id))
+          .run();
+      })(),
+    );
 
     return c.json({ id: row.id, submittedAt: row.submittedAt }, 201);
   });

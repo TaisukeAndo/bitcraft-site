@@ -1,0 +1,8 @@
+/* js/form-submit.js とセットで使う共通コンポーネント。
+   送信中はボタンをdisabledにして「送信中...」表示に切り替えるため、
+   見た目でも押せない状態であることが分かるようにする。 */
+.btn:disabled,
+.btn.is-loading {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

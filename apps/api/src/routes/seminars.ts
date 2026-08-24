@@ -164,38 +164,51 @@ export function registerSeminarApplicationRoutes(app: OpenAPIHono<{ Bindings: Bi
     // 申込時点(on_submit)のメールを全て送信する（ベストエフォート、申込自体の
     // 成否には影響させない）。1件も設定されていないセミナーでは、申込確認メール
     // PR時点の挙動を退行させないようデフォルト文面にフォールバックする。
-    const onSubmitTemplates = await db
-      .select()
-      .from(emailTemplates)
-      .where(eq(emailTemplates.seminarId, seminar.id));
-    const enabledOnSubmit = onSubmitTemplates.filter((t) => t.triggerType === "on_submit" && t.enabled);
+    //
+    // メール送信(Cloudflare Email SendingへのHTTP往復、テンプレート数だけ発生)を
+    // レスポンス返却前に待つと、申込のたびに数百ms〜数秒の体感遅延になり、その間に
+    // ユーザーが送信ボタンを連打してしまう一因になっていた。DB保存が完了した
+    // 時点で201を返し、メール送信自体はc.executionCtx.waitUntil()でレスポンス後も
+    // Workerを生かしたままバックグラウンド実行する（auth.tsのlast_used_at更新と
+    // 同じパターン）。あわせて複数テンプレートを直列awaitしていたのを並列化した。
+    c.executionCtx.waitUntil(
+      (async () => {
+        const onSubmitTemplates = await db
+          .select()
+          .from(emailTemplates)
+          .where(eq(emailTemplates.seminarId, seminar.id));
+        const enabledOnSubmit = onSubmitTemplates.filter((t) => t.triggerType === "on_submit" && t.enabled);
 
-    const toSend =
-      enabledOnSubmit.length > 0
-        ? enabledOnSubmit.map((t) => ({ id: t.id as number | null, key: t.key, content: toDispatchContent(t) }))
-        : [{ id: null, key: "confirmation", content: DEFAULT_ON_SUBMIT_CONTENT }];
+        const toSend =
+          enabledOnSubmit.length > 0
+            ? enabledOnSubmit.map((t) => ({ id: t.id as number | null, key: t.key, content: toDispatchContent(t) }))
+            : [{ id: null, key: "confirmation", content: DEFAULT_ON_SUBMIT_CONTENT }];
 
-    for (const item of toSend) {
-      const result = await dispatchTemplatedEmail(
-        c.env,
-        seminar,
-        item.content,
-        answers as ApplicationAnswers,
-        applicantNameStr,
-        applicantEmailStr,
-      );
-      if (result.status === "skipped" || item.id === null) continue; // 宛先不明、またはフォールバック文面は履歴を残さない
-      await db
-        .insert(applicationEmailSends)
-        .values({
-          applicationId: row.id,
-          emailTemplateId: item.id,
-          status: result.status,
-          error: result.status === "failed" ? result.error : null,
-        })
-        .onConflictDoNothing()
-        .run();
-    }
+        await Promise.all(
+          toSend.map(async (item) => {
+            const result = await dispatchTemplatedEmail(
+              c.env,
+              seminar,
+              item.content,
+              answers as ApplicationAnswers,
+              applicantNameStr,
+              applicantEmailStr,
+            );
+            if (result.status === "skipped" || item.id === null) return; // 宛先不明、またはフォールバック文面は履歴を残さない
+            await db
+              .insert(applicationEmailSends)
+              .values({
+                applicationId: row.id,
+                emailTemplateId: item.id,
+                status: result.status,
+                error: result.status === "failed" ? result.error : null,
+              })
+              .onConflictDoNothing()
+              .run();
+          }),
+        );
+      })(),
+    );
 
     return c.json({ id: row.id, submittedAt: row.submittedAt }, 201);
   });
