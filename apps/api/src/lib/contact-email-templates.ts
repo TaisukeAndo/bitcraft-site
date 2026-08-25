@@ -3,6 +3,7 @@ import { contactEmailTemplates, type ContactEmailTemplateRow } from "@bitcraft/d
 import { DEFAULT_CONTACT_CONFIRMATION_TEMPLATE, DEFAULT_CONTACT_NOTIFICATION_TEMPLATE } from "@bitcraft/shared";
 import type { Bindings } from "./bindings";
 import { getDb } from "./db";
+import { decodeRecipients } from "./email-recipients";
 
 export type ContactEmailTemplateKey = "notification" | "confirmation";
 
@@ -14,6 +15,8 @@ export type ResolvedContactEmailTemplate = {
   subject: string;
   bodyText: string;
   bodyHtml: string | null;
+  cc: string[] | null;
+  bcc: string[] | null;
 };
 
 const DEFAULT_LABELS: Record<ContactEmailTemplateKey, string> = {
@@ -55,6 +58,8 @@ export function toResolved(
       subject: row.subject,
       bodyText: row.bodyText,
       bodyHtml: row.bodyHtml,
+      cc: decodeRecipients(row.cc),
+      bcc: decodeRecipients(row.bcc),
     };
   }
   const fallback = key === "notification" ? DEFAULT_CONTACT_NOTIFICATION_TEMPLATE : DEFAULT_CONTACT_CONFIRMATION_TEMPLATE;
@@ -66,5 +71,7 @@ export function toResolved(
     subject: fallback.subject,
     bodyText: fallback.bodyText,
     bodyHtml: fallback.bodyHtml ?? null,
+    cc: fallback.cc ?? null,
+    bcc: fallback.bcc ?? null,
   };
 }

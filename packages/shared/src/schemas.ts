@@ -65,6 +65,8 @@ export const emailContentBaseSchema = z.object({
   subject: z.string().min(1),
   bodyText: z.string().min(1),
   bodyHtml: z.string().optional(),
+  cc: z.array(z.string().email()).optional(), // Toに加えて常に写しを送りたい宛先
+  bcc: z.array(z.string().email()).optional(), // To/Ccに見せずに写しを送りたい宛先
 });
 
 const emailContentSchema = emailContentBaseSchema.extend({

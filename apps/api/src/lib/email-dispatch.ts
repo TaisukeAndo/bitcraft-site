@@ -6,6 +6,7 @@ import {
 import type { EmailTemplateRow, SeminarRow } from "@bitcraft/db";
 import type { Bindings } from "./bindings";
 import { sendMail } from "./smtp-mailer";
+import { decodeRecipients } from "./email-recipients";
 
 function pickApplicantName(answers: ApplicationAnswers, fallback: string | null): string {
   const value = answers["name"];
@@ -28,6 +29,8 @@ export type EmailDispatchContent = {
   subject: string;
   bodyText: string;
   bodyHtml?: string | null;
+  cc?: string[] | null;
+  bcc?: string[] | null;
 };
 
 export type EmailDispatchResult = { status: "sent" } | { status: "failed"; error: string } | { status: "skipped" };
@@ -63,6 +66,8 @@ export async function dispatchTemplatedEmail(
       subject: renderEmailTemplate(content.subject, context),
       text: renderEmailTemplate(content.bodyText, context),
       html: content.bodyHtml ? renderEmailTemplate(content.bodyHtml, context) : undefined,
+      cc: content.cc,
+      bcc: content.bcc,
     });
     return { status: "sent" };
   } catch (error) {
@@ -79,6 +84,8 @@ export function toDispatchContent(row: EmailTemplateRow): EmailDispatchContent {
     subject: row.subject,
     bodyText: row.bodyText,
     bodyHtml: row.bodyHtml,
+    cc: decodeRecipients(row.cc),
+    bcc: decodeRecipients(row.bcc),
   };
 }
 

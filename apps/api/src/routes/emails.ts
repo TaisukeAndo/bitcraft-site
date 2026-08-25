@@ -5,6 +5,7 @@ import { createEmailTemplateSchema, emailTriggerSchema, updateEmailTemplateSchem
 import type { Bindings } from "../lib/bindings";
 import { getDb } from "../lib/db";
 import { checkApiKey } from "../middleware/auth";
+import { decodeRecipients, encodeRecipients } from "../lib/email-recipients";
 
 const emailTemplateResponseSchema = z.object({
   key: z.string(),
@@ -16,6 +17,8 @@ const emailTemplateResponseSchema = z.object({
   subject: z.string(),
   bodyText: z.string(),
   bodyHtml: z.string().nullable(),
+  cc: z.array(z.string()).nullable(),
+  bcc: z.array(z.string()).nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
@@ -33,6 +36,8 @@ type EmailTemplateRowLike = {
   subject: string;
   bodyText: string;
   bodyHtml: string | null;
+  cc: string | null;
+  bcc: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -59,6 +64,8 @@ function toResponse(row: EmailTemplateRowLike): z.infer<typeof emailTemplateResp
     subject: row.subject,
     bodyText: row.bodyText,
     bodyHtml: row.bodyHtml,
+    cc: decodeRecipients(row.cc),
+    bcc: decodeRecipients(row.bcc),
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };
@@ -158,6 +165,8 @@ export function registerEmailTemplateRoutes(app: OpenAPIHono<{ Bindings: Binding
         subject: body.subject,
         bodyText: body.bodyText,
         bodyHtml: body.bodyHtml ?? null,
+        cc: encodeRecipients(body.cc),
+        bcc: encodeRecipients(body.bcc),
       })
       .returning();
 
@@ -229,6 +238,8 @@ export function registerEmailTemplateRoutes(app: OpenAPIHono<{ Bindings: Binding
         subject: body.subject ?? existing.subject,
         bodyText: body.bodyText ?? existing.bodyText,
         bodyHtml: body.bodyHtml === undefined ? existing.bodyHtml : body.bodyHtml,
+        cc: body.cc === undefined ? existing.cc : encodeRecipients(body.cc),
+        bcc: body.bcc === undefined ? existing.bcc : encodeRecipients(body.bcc),
         updatedAt: new Date().toISOString(),
       })
       .where(eq(emailTemplates.id, existing.id))

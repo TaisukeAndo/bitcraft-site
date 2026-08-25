@@ -26,6 +26,8 @@ const emailContentShape = {
   subject: z.string().min(1),
   bodyText: z.string().min(1),
   bodyHtml: z.string().optional(),
+  cc: z.array(z.string().email()).optional().describe("Toに加えて常に写しを送りたい宛先"),
+  bcc: z.array(z.string().email()).optional().describe("To/Ccに見せずに写しを送りたい宛先"),
 };
 
 export function registerEmailTools(server: McpServer, env: Bindings, token: string) {
@@ -65,6 +67,8 @@ export function registerEmailTools(server: McpServer, env: Bindings, token: stri
         subject: emailContentShape.subject.optional(),
         bodyText: emailContentShape.bodyText.optional(),
         bodyHtml: emailContentShape.bodyHtml,
+        cc: emailContentShape.cc,
+        bcc: emailContentShape.bcc,
       },
     },
     async ({ slug, key, ...body }) =>

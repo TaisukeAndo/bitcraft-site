@@ -11,6 +11,8 @@ export type ApplicationEmailTemplate = {
   subject: string; // {{token}}プレースホルダーを含められる
   bodyText: string; // {{token}}プレースホルダーを含められる
   bodyHtml?: string; // 任意。指定しない場合はbodyTextのみのプレーンテキストメールになる
+  cc?: string[]; // 任意。To以外に常に写しを送りたい宛先
+  bcc?: string[]; // 任意。To/Ccに見せずに写しを送りたい宛先
 };
 
 export const APPLICATION_EMAIL_SENDER_DOMAIN = "bitcraft.work";
