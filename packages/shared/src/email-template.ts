@@ -1,6 +1,9 @@
 // セミナー申込の確認メール。「メールの内容自体もAPIでセミナーごとに
 // 設定管理できるようにしたい」というユーザー要望への対応。
-// fromEmailは常に `*@bitcraft.work`（Email Sendingで認証済みのドメイン）
+// fromEmailは常に `*@bitcraft.work`（ドメイン自体はzodスキーマ上どのアドレスも
+// 許可するが、実際の送信はGmail SMTPリレー(apps/api/src/lib/smtp-mailer.ts)
+// 経由で、Gmail側の「送信元アドレス」として検証済みのcontact@bitcraft.workの
+// みが送信可能。他のアドレスを指定した場合は送信時にfailedとして記録される）
 // である必要がある。
 export type ApplicationEmailTemplate = {
   fromName: string;
@@ -14,7 +17,7 @@ export const APPLICATION_EMAIL_SENDER_DOMAIN = "bitcraft.work";
 
 export const DEFAULT_APPLICATION_EMAIL_TEMPLATE: ApplicationEmailTemplate = {
   fromName: "bitcraft",
-  fromEmail: `noreply@${APPLICATION_EMAIL_SENDER_DOMAIN}`,
+  fromEmail: `contact@${APPLICATION_EMAIL_SENDER_DOMAIN}`,
   subject: "【{{seminarTitle}}】お申し込みありがとうございます",
   bodyText: `{{applicantName}} 様
 
