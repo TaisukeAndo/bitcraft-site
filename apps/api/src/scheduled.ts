@@ -1,9 +1,9 @@
-import { and, eq, isNull, ne } from "drizzle-orm";
-import { applicationEmailSends, applications, emailTemplates, seminars } from "@bitcraft/db";
-import { isTriggerDue, type ApplicationAnswers, type EmailTrigger } from "@bitcraft/shared";
+import { and, eq, ne } from "drizzle-orm";
+import { emailTemplates, seminars } from "@bitcraft/db";
+import { isTriggerDue, type EmailTrigger } from "@bitcraft/shared";
 import type { Bindings } from "./lib/bindings";
 import { getDb } from "./lib/db";
-import { dispatchTemplatedEmail, toDispatchContent } from "./lib/email-dispatch";
+import { dispatchTemplateToPendingApplications } from "./lib/email-dispatch";
 
 function toEmailTrigger(row: {
   triggerType: "on_submit" | "relative_to_event" | "absolute";
@@ -24,9 +24,10 @@ function toEmailTrigger(row: {
 
 // 開催日基準(relative_to_event)・絶対日時(absolute)のメールは、申込という
 // ユーザー操作を起点にできないため、Cronトリガー（wrangler.jsonc triggers.crons）
-// で定期的に「配信すべきテンプレートが無いか」をスイープする。
-// 同一テンプレート×同一申込への二重送信は application_email_sends の
-// UNIQUE制約(applicationId, emailTemplateId)で最終的に防ぐ。
+// で定期的に「配信すべきテンプレートが無いか」をスイープする。実際の一斉送信
+// ロジック（同一テンプレート×同一申込への二重送信防止を含む）は
+// lib/email-dispatch.ts の dispatchTemplateToPendingApplications と共有する
+// （routes/emails.ts の POST .../send=手動即時ブロードキャストも同じ関数を使う）。
 export async function runScheduledEmailSweep(env: Bindings): Promise<{ checked: number; sent: number; failed: number }> {
   const db = getDb(env);
   const now = new Date();
@@ -48,45 +49,9 @@ export async function runScheduledEmailSweep(env: Bindings): Promise<{ checked: 
 
     checked += 1;
 
-    // このテンプレートについてまだ送信していない申込を取得
-    const pending = await db
-      .select({ application: applications })
-      .from(applications)
-      .leftJoin(
-        applicationEmailSends,
-        and(
-          eq(applicationEmailSends.applicationId, applications.id),
-          eq(applicationEmailSends.emailTemplateId, template.id),
-        ),
-      )
-      .where(and(eq(applications.seminarId, seminar.id), isNull(applicationEmailSends.id)));
-
-    for (const { application } of pending) {
-      const answers = JSON.parse(application.answersJson) as ApplicationAnswers;
-      const result = await dispatchTemplatedEmail(
-        env,
-        seminar,
-        toDispatchContent(template),
-        answers,
-        application.applicantName,
-        application.applicantEmail,
-      );
-      if (result.status === "skipped") continue;
-
-      if (result.status === "sent") sent += 1;
-      else failed += 1;
-
-      await db
-        .insert(applicationEmailSends)
-        .values({
-          applicationId: application.id,
-          emailTemplateId: template.id,
-          status: result.status,
-          error: result.status === "failed" ? result.error : null,
-        })
-        .onConflictDoNothing()
-        .run();
-    }
+    const result = await dispatchTemplateToPendingApplications(env, seminar, template);
+    sent += result.sent;
+    failed += result.failed;
   }
 
   return { checked, sent, failed };

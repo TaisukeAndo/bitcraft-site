@@ -1,11 +1,14 @@
 import { createRoute, z, type OpenAPIHono } from "@hono/zod-openapi";
 import { and, eq } from "drizzle-orm";
-import { seminars, emailTemplates, applicationEmailSends } from "@bitcraft/db";
+import { seminars, emailTemplates, applicationEmailSends, type EmailTemplateRow, type SeminarRow } from "@bitcraft/db";
 import { createEmailTemplateSchema, emailTriggerSchema, updateEmailTemplateSchema } from "@bitcraft/shared";
 import type { Bindings } from "../lib/bindings";
 import { getDb } from "../lib/db";
 import { checkApiKey } from "../middleware/auth";
 import { decodeRecipients, encodeRecipients } from "../lib/email-recipients";
+import { dispatchSeminarTemplateTest, dispatchTemplateToPendingApplications, toDispatchContent } from "../lib/email-dispatch";
+
+const testSendResultSchema = z.object({ status: z.enum(["sent", "failed", "skipped"]), error: z.string().nullable() });
 
 const emailTemplateResponseSchema = z.object({
   key: z.string(),
@@ -21,7 +24,22 @@ const emailTemplateResponseSchema = z.object({
   bcc: z.array(z.string()).nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
+  testSend: testSendResultSchema.optional(),
 });
+
+// テンプレート保存(POST/PATCH)と同時にtestSendToが指定されていればテスト送信する
+// 共通ヘルパー。routes/contact-emails.tsと同様、保存とテストを1リクエストで
+// 済ませたいというユーザー要望に応じたもの。
+async function runTestSendIfRequested(
+  env: Bindings,
+  seminar: SeminarRow,
+  testSendTo: string | undefined,
+  row: EmailTemplateRow,
+): Promise<z.infer<typeof testSendResultSchema> | undefined> {
+  if (!testSendTo) return undefined;
+  const result = await dispatchSeminarTemplateTest(env, seminar, toDispatchContent(row), testSendTo);
+  return result.status === "failed" ? { status: "failed", error: result.error } : { status: result.status, error: null };
+}
 
 type EmailTemplateRowLike = {
   key: string;
@@ -136,7 +154,7 @@ export function registerEmailTemplateRoutes(app: OpenAPIHono<{ Bindings: Binding
     const { slug } = c.req.valid("param");
     const body = c.req.valid("json");
     const db = getDb(c.env);
-    const seminar = await db.select({ id: seminars.id }).from(seminars).where(eq(seminars.slug, slug)).get();
+    const seminar = await db.select().from(seminars).where(eq(seminars.slug, slug)).get();
     if (!seminar) return c.json({ error: "Not Found" }, 404);
 
     const existing = await db
@@ -172,7 +190,8 @@ export function registerEmailTemplateRoutes(app: OpenAPIHono<{ Bindings: Binding
 
     const row = inserted[0];
     if (!row) return c.json({ error: "作成に失敗しました" }, 404);
-    return c.json(toResponse(row), 201);
+    const testSend = await runTestSendIfRequested(c.env, seminar, body.testSendTo, row);
+    return c.json({ ...toResponse(row), testSend }, 201);
   });
 
   // PATCH /v1/seminars/{slug}/emails/{key} ----------------------------------
@@ -203,7 +222,7 @@ export function registerEmailTemplateRoutes(app: OpenAPIHono<{ Bindings: Binding
     const { slug, key } = c.req.valid("param");
     const body = c.req.valid("json");
     const db = getDb(c.env);
-    const seminar = await db.select({ id: seminars.id }).from(seminars).where(eq(seminars.slug, slug)).get();
+    const seminar = await db.select().from(seminars).where(eq(seminars.slug, slug)).get();
     if (!seminar) return c.json({ error: "Not Found" }, 404);
 
     const existing = await db
@@ -246,7 +265,55 @@ export function registerEmailTemplateRoutes(app: OpenAPIHono<{ Bindings: Binding
       .run();
 
     const updated = await db.select().from(emailTemplates).where(eq(emailTemplates.id, existing.id)).get();
-    return c.json(toResponse(updated!), 200);
+    const testSend = await runTestSendIfRequested(c.env, seminar, body.testSendTo, updated!);
+    return c.json({ ...toResponse(updated!), testSend }, 200);
+  });
+
+  // POST /v1/seminars/{slug}/emails/{key}/send ------------------------------
+  // 「同じセミナーの参加者にメールを一斉送信したい」というユーザー要望への対応。
+  // トリガー(relative_to_event/absolute)の時刻・enabledの状態に関わらず、今すぐ
+  // このテンプレートをまだ受け取っていない全申込者へ配信する（管理者による
+  // 明示的な手動ブロードキャスト）。scheduled.tsの定期スイープと同じ
+  // dispatchTemplateToPendingApplicationsを使うため、二重送信防止の仕組みは共通。
+  const sendNowRoute = createRoute({
+    method: "post",
+    path: "/v1/seminars/{slug}/emails/{key}/send",
+    summary: "このテンプレートをまだ受け取っていない全申込者へ今すぐ一斉送信する",
+    tags: ["emails"],
+    security: [{ bearerAuth: [] }],
+    request: { params: z.object({ slug: z.string(), key: z.string() }) },
+    responses: {
+      200: {
+        description: "配信結果",
+        content: {
+          "application/json": {
+            schema: z.object({ pendingCount: z.number(), sent: z.number(), failed: z.number() }),
+          },
+        },
+      },
+      401: { description: "認証エラー" },
+      404: { description: "セミナーまたはテンプレートが見つからない" },
+    },
+  });
+
+  app.openapi(sendNowRoute, async (c) => {
+    const authError = await checkApiKey(c);
+    if (authError) return authError;
+
+    const { slug, key } = c.req.valid("param");
+    const db = getDb(c.env);
+    const seminar = await db.select().from(seminars).where(eq(seminars.slug, slug)).get();
+    if (!seminar) return c.json({ error: "Not Found" }, 404);
+
+    const template = await db
+      .select()
+      .from(emailTemplates)
+      .where(and(eq(emailTemplates.seminarId, seminar.id), eq(emailTemplates.key, key)))
+      .get();
+    if (!template) return c.json({ error: "Not Found" }, 404);
+
+    const result = await dispatchTemplateToPendingApplications(c.env, seminar, template);
+    return c.json(result, 200);
   });
 
   // DELETE /v1/seminars/{slug}/emails/{key} ---------------------------------

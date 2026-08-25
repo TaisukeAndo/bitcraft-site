@@ -1,9 +1,15 @@
 import { eq } from "drizzle-orm";
 import { contactEmailTemplates, type ContactEmailTemplateRow } from "@bitcraft/db";
-import { DEFAULT_CONTACT_CONFIRMATION_TEMPLATE, DEFAULT_CONTACT_NOTIFICATION_TEMPLATE } from "@bitcraft/shared";
+import {
+  DEFAULT_CONTACT_CONFIRMATION_TEMPLATE,
+  DEFAULT_CONTACT_NOTIFICATION_TEMPLATE,
+  renderEmailTemplate,
+  type ContactEmailContext,
+} from "@bitcraft/shared";
 import type { Bindings } from "./bindings";
 import { getDb } from "./db";
 import { decodeRecipients } from "./email-recipients";
+import { sendMail } from "./smtp-mailer";
 
 export type ContactEmailTemplateKey = "notification" | "confirmation";
 
@@ -74,4 +80,36 @@ export function toResolved(
     cc: fallback.cc ?? null,
     bcc: fallback.bcc ?? null,
   };
+}
+
+// テンプレートの内容確認用にテスト送信する。実際の問い合わせデータには紐付かない
+// ダミー値（宛先はtestSendTo固定）でレンダリングし、件名に印を付けて実配信と
+// 区別できるようにする（seminars側のdispatchSeminarTemplateTestと同じ方針）。
+export async function dispatchContactTemplateTest(
+  env: Bindings,
+  template: ResolvedContactEmailTemplate,
+  testSendTo: string,
+): Promise<{ status: "sent" } | { status: "failed"; error: string }> {
+  const context: ContactEmailContext = {
+    name: "テスト太郎",
+    email: testSendTo,
+    affiliation: "テスト株式会社",
+    inquiryType: "その他のお問い合わせ",
+    message: "これはテスト送信です。",
+  };
+  try {
+    await sendMail(env, {
+      to: testSendTo,
+      from: { name: template.fromName, email: template.fromEmail },
+      subject: `【テスト送信】${renderEmailTemplate(template.subject, context)}`,
+      text: renderEmailTemplate(template.bodyText, context),
+      html: template.bodyHtml ? renderEmailTemplate(template.bodyHtml, context) : undefined,
+      cc: template.cc,
+      bcc: template.bcc,
+    });
+    return { status: "sent" };
+  } catch (error) {
+    const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+    return { status: "failed", error: message };
+  }
 }

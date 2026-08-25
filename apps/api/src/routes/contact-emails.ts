@@ -6,6 +6,7 @@ import type { Bindings } from "../lib/bindings";
 import { getDb } from "../lib/db";
 import { checkApiKey } from "../middleware/auth";
 import {
+  dispatchContactTemplateTest,
   getContactEmailTemplateRow,
   resolveContactEmailTemplate,
   toResolved,
@@ -14,6 +15,8 @@ import {
 import { encodeRecipients } from "../lib/email-recipients";
 
 const CONTACT_EMAIL_TEMPLATE_KEYS: ContactEmailTemplateKey[] = ["notification", "confirmation"];
+
+const testSendResultSchema = z.object({ status: z.enum(["sent", "failed"]), error: z.string().nullable() });
 
 const contactEmailTemplateResponseSchema = z.object({
   key: contactEmailTemplateKeySchema,
@@ -26,6 +29,7 @@ const contactEmailTemplateResponseSchema = z.object({
   bodyHtml: z.string().nullable(),
   cc: z.array(z.string()).nullable(),
   bcc: z.array(z.string()).nullable(),
+  testSend: testSendResultSchema.optional(),
 });
 
 // お問い合わせの通知メール(notification)・自動返信メール(confirmation)の文面設定。
@@ -117,6 +121,13 @@ export function registerContactEmailRoutes(app: OpenAPIHono<{ Bindings: Bindings
     }
 
     const updated = toResolved(key, await getContactEmailTemplateRow(c.env, key));
-    return c.json({ key, ...updated }, 200);
+
+    let testSend: z.infer<typeof testSendResultSchema> | undefined;
+    if (body.testSendTo) {
+      const result = await dispatchContactTemplateTest(c.env, updated, body.testSendTo);
+      testSend = result.status === "failed" ? result : { status: "sent", error: null };
+    }
+
+    return c.json({ key, ...updated, testSend }, 200);
   });
 }

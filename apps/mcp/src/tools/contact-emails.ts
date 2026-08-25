@@ -21,6 +21,11 @@ const contentShape = {
   bodyHtml: z.string().optional(),
   cc: z.array(z.string().email()).optional().describe("Toに加えて常に写しを送りたい宛先"),
   bcc: z.array(z.string().email()).optional().describe("To/Ccに見せずに写しを送りたい宛先"),
+  testSendTo: z
+    .string()
+    .email()
+    .optional()
+    .describe("指定すると保存と同時にこのアドレス宛のテスト送信も行う（実際の問い合わせには記録されない）"),
 };
 
 export function registerContactEmailTools(server: McpServer, env: Bindings, token: string) {
