@@ -46,9 +46,12 @@ export type EmailTemplateContext = {
 // {{applicantName}} のようなプレースホルダーを実際の値に置換する。
 // 未知のトークン・値が無いトークンは空文字に置換する（テンプレート側の
 // タイプミスでメール送信自体が失敗しないようにするため）。
-export function renderEmailTemplate(template: string, context: EmailTemplateContext): string {
+// コンテキストの形はseminars(EmailTemplateContext)・contact
+// (ContactEmailContext、contact-email-template.ts)で異なるため、
+// Record<string, string | undefined>を受け取る汎用実装にしてある
+// （両者で共通利用するコンポーネント）。
+export function renderEmailTemplate(template: string, context: Record<string, string | undefined>): string {
   return template.replace(/\{\{(\w+)\}\}/g, (_match, key: string) => {
-    const value = (context as Record<string, string | undefined>)[key];
-    return value ?? "";
+    return context[key] ?? "";
   });
 }

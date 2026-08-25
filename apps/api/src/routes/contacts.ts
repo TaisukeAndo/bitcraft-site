@@ -1,22 +1,19 @@
 import { createRoute, z, type OpenAPIHono } from "@hono/zod-openapi";
 import { desc, eq } from "drizzle-orm";
 import { contacts, type ContactRow } from "@bitcraft/db";
-import { APPLICATION_EMAIL_SENDER_DOMAIN, contactStatusUpdateSchema, submitContactSchema } from "@bitcraft/shared";
+import { contactStatusUpdateSchema, renderEmailTemplate, submitContactSchema } from "@bitcraft/shared";
 import type { Bindings } from "../lib/bindings";
 import { getDb } from "../lib/db";
 import { checkApiKey } from "../middleware/auth";
 import { sendMail } from "../lib/smtp-mailer";
+import { resolveContactEmailTemplate } from "../lib/contact-email-templates";
 
 // 運用者への通知メールの宛先。@bitcraft.work宛先の前例が無く、現状サイト内で
 // 実際に使われている連絡先(トップページの「メールを送る」CTA)と同じ運用者の
-// 個人アドレスに揃える（ユーザー確認済み）。
+// 個人アドレスに揃える（ユーザー確認済み）。文面(fromName/fromEmail/subject/
+// bodyText)自体はPATCH /v1/contact-email-templates/notificationで設定管理する
+// 対象だが、送信先アドレスは運用上固定のためここでは変更対象にしていない。
 const ADMIN_NOTIFICATION_EMAIL = "ando1202taisuke@gmail.com";
-// contact@bitcraft.workはGmail側で「送信元アドレス」として検証済みのエイリアス
-// （ユーザー確認済み）。smtp-mailer.tsの認証はGmailアカウント本体で行うため、
-// Fromに指定できるのは実質このアドレスのみ（noreply@等、他の*@bitcraft.work
-// アドレスはGmail側の検証が無く送信失敗する）。
-const FROM_EMAIL = `contact@${APPLICATION_EMAIL_SENDER_DOMAIN}`;
-const FROM_NAME = "bitcraft";
 
 const contactResponseSchema = z.object({
   id: z.number(),
@@ -46,16 +43,17 @@ function toResponse(row: ContactRow): z.infer<typeof contactResponseSchema> {
   };
 }
 
-type SendResult = { status: "sent" } | { status: "failed"; error: string };
+type SendResult = { status: "sent" } | { status: "failed"; error: string } | { status: "skipped" };
 
 async function sendEmail(
   env: Bindings,
   to: string,
+  from: { name: string; email: string },
   subject: string,
   text: string,
 ): Promise<SendResult> {
   try {
-    await sendMail(env, { to, from: { email: FROM_EMAIL, name: FROM_NAME }, subject, text });
+    await sendMail(env, { to, from, subject, text });
     return { status: "sent" };
   } catch (error) {
     const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
@@ -112,51 +110,56 @@ export function registerContactRoutes(app: OpenAPIHono<{ Bindings: Bindings }>) 
     }
 
     // 運用者への通知・問い合わせ者への確認、どちらもベストエフォート送信
-    // （申込自体の成否には影響させない。セミナー申込と同じ方針）。
+    // （申込自体の成否には影響させない。セミナー申込と同じ方針）。文面は
+    // PATCH /v1/contact-email-templates/{key}で設定管理でき、未設定なら
+    // packages/sharedのデフォルト文面にフォールバックする
+    // （resolveContactEmailTemplate、seminarsのDEFAULT_ON_SUBMIT_CONTENTと同じ方針）。
+    // {{name}}/{{email}}/{{affiliation}}/{{inquiryType}}/{{message}}の
+    // プレースホルダーをrenderEmailTemplateで置換する。
+    //
     // メール送信(Cloudflare Email SendingへのHTTP往復)をレスポンス返却前に
     // 待つと、フォーム送信のたびに数百ms〜数秒の体感遅延になり、その間に
     // ユーザーが送信ボタンを連打してしまう一因になっていた。DB保存が
     // 完了した時点で201を返し、メール送信自体はc.executionCtx.waitUntil()で
     // レスポンス後もWorkerを生かしたままバックグラウンド実行する
     // （auth.tsのlast_used_at更新と同じパターン）。
-    const inquiryDetail = `お名前: ${body.name}
-メールアドレス: ${body.email}
-ご所属: ${body.affiliation}
-お問い合わせ種別: ${body.inquiryType}
-
-ご相談内容:
-${body.message}`;
+    const context = {
+      name: body.name,
+      email: body.email,
+      affiliation: body.affiliation,
+      inquiryType: body.inquiryType,
+      message: body.message,
+    };
 
     c.executionCtx.waitUntil(
       (async () => {
+        const [notificationTemplate, confirmationTemplate] = await Promise.all([
+          resolveContactEmailTemplate(c.env, "notification"),
+          resolveContactEmailTemplate(c.env, "confirmation"),
+        ]);
+
+        const sendIfEnabled = (template: typeof notificationTemplate, to: string) =>
+          template.enabled
+            ? sendEmail(
+                c.env,
+                to,
+                { name: template.fromName, email: template.fromEmail },
+                renderEmailTemplate(template.subject, context),
+                renderEmailTemplate(template.bodyText, context),
+              )
+            : Promise.resolve<SendResult>({ status: "skipped" });
+
         const [notification, confirmation] = await Promise.all([
-          sendEmail(c.env, ADMIN_NOTIFICATION_EMAIL, `【bitcraft】お問い合わせ: ${body.inquiryType}`, inquiryDetail),
-          sendEmail(
-            c.env,
-            body.email,
-            "【bitcraft】お問い合わせありがとうございます",
-            `${body.name} 様
-
-この度はお問い合わせいただき、誠にありがとうございます。
-以下の内容で受け付けいたしました。担当者より追ってご連絡いたしますので、今しばらくお待ちください。
-
-お問い合わせ種別: ${body.inquiryType}
-
-ご相談内容:
-${body.message}
-
---
-bitcraft
-https://bitcraft.work/`,
-          ),
+          sendIfEnabled(notificationTemplate, ADMIN_NOTIFICATION_EMAIL),
+          sendIfEnabled(confirmationTemplate, body.email),
         ]);
 
         await db
           .update(contacts)
           .set({
-            notificationEmailStatus: notification.status,
+            notificationEmailStatus: notification.status === "skipped" ? null : notification.status,
             notificationEmailError: notification.status === "failed" ? notification.error : null,
-            confirmationEmailStatus: confirmation.status,
+            confirmationEmailStatus: confirmation.status === "skipped" ? null : confirmation.status,
             confirmationEmailError: confirmation.status === "failed" ? confirmation.error : null,
           })
           .where(eq(contacts.id, row.id))

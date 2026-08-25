@@ -262,8 +262,8 @@ export const contacts = sqliteTable(
     status: text("status", { enum: ["received", "replied", "closed"] })
       .notNull()
       .default("received"),
-    // 通知メール(運用者宛)・確認メール(問い合わせ者宛)は内容が固定のため、
-    // seminarsのようなemail_templatesテーブルは持たず、送信結果のみをここに記録する。
+    // 通知メール(運用者宛)・確認メール(問い合わせ者宛)の送信結果。文面自体は
+    // contact_email_templatesで管理する（下記）。
     notificationEmailStatus: text("notification_email_status", { enum: ["sent", "failed"] }),
     notificationEmailError: text("notification_email_error"),
     confirmationEmailStatus: text("confirmation_email_status", { enum: ["sent", "failed"] }),
@@ -275,6 +275,40 @@ export const contacts = sqliteTable(
   (table) => ({
     submittedIdx: index("idx_contacts_submitted").on(table.submittedAt),
     statusCheck: check("contacts_status_check", sql`${table.status} IN ('received', 'replied', 'closed')`),
+  }),
+);
+
+// contact_email_templates（お問い合わせの通知・自動返信メールの文面設定）--------
+//
+// seminarsのemail_templatesと同じ「メールの内容自体もAPIで設定管理できるように
+// したい」という要望に応えるコンポーネントだが、Contactはセミナーのように複数
+// 種類・配信タイミング（開催日基準等）を持たない固定2種類（運用者への通知
+// notification・問い合わせ者への自動返信confirmation）の即時送信のみのため、
+// seminarIdやtrigger系カラムを持たない、より単純な専用テーブルにしている
+// （emailTemplatesにseminarId:NULL許容の形で相乗りさせる案もあったが、
+// 既存の populated テーブルのNOT NULL制約変更は本番マイグレーションのリスクが
+// 高いため避けた。schemas.tsのemailContentBaseSchemaはこの2テーブルで共通利用）。
+export const contactEmailTemplates = sqliteTable(
+  "contact_email_templates",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    key: text("key", { enum: ["notification", "confirmation"] }).notNull().unique(),
+    label: text("label").notNull(),
+    enabled: integer("enabled").notNull().default(1),
+    fromName: text("from_name").notNull(),
+    fromEmail: text("from_email").notNull(),
+    subject: text("subject").notNull(),
+    bodyText: text("body_text").notNull(),
+    bodyHtml: text("body_html"),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    keyCheck: check("contact_email_templates_key_check", sql`${table.key} IN ('notification', 'confirmation')`),
   }),
 );
 
@@ -303,3 +337,6 @@ export type NewApiKeyRow = typeof apiKeys.$inferInsert;
 
 export type ContactRow = typeof contacts.$inferSelect;
 export type NewContactRow = typeof contacts.$inferInsert;
+
+export type ContactEmailTemplateRow = typeof contactEmailTemplates.$inferSelect;
+export type NewContactEmailTemplateRow = typeof contactEmailTemplates.$inferInsert;

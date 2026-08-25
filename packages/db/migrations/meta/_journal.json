@@ -36,6 +36,13 @@
       "when": 1787497468666,
       "tag": "0004_perpetual_moonstone",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1787678324934,
+      "tag": "0005_lonely_sally_floyd",
+      "breakpoints": true
     }
   ]
 }
