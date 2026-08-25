@@ -1,12 +1,22 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
+import { SEMINAR_EMAIL_TOKENS } from "@bitcraft/shared";
 import type { Bindings } from "../lib/bindings";
 import { callApi } from "../lib/api-client";
 import { apiResultToToolResult } from "../lib/tool-result";
 
 // セミナーごとに複数設定できるメール（申込確認・事前準備案内・前日リマインド等）の
 // MCPツール。apps/apiの /v1/seminars/{slug}/emails* を1:1でラップする（実装計画5章）。
-// zod v3/v4混在の事情はtools/news.tsのコメント参照。
+// zod v3/v4混在の事情はtools/news.tsのコメント参照（SEMINAR_EMAIL_TOKENSは
+// zodを含まない素のstring[]なのでこの制約と無関係にimportできる）。
+//
+// subject/bodyText/bodyHtmlで使えるプレースホルダーをSEMINAR_EMAIL_TOKENS
+// （apps/api/src/routes/emails.tsの未知トークン検証と同じ単一の情報源）から
+// 動的に生成してdescriptionへ埋め込む。以前ここにプレースホルダー一覧が
+// 書かれておらず、contact用の{{name}}をセミナー用テンプレートに誤って
+// 使ってしまい実際の送信で申込者名が空欄になる事故が起きたため、
+// 一覧とコード上の実態が二度とずれないようにした。
+const SEMINAR_TOKEN_HINT = `使えるプレースホルダー: ${SEMINAR_EMAIL_TOKENS.map((t) => `{{${t}}}`).join(", ")}（それ以外の{{...}}は送信時に空文字になる）`;
 const emailTriggerShape = z.discriminatedUnion("type", [
   z.object({ type: z.literal("on_submit") }),
   z.object({
@@ -45,8 +55,7 @@ export function registerEmailTools(server: McpServer, env: Bindings, token: stri
   server.registerTool(
     "seminar_emails_create",
     {
-      description:
-        "セミナーにメールテンプレートを追加する。trigger.typeは on_submit(申込直後即時) / relative_to_event(開催日基準、offsetDays+timeJstで指定) / absolute(特定日時) のいずれか",
+      description: `セミナーにメールテンプレートを追加する。trigger.typeは on_submit(申込直後即時) / relative_to_event(開催日基準、offsetDays+timeJstで指定) / absolute(特定日時) のいずれか。${SEMINAR_TOKEN_HINT}`,
       inputSchema: {
         slug: z.string(),
         key: z.string().min(1).regex(/^[a-z0-9_-]+$/, "keyは英小文字・数字・ハイフン・アンダースコアのみ使用できます"),
@@ -60,7 +69,7 @@ export function registerEmailTools(server: McpServer, env: Bindings, token: stri
   server.registerTool(
     "seminar_emails_update",
     {
-      description: "セミナーのメールテンプレートを更新する",
+      description: `セミナーのメールテンプレートを更新する。${SEMINAR_TOKEN_HINT}`,
       inputSchema: {
         slug: z.string(),
         key: z.string(),

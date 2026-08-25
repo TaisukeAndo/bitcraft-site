@@ -1,7 +1,13 @@
 import { createRoute, z, type OpenAPIHono } from "@hono/zod-openapi";
 import { and, eq } from "drizzle-orm";
 import { seminars, emailTemplates, applicationEmailSends, type EmailTemplateRow, type SeminarRow } from "@bitcraft/db";
-import { createEmailTemplateSchema, emailTriggerSchema, updateEmailTemplateSchema } from "@bitcraft/shared";
+import {
+  createEmailTemplateSchema,
+  emailTriggerSchema,
+  findUnknownPlaceholders,
+  SEMINAR_EMAIL_TOKENS,
+  updateEmailTemplateSchema,
+} from "@bitcraft/shared";
 import type { Bindings } from "../lib/bindings";
 import { getDb } from "../lib/db";
 import { checkApiKey } from "../middleware/auth";
@@ -25,7 +31,20 @@ const emailTemplateResponseSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
   testSend: testSendResultSchema.optional(),
+  warnings: z.array(z.string()).optional(),
 });
+
+// subject/bodyText/bodyHtmlに、SEMINAR_EMAIL_TOKENSに無い{{token}}が使われて
+// いないか検出する。renderEmailTemplateは未知のトークンを黙って空文字に置換する
+// ため、実際に{{name}}(誤。contact用のトークン)を{{applicantName}}(正)と
+// 取り違えて保存し、実配信で申込者名が空欄になる事故が起きたことへの対応。
+function checkUnknownTokens(subject: string, bodyText: string, bodyHtml: string | null | undefined): string[] {
+  const unknown = findUnknownPlaceholders(`${subject}\n${bodyText}\n${bodyHtml ?? ""}`, SEMINAR_EMAIL_TOKENS);
+  return unknown.map(
+    (token) =>
+      `不明なプレースホルダー {{${token}}} が使われています（有効な値: ${SEMINAR_EMAIL_TOKENS.map((t) => `{{${t}}}`).join(", ")}）。レンダリング時に空文字になります。`,
+  );
+}
 
 // テンプレート保存(POST/PATCH)と同時にtestSendToが指定されていればテスト送信する
 // 共通ヘルパー。routes/contact-emails.tsと同様、保存とテストを1リクエストで
@@ -130,6 +149,7 @@ export function registerEmailTemplateRoutes(app: OpenAPIHono<{ Bindings: Binding
     method: "post",
     path: "/v1/seminars/{slug}/emails",
     summary: "セミナーにメールテンプレートを追加",
+    description: `subject/bodyText/bodyHtmlで使えるプレースホルダー: ${SEMINAR_EMAIL_TOKENS.map((t) => `{{${t}}}`).join(", ")}。それ以外の{{...}}は送信時に空文字へ置換される（レスポンスのwarningsで検出結果を確認できる）`,
     tags: ["emails"],
     security: [{ bearerAuth: [] }],
     request: {
@@ -191,7 +211,8 @@ export function registerEmailTemplateRoutes(app: OpenAPIHono<{ Bindings: Binding
     const row = inserted[0];
     if (!row) return c.json({ error: "作成に失敗しました" }, 404);
     const testSend = await runTestSendIfRequested(c.env, seminar, body.testSendTo, row);
-    return c.json({ ...toResponse(row), testSend }, 201);
+    const warnings = checkUnknownTokens(row.subject, row.bodyText, row.bodyHtml);
+    return c.json({ ...toResponse(row), testSend, warnings: warnings.length > 0 ? warnings : undefined }, 201);
   });
 
   // PATCH /v1/seminars/{slug}/emails/{key} ----------------------------------
@@ -199,6 +220,7 @@ export function registerEmailTemplateRoutes(app: OpenAPIHono<{ Bindings: Binding
     method: "patch",
     path: "/v1/seminars/{slug}/emails/{key}",
     summary: "セミナーのメールテンプレートを更新",
+    description: `subject/bodyText/bodyHtmlで使えるプレースホルダー: ${SEMINAR_EMAIL_TOKENS.map((t) => `{{${t}}}`).join(", ")}。それ以外の{{...}}は送信時に空文字へ置換される（レスポンスのwarningsで検出結果を確認できる）`,
     tags: ["emails"],
     security: [{ bearerAuth: [] }],
     request: {
@@ -266,7 +288,8 @@ export function registerEmailTemplateRoutes(app: OpenAPIHono<{ Bindings: Binding
 
     const updated = await db.select().from(emailTemplates).where(eq(emailTemplates.id, existing.id)).get();
     const testSend = await runTestSendIfRequested(c.env, seminar, body.testSendTo, updated!);
-    return c.json({ ...toResponse(updated!), testSend }, 200);
+    const warnings = checkUnknownTokens(updated!.subject, updated!.bodyText, updated!.bodyHtml);
+    return c.json({ ...toResponse(updated!), testSend, warnings: warnings.length > 0 ? warnings : undefined }, 200);
   });
 
   // POST /v1/seminars/{slug}/emails/{key}/send ------------------------------

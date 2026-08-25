@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { renderEmailTemplate } from "./email-template";
+import { findUnknownPlaceholders, renderEmailTemplate, SEMINAR_EMAIL_TOKENS } from "./email-template";
 
 describe("renderEmailTemplate", () => {
   const context = {
@@ -28,5 +28,24 @@ describe("renderEmailTemplate", () => {
   it("プレースホルダーが無ければそのまま返す", () => {
     const result = renderEmailTemplate("プレーンな本文です。", context);
     expect(result).toBe("プレーンな本文です。");
+  });
+});
+
+// {{name}}(contact用)と{{applicantName}}(seminar用)の取り違えにより、実際の
+// 送信で申込者名が空欄になる事故が起きたことへの回帰テスト。
+describe("findUnknownPlaceholders", () => {
+  it("既知のトークンのみなら空配列を返す", () => {
+    const result = findUnknownPlaceholders("{{applicantName}}様、{{seminarTitle}}のご案内", SEMINAR_EMAIL_TOKENS);
+    expect(result).toEqual([]);
+  });
+
+  it("contact用の{{name}}をseminar用テンプレートに使うと検出する", () => {
+    const result = findUnknownPlaceholders("{{name}} 様", SEMINAR_EMAIL_TOKENS);
+    expect(result).toEqual(["name"]);
+  });
+
+  it("同じ未知トークンが複数回登場しても重複排除する", () => {
+    const result = findUnknownPlaceholders("{{typo}}...{{typo}}", SEMINAR_EMAIL_TOKENS);
+    expect(result).toEqual(["typo"]);
   });
 });

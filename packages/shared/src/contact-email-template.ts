@@ -12,6 +12,17 @@ export type ContactEmailContext = {
   message: string;
 };
 
+// ContactEmailContextのキー一覧。ツール説明文(apps/mcp)・保存時の未知トークン
+// 検出(findUnknownPlaceholders、email-template.ts)の単一の情報源にする
+// （seminars側のSEMINAR_EMAIL_TOKENSと同じ理由）。
+export const CONTACT_EMAIL_TOKENS: (keyof ContactEmailContext)[] = [
+  "name",
+  "email",
+  "affiliation",
+  "inquiryType",
+  "message",
+];
+
 export const DEFAULT_CONTACT_NOTIFICATION_TEMPLATE: ApplicationEmailTemplate = {
   fromName: "bitcraft",
   fromEmail: `contact@${APPLICATION_EMAIL_SENDER_DOMAIN}`,
