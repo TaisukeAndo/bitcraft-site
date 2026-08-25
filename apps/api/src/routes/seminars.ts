@@ -194,7 +194,27 @@ export function registerSeminarApplicationRoutes(app: OpenAPIHono<{ Bindings: Bi
               applicantNameStr,
               applicantEmailStr,
             );
-            if (result.status === "skipped" || item.id === null) return; // 宛先不明、またはフォールバック文面は履歴を残さない
+            if (result.status === "skipped") return; // 宛先不明（申込フォームにemailフィールドが無い等）
+
+            if (item.id === null) {
+              // フォールバック文面(DEFAULT_ON_SUBMIT_CONTENT)にはemail_templatesの
+              // 実レコードが無くapplication_email_sends(NOT NULL FK)へは記録できないため、
+              // applicationsの非推奨カラム(confirmationEmailStatus/Error)を再利用して
+              // 送信結果を残す。元々このカラムは複数メール対応前の単一確認メール用に
+              // 存在していたもので、フォールバック=単一確認メールという性質に合致する。
+              // これが無いと配信失敗(検証済み宛先以外へのCloudflare Email Sending制限等)が
+              // 一切記録されず、運用者が気づく手段が無かった（実際に本番で踏んだ不具合）。
+              await db
+                .update(applications)
+                .set({
+                  confirmationEmailStatus: result.status,
+                  confirmationEmailError: result.status === "failed" ? result.error : null,
+                })
+                .where(eq(applications.id, row.id))
+                .run();
+              return;
+            }
+
             await db
               .insert(applicationEmailSends)
               .values({
@@ -264,18 +284,29 @@ export function registerSeminarApplicationRoutes(app: OpenAPIHono<{ Bindings: Bi
       .where(eq(emailTemplates.seminarId, seminar.id));
 
     return c.json(
-      rows.map((r) => ({
-        id: r.id,
-        seminarSlug: r.seminarSlug,
-        answers: JSON.parse(r.answersJson) as z.infer<typeof applicationAnswersSchema>,
-        applicantName: r.applicantName,
-        applicantEmail: r.applicantEmail,
-        status: r.status,
-        emails: sends
+      rows.map((r) => {
+        const templatedEmails = sends
           .filter((s) => s.applicationId === r.id)
-          .map((s) => ({ key: s.key, status: s.status, error: s.error, sentAt: s.sentAt })),
-        submittedAt: r.submittedAt,
-      })),
+          .map((s) => ({ key: s.key, status: s.status, error: s.error, sentAt: s.sentAt }));
+        // フォールバック文面(email_templates未設定セミナー)の送信結果は
+        // application_email_sendsではなくapplications.confirmationEmailStatusに
+        // 記録される（submitApplicationRoute参照）。同じemails配列で見えるよう合流する。
+        const fallbackEmail =
+          templatedEmails.length === 0 && r.confirmationEmailStatus
+            ? [{ key: "confirmation", status: r.confirmationEmailStatus, error: r.confirmationEmailError, sentAt: r.submittedAt }]
+            : [];
+
+        return {
+          id: r.id,
+          seminarSlug: r.seminarSlug,
+          answers: JSON.parse(r.answersJson) as z.infer<typeof applicationAnswersSchema>,
+          applicantName: r.applicantName,
+          applicantEmail: r.applicantEmail,
+          status: r.status,
+          emails: [...templatedEmails, ...fallbackEmail],
+          submittedAt: r.submittedAt,
+        };
+      }),
       200,
     );
   });
