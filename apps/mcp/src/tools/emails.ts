@@ -28,6 +28,11 @@ const emailContentShape = {
   bodyHtml: z.string().optional(),
   cc: z.array(z.string().email()).optional().describe("Toに加えて常に写しを送りたい宛先"),
   bcc: z.array(z.string().email()).optional().describe("To/Ccに見せずに写しを送りたい宛先"),
+  testSendTo: z
+    .string()
+    .email()
+    .optional()
+    .describe("指定すると保存と同時にこのアドレス宛のテスト送信も行う（実際の申込には記録されない）"),
 };
 
 export function registerEmailTools(server: McpServer, env: Bindings, token: string) {
@@ -69,6 +74,7 @@ export function registerEmailTools(server: McpServer, env: Bindings, token: stri
         bodyHtml: emailContentShape.bodyHtml,
         cc: emailContentShape.cc,
         bcc: emailContentShape.bcc,
+        testSendTo: emailContentShape.testSendTo,
       },
     },
     async ({ slug, key, ...body }) =>
@@ -84,5 +90,16 @@ export function registerEmailTools(server: McpServer, env: Bindings, token: stri
     },
     async ({ slug, key }) =>
       apiResultToToolResult(await callApi(env, token, "DELETE", `/v1/seminars/${slug}/emails/${key}`)),
+  );
+
+  server.registerTool(
+    "seminar_emails_send_now",
+    {
+      description:
+        "このテンプレートをまだ受け取っていない、そのセミナーの全申込者へ今すぐ一斉送信する（トリガー時刻・enabledの状態に関わらず即時実行。同じ人への二重送信は自動的に防止される）",
+      inputSchema: { slug: z.string(), key: z.string() },
+    },
+    async ({ slug, key }) =>
+      apiResultToToolResult(await callApi(env, token, "POST", `/v1/seminars/${slug}/emails/${key}/send`)),
   );
 }

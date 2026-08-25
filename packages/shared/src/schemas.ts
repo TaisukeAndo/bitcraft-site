@@ -73,14 +73,23 @@ const emailContentSchema = emailContentBaseSchema.extend({
   trigger: emailTriggerSchema,
 });
 
-export const createEmailTemplateSchema = emailContentSchema.extend({
-  key: z
-    .string()
-    .min(1)
-    .regex(/^[a-z0-9_-]+$/, { message: "keyは英小文字・数字・ハイフン・アンダースコアのみ使用できます" }),
+// テンプレート保存と同時にこのアドレス宛のテスト送信も行う（任意）。
+// 実際の申込・問い合わせデータには紐付かないダミー値でレンダリングし、
+// 送信結果だけを応答に含める（DBの送信履歴には記録しない）。
+export const testSendToSchema = z.object({
+  testSendTo: z.string().email().optional(),
 });
 
-export const updateEmailTemplateSchema = emailContentSchema.partial();
+export const createEmailTemplateSchema = emailContentSchema
+  .extend({
+    key: z
+      .string()
+      .min(1)
+      .regex(/^[a-z0-9_-]+$/, { message: "keyは英小文字・数字・ハイフン・アンダースコアのみ使用できます" }),
+  })
+  .extend(testSendToSchema.shape);
+
+export const updateEmailTemplateSchema = emailContentSchema.partial().extend(testSendToSchema.shape);
 
 // news の入力バリデーション（POST/PATCH /v1/news[/{slug}]）。
 const slugSchema = z
@@ -220,4 +229,4 @@ export const contactStatusUpdateSchema = z.object({
 // 配信タイミングは常に即時のためtriggerは持たない）。
 export const contactEmailTemplateKeySchema = z.enum(["notification", "confirmation"]);
 
-export const updateContactEmailTemplateSchema = emailContentBaseSchema.partial();
+export const updateContactEmailTemplateSchema = emailContentBaseSchema.partial().extend(testSendToSchema.shape);
