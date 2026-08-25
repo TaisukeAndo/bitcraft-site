@@ -33,7 +33,14 @@ export default {
     // ステートレス設計のため、リクエストごとに(env, token)をクロージャで
     // 保持したfactoryを都度生成する。McpServer自体の構築コストは軽く、
     // ツール呼び出しの実処理は毎回apps/apiへのfetchで完結するため問題ない。
-    const handler = createMcpHandler(() => createServer(env, token));
+    const handler = createMcpHandler(() => createServer(env, token), {
+      // デフォルトの許可オリジンはlocalhost系とworkers.devホスト名のみのため、
+      // Claude.ai(Web)のカスタムコネクタから接続すると
+      // "Invalid Origin: claude.ai" で403になる不具合を実際に確認した。
+      // Bearer認証は別途必須のため、ブラウザ経由のクライアントとして
+      // claude.aiを明示的に許可する（ワイルドカードは避け必要な分だけ許可）。
+      allowedOriginHostnames: ["claude.ai"],
+    });
     return handler(request, env, ctx);
   },
 };
