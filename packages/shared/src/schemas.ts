@@ -54,15 +54,21 @@ export const emailTriggerSchema = z.discriminatedUnion("type", [
   }),
 ]);
 
-const emailContentSchema = z.object({
+// メールテンプレートの共通フィールド（seminarsのemail_templates・contactの
+// contact_email_templates双方で使うコンポーネント）。トリガー(配信タイミング)の
+// 有無だけがこの2者の違いのため、baseを共有しseminars側だけtriggerをextendする。
+export const emailContentBaseSchema = z.object({
   label: z.string().min(1),
   enabled: z.boolean().optional(),
-  trigger: emailTriggerSchema,
   fromName: z.string().min(1),
   fromEmail: fromEmailSchema,
   subject: z.string().min(1),
   bodyText: z.string().min(1),
   bodyHtml: z.string().optional(),
+});
+
+const emailContentSchema = emailContentBaseSchema.extend({
+  trigger: emailTriggerSchema,
 });
 
 export const createEmailTemplateSchema = emailContentSchema.extend({
@@ -205,3 +211,11 @@ export const submitContactSchema = z.object({
 export const contactStatusUpdateSchema = z.object({
   status: z.enum(["received", "replied", "closed"]),
 });
+
+// お問い合わせの自動返信メール(confirmation)・運用者への通知メール(notification)の
+// 内容設定（PATCH /v1/contact-email-templates/{key}）。emailContentBaseSchemaを
+// そのまま再利用する（seminarsのemail_templatesと異なり、キーは固定2種類のみ・
+// 配信タイミングは常に即時のためtriggerは持たない）。
+export const contactEmailTemplateKeySchema = z.enum(["notification", "confirmation"]);
+
+export const updateContactEmailTemplateSchema = emailContentBaseSchema.partial();

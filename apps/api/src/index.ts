@@ -9,6 +9,7 @@ import { registerNewsRoutes } from "./routes/news";
 import { registerMediaRoutes } from "./routes/media";
 import { registerApiKeyRoutes } from "./routes/api-keys";
 import { registerContactRoutes } from "./routes/contacts";
+import { registerContactEmailRoutes } from "./routes/contact-emails";
 import { runScheduledEmailSweep } from "./scheduled";
 
 // CMS API（実装計画 4章）。OpenAPIHonoによるSwagger UI (/v1/docs) の配線・
@@ -72,6 +73,7 @@ registerEmailTemplateRoutes(app);
 registerMediaRoutes(app);
 registerApiKeyRoutes(app);
 registerContactRoutes(app);
+registerContactEmailRoutes(app);
 
 const emailSweepRoute = createRoute({
   method: "post",
