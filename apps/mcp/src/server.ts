@@ -5,6 +5,7 @@ import { registerSeminarTools } from "./tools/seminars";
 import { registerEmailTools } from "./tools/emails";
 import { registerMediaTools } from "./tools/media";
 import { registerApiKeyTools } from "./tools/api-keys";
+import { registerContactTools } from "./tools/contacts";
 
 // bitcraft CMS APIをラップするMCPサーバー本体。ツールごとの実処理は
 // apps/apiへのService Binding経由HTTP呼び出しに委譲し、ここではツール定義
@@ -16,5 +17,6 @@ export function createServer(env: Bindings, token: string): McpServer {
   registerEmailTools(server, env, token);
   registerMediaTools(server, env, token);
   registerApiKeyTools(server, env, token);
+  registerContactTools(server, env, token);
   return server;
 }
