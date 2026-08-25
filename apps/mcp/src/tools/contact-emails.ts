@@ -1,5 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
+import { CONTACT_EMAIL_TOKENS } from "@bitcraft/shared";
 import type { Bindings } from "../lib/bindings";
 import { callApi } from "../lib/api-client";
 import { apiResultToToolResult } from "../lib/tool-result";
@@ -8,8 +9,15 @@ import { apiResultToToolResult } from "../lib/tool-result";
 // 設定のMCPツール。apps/apiの /v1/contact-email-templates* を1:1でラップする
 // （実装計画5章）。tools/emails.tsのemailContentShapeと共通のフィールド構成だが、
 // Contactはキー固定・常に即時送信のためtrigger/keyは持たない
-// （zod v3/v4混在の事情はtools/news.tsのコメント参照）。
+// （zod v3/v4混在の事情はtools/news.tsのコメント参照。CONTACT_EMAIL_TOKENSは
+// zodを含まない素のstring[]なのでこの制約と無関係にimportできる）。
 const keyEnum = z.enum(["notification", "confirmation"]);
+
+// プレースホルダー一覧はCONTACT_EMAIL_TOKENS（apps/api/src/routes/
+// contact-emails.tsの未知トークン検証と同じ単一の情報源）から動的に生成する
+// （tools/emails.tsのSEMINAR_TOKEN_HINTと同じ理由。ハードコードした一覧と
+// コード上の実態がずれる事故を防ぐ）。
+const CONTACT_TOKEN_HINT = `使えるプレースホルダー: ${CONTACT_EMAIL_TOKENS.map((t) => `{{${t}}}`).join(", ")}（それ以外の{{...}}は送信時に空文字になる）`;
 
 const contentShape = {
   label: z.string().min(1).optional(),
@@ -42,8 +50,7 @@ export function registerContactEmailTools(server: McpServer, env: Bindings, toke
   server.registerTool(
     "contact_email_templates_update",
     {
-      description:
-        "お問い合わせの通知(notification)・自動返信(confirmation)メールの文面を更新する（未設定なら新規作成）。{{name}}/{{email}}/{{affiliation}}/{{inquiryType}}/{{message}}のプレースホルダーが使える",
+      description: `お問い合わせの通知(notification)・自動返信(confirmation)メールの文面を更新する（未設定なら新規作成）。${CONTACT_TOKEN_HINT}`,
       inputSchema: { key: keyEnum, ...contentShape },
     },
     async ({ key, ...body }) =>

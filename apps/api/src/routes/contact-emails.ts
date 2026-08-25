@@ -1,7 +1,12 @@
 import { createRoute, z, type OpenAPIHono } from "@hono/zod-openapi";
 import { eq } from "drizzle-orm";
 import { contactEmailTemplates } from "@bitcraft/db";
-import { contactEmailTemplateKeySchema, updateContactEmailTemplateSchema } from "@bitcraft/shared";
+import {
+  CONTACT_EMAIL_TOKENS,
+  contactEmailTemplateKeySchema,
+  findUnknownPlaceholders,
+  updateContactEmailTemplateSchema,
+} from "@bitcraft/shared";
 import type { Bindings } from "../lib/bindings";
 import { getDb } from "../lib/db";
 import { checkApiKey } from "../middleware/auth";
@@ -30,7 +35,20 @@ const contactEmailTemplateResponseSchema = z.object({
   cc: z.array(z.string()).nullable(),
   bcc: z.array(z.string()).nullable(),
   testSend: testSendResultSchema.optional(),
+  warnings: z.array(z.string()).optional(),
 });
+
+// subject/bodyText/bodyHtmlに、CONTACT_EMAIL_TOKENSに無い{{token}}が使われて
+// いないか検出する（routes/emails.tsのcheckUnknownTokensと同じ理由。
+// seminars用の{{applicantName}}をcontact用と取り違える等の逆方向のミスも
+// これで検出できる）。
+function checkUnknownTokens(subject: string, bodyText: string, bodyHtml: string | null | undefined): string[] {
+  const unknown = findUnknownPlaceholders(`${subject}\n${bodyText}\n${bodyHtml ?? ""}`, CONTACT_EMAIL_TOKENS);
+  return unknown.map(
+    (token) =>
+      `不明なプレースホルダー {{${token}}} が使われています（有効な値: ${CONTACT_EMAIL_TOKENS.map((t) => `{{${t}}}`).join(", ")}）。レンダリング時に空文字になります。`,
+  );
+}
 
 // お問い合わせの通知メール(notification)・自動返信メール(confirmation)の文面設定。
 // seminarsのemail_templates(routes/emails.ts)と同じ「メールの内容自体もAPIで
@@ -72,6 +90,7 @@ export function registerContactEmailRoutes(app: OpenAPIHono<{ Bindings: Bindings
     method: "patch",
     path: "/v1/contact-email-templates/{key}",
     summary: "お問い合わせの通知・自動返信メール設定を更新（未設定なら作成）",
+    description: `subject/bodyText/bodyHtmlで使えるプレースホルダー: ${CONTACT_EMAIL_TOKENS.map((t) => `{{${t}}}`).join(", ")}。それ以外の{{...}}は送信時に空文字へ置換される（レスポンスのwarningsで検出結果を確認できる）`,
     tags: ["contact-emails"],
     security: [{ bearerAuth: [] }],
     request: {
@@ -128,6 +147,7 @@ export function registerContactEmailRoutes(app: OpenAPIHono<{ Bindings: Bindings
       testSend = result.status === "failed" ? result : { status: "sent", error: null };
     }
 
-    return c.json({ key, ...updated, testSend }, 200);
+    const warnings = checkUnknownTokens(updated.subject, updated.bodyText, updated.bodyHtml);
+    return c.json({ key, ...updated, testSend, warnings: warnings.length > 0 ? warnings : undefined }, 200);
   });
 }

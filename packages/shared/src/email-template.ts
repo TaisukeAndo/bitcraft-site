@@ -45,6 +45,19 @@ export type EmailTemplateContext = {
   priceDisplay: string;
 };
 
+// EmailTemplateContextのキー一覧。ツール説明文(apps/mcp)・保存時の未知トークン
+// 検出(findUnknownPlaceholders)の両方がこの一覧を単一の情報源として参照する
+// （{{name}}（誤、contact用のトークン）と{{applicantName}}（正）を取り違えて
+// 保存され、レンダリング時に黙って空文字になり実際の送信で名前が抜け落ちる、
+// という実際に起きた事故の再発防止）。
+export const SEMINAR_EMAIL_TOKENS: (keyof EmailTemplateContext)[] = [
+  "applicantName",
+  "seminarTitle",
+  "eventDateDisplay",
+  "venueSummary",
+  "priceDisplay",
+];
+
 // {{applicantName}} のようなプレースホルダーを実際の値に置換する。
 // 未知のトークン・値が無いトークンは空文字に置換する（テンプレート側の
 // タイプミスでメール送信自体が失敗しないようにするため）。
@@ -56,4 +69,17 @@ export function renderEmailTemplate(template: string, context: Record<string, st
   return template.replace(/\{\{(\w+)\}\}/g, (_match, key: string) => {
     return context[key] ?? "";
   });
+}
+
+// subject/bodyText/bodyHtmlに含まれる{{token}}のうち、knownTokensに無いものを
+// 検出する。renderEmailTemplateは未知のトークンを空文字へ黙って置換する設計の
+// ため、保存時にこれで検出して呼び出し元に警告を返す（seminars/contact双方の
+// テンプレート保存エンドポイントで共有するコンポーネント）。
+export function findUnknownPlaceholders(text: string, knownTokens: readonly string[]): string[] {
+  const found = new Set<string>();
+  for (const match of text.matchAll(/\{\{(\w+)\}\}/g)) {
+    const token = match[1];
+    if (token && !knownTokens.includes(token)) found.add(token);
+  }
+  return [...found];
 }
