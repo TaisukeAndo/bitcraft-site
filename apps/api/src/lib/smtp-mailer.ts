@@ -27,6 +27,8 @@ export type SendEmailInput = {
   subject: string;
   text: string;
   html?: string;
+  cc?: string[] | null;
+  bcc?: string[] | null;
 };
 
 export async function sendMail(env: Bindings, input: SendEmailInput): Promise<void> {
@@ -45,6 +47,8 @@ export async function sendMail(env: Bindings, input: SendEmailInput): Promise<vo
       subject: input.subject,
       text: input.text,
       html: input.html,
+      cc: input.cc?.length ? input.cc : undefined,
+      bcc: input.bcc?.length ? input.bcc : undefined,
     },
   );
 }

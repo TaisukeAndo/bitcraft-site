@@ -51,9 +51,11 @@ async function sendEmail(
   from: { name: string; email: string },
   subject: string,
   text: string,
+  cc?: string[] | null,
+  bcc?: string[] | null,
 ): Promise<SendResult> {
   try {
-    await sendMail(env, { to, from, subject, text });
+    await sendMail(env, { to, from, subject, text, cc, bcc });
     return { status: "sent" };
   } catch (error) {
     const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
@@ -146,6 +148,8 @@ export function registerContactRoutes(app: OpenAPIHono<{ Bindings: Bindings }>) 
                 { name: template.fromName, email: template.fromEmail },
                 renderEmailTemplate(template.subject, context),
                 renderEmailTemplate(template.bodyText, context),
+                template.cc,
+                template.bcc,
               )
             : Promise.resolve<SendResult>({ status: "skipped" });
 

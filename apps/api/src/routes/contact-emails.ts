@@ -11,6 +11,7 @@ import {
   toResolved,
   type ContactEmailTemplateKey,
 } from "../lib/contact-email-templates";
+import { encodeRecipients } from "../lib/email-recipients";
 
 const CONTACT_EMAIL_TEMPLATE_KEYS: ContactEmailTemplateKey[] = ["notification", "confirmation"];
 
@@ -23,6 +24,8 @@ const contactEmailTemplateResponseSchema = z.object({
   subject: z.string(),
   bodyText: z.string(),
   bodyHtml: z.string().nullable(),
+  cc: z.array(z.string()).nullable(),
+  bcc: z.array(z.string()).nullable(),
 });
 
 // お問い合わせの通知メール(notification)・自動返信メール(confirmation)の文面設定。
@@ -99,6 +102,8 @@ export function registerContactEmailRoutes(app: OpenAPIHono<{ Bindings: Bindings
       subject: body.subject ?? base.subject,
       bodyText: body.bodyText ?? base.bodyText,
       bodyHtml: body.bodyHtml === undefined ? base.bodyHtml : body.bodyHtml,
+      cc: body.cc === undefined ? encodeRecipients(base.cc ?? undefined) : encodeRecipients(body.cc),
+      bcc: body.bcc === undefined ? encodeRecipients(base.bcc ?? undefined) : encodeRecipients(body.bcc),
     };
 
     if (existing) {

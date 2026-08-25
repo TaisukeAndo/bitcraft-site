@@ -165,6 +165,8 @@ export const emailTemplates = sqliteTable(
     subject: text("subject").notNull(),
     bodyText: text("body_text").notNull(),
     bodyHtml: text("body_html"),
+    cc: text("cc"), // string[]のJSON。未設定はnull（lib/email-recipients.tsで符号化/復号）
+    bcc: text("bcc"), // string[]のJSON。未設定はnull
     createdAt: text("created_at")
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
@@ -300,6 +302,8 @@ export const contactEmailTemplates = sqliteTable(
     subject: text("subject").notNull(),
     bodyText: text("body_text").notNull(),
     bodyHtml: text("body_html"),
+    cc: text("cc"), // string[]のJSON。未設定はnull（lib/email-recipients.tsで符号化/復号）
+    bcc: text("bcc"), // string[]のJSON。未設定はnull
     createdAt: text("created_at")
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
