@@ -5,6 +5,7 @@ import {
 } from "@bitcraft/shared";
 import type { EmailTemplateRow, SeminarRow } from "@bitcraft/db";
 import type { Bindings } from "./bindings";
+import { sendMail } from "./smtp-mailer";
 
 function pickApplicantName(answers: ApplicationAnswers, fallback: string | null): string {
   const value = answers["name"];
@@ -56,7 +57,7 @@ export async function dispatchTemplatedEmail(
   };
 
   try {
-    await env.EMAIL.send({
+    await sendMail(env, {
       to,
       from: { email: content.fromEmail, name: content.fromName },
       subject: renderEmailTemplate(content.subject, context),

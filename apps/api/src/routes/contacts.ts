@@ -5,12 +5,17 @@ import { APPLICATION_EMAIL_SENDER_DOMAIN, contactStatusUpdateSchema, submitConta
 import type { Bindings } from "../lib/bindings";
 import { getDb } from "../lib/db";
 import { checkApiKey } from "../middleware/auth";
+import { sendMail } from "../lib/smtp-mailer";
 
 // 運用者への通知メールの宛先。@bitcraft.work宛先の前例が無く、現状サイト内で
 // 実際に使われている連絡先(トップページの「メールを送る」CTA)と同じ運用者の
 // 個人アドレスに揃える（ユーザー確認済み）。
 const ADMIN_NOTIFICATION_EMAIL = "ando1202taisuke@gmail.com";
-const FROM_EMAIL = `noreply@${APPLICATION_EMAIL_SENDER_DOMAIN}`;
+// contact@bitcraft.workはGmail側で「送信元アドレス」として検証済みのエイリアス
+// （ユーザー確認済み）。smtp-mailer.tsの認証はGmailアカウント本体で行うため、
+// Fromに指定できるのは実質このアドレスのみ（noreply@等、他の*@bitcraft.work
+// アドレスはGmail側の検証が無く送信失敗する）。
+const FROM_EMAIL = `contact@${APPLICATION_EMAIL_SENDER_DOMAIN}`;
 const FROM_NAME = "bitcraft";
 
 const contactResponseSchema = z.object({
@@ -50,7 +55,7 @@ async function sendEmail(
   text: string,
 ): Promise<SendResult> {
   try {
-    await env.EMAIL.send({ to, from: { email: FROM_EMAIL, name: FROM_NAME }, subject, text });
+    await sendMail(env, { to, from: { email: FROM_EMAIL, name: FROM_NAME }, subject, text });
     return { status: "sent" };
   } catch (error) {
     const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
