@@ -121,7 +121,12 @@ export const products = sqliteTable(
     title: text("title").notNull(), // 例: "Meet"
     subTitle: text("sub_title"), // カード上部の一言キャッチコピー
     description: text("description").notNull(),
-    imageUrl: text("image_url"), // 静的パス("/image/xxx.png")またはメディアURL("/media/<key>")
+    // imageUrl: 既存の静的パス("/image/xxx.png")等をそのまま指定する場合に使う。
+    // imageKey: /v1/media 経由でR2にアップロードした画像のキー。設定されていれば
+    // imageUrlより優先し、mediaUrl(imageKey)（"/media/<key>"）を表示に使う
+    // （news.ogImageKey/seminars.heroImageKeyと同じ仕組み。実装計画4章）。
+    imageUrl: text("image_url"),
+    imageKey: text("image_key"),
     href: text("href"), // NULL（または"#"）は「準備中です」のプレースホルダー扱い
     linkTitle: text("link_title"), // アンカーのtitle属性。未指定時はhrefの有無から既定値を導出する
     createdAt: text("created_at")
@@ -149,7 +154,9 @@ export const services = sqliteTable(
     sortOrder: integer("sort_order").notNull().default(0),
     title: text("title").notNull(),
     description: text("description").notNull(),
+    // imageUrl/imageKeyの使い分けはproductsと同じ（imageKey優先、無ければimageUrl）。
     imageUrl: text("image_url"),
+    imageKey: text("image_key"),
     href: text("href"),
     linkTitle: text("link_title"),
     createdAt: text("created_at")
@@ -283,9 +290,9 @@ export const media = sqliteTable(
     contentType: text("content_type").notNull(),
     sizeBytes: integer("size_bytes"),
     purpose: text("purpose", {
-      enum: ["news_og", "seminar_hero", "seminar_card", "seminar_speaker", "other"],
+      enum: ["news_og", "seminar_hero", "seminar_card", "seminar_speaker", "product_image", "service_image", "other"],
     }),
-    ownerType: text("owner_type", { enum: ["news", "seminar"] }),
+    ownerType: text("owner_type", { enum: ["news", "seminar", "product", "service"] }),
     ownerSlug: text("owner_slug"),
     uploadedAt: text("uploaded_at")
       .notNull()

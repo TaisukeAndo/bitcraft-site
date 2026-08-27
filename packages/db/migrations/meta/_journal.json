@@ -57,6 +57,13 @@
       "when": 1787807517158,
       "tag": "0007_romantic_mojo",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1787813492575,
+      "tag": "0008_green_silver_sable",
+      "breakpoints": true
     }
   ]
 }

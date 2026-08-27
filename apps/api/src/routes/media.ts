@@ -1,21 +1,48 @@
 import { createRoute, z, type OpenAPIHono } from "@hono/zod-openapi";
 import { desc, eq } from "drizzle-orm";
-import { media, news, seminars, type MediaRow } from "@bitcraft/db";
+import { media, news, products, seminars, services, type MediaRow } from "@bitcraft/db";
 import type { Bindings } from "../lib/bindings";
 import { getDb } from "../lib/db";
 import { checkApiKey } from "../middleware/auth";
 
-const PURPOSES = ["news_og", "seminar_hero", "seminar_card", "seminar_speaker", "other"] as const;
-const OWNER_TYPES = ["news", "seminar"] as const;
+const PURPOSES = [
+  "news_og",
+  "seminar_hero",
+  "seminar_card",
+  "seminar_speaker",
+  "product_image",
+  "service_image",
+  "other",
+] as const;
+const OWNER_TYPES = ["news", "seminar", "product", "service"] as const;
 
-// purpose('news_og'|'seminar_hero'|'seminar_card') が指定された場合、
-// 対応するレコードの *_image_key を自動更新する対応表（実装計画4章）。
+// ownerType単体からowner存在チェック対象のテーブルを引く（slug/idのみ使うので
+// テーブルごとの列差異は問題にならない）。
+function getOwnerTable(ownerType: (typeof OWNER_TYPES)[number]) {
+  switch (ownerType) {
+    case "news":
+      return news;
+    case "seminar":
+      return seminars;
+    case "product":
+      return products;
+    case "service":
+      return services;
+  }
+}
+
+// purpose('news_og'|'seminar_hero'|'seminar_card'|'product_image'|'service_image')
+// が指定された場合、対応するレコードの *_image_key を自動更新する対応表（実装計画4章）。
 // seminar_speakerはsections_json内(speakers.items[].photoKey)の一項目であり、
 // 一意な単一カラムに対応しないため自動更新の対象外（呼び出し側でPATCH /v1/seminars/{slug}経由で設定する）。
-const AUTO_LINK_COLUMN: Partial<Record<(typeof PURPOSES)[number], "ogImageKey" | "heroImageKey" | "cardImageKey">> = {
+const AUTO_LINK_COLUMN: Partial<
+  Record<(typeof PURPOSES)[number], "ogImageKey" | "heroImageKey" | "cardImageKey" | "imageKey">
+> = {
   news_og: "ogImageKey",
   seminar_hero: "heroImageKey",
   seminar_card: "cardImageKey",
+  product_image: "imageKey",
+  service_image: "imageKey",
 };
 
 const mediaResponseSchema = z.object({
@@ -47,7 +74,7 @@ function toResponse(row: MediaRow): z.infer<typeof mediaResponseSchema> {
 // R2へのメディアアップロードAPI。既存の画像（講師写真・OGP画像等）はオフラインの
 // generate_ogp.pyやwrangler r2 object putで投入してきたが、これをAPI経由でも
 // 行えるようにする（実装計画4章・9章）。owner_type/owner_slug/purposeを指定すると
-// 対応するnews/seminarsレコードの*_image_keyを自動でリンクする。
+// 対応するnews/seminars/products/servicesレコードの*_image_keyを自動でリンクする。
 export function registerMediaRoutes(app: OpenAPIHono<{ Bindings: Bindings }>) {
   // POST /v1/media -----------------------------------------------------------
   const uploadRoute = createRoute({
@@ -109,7 +136,7 @@ export function registerMediaRoutes(app: OpenAPIHono<{ Bindings: Bindings }>) {
     }
 
     if (ownerType && ownerSlug) {
-      const table = ownerType === "news" ? news : seminars;
+      const table = getOwnerTable(ownerType);
       const owner = await db.select({ id: table.id }).from(table).where(eq(table.slug, ownerSlug)).get();
       if (!owner) {
         return c.json({ error: `${ownerType} '${ownerSlug}' が見つかりません` }, 404);
@@ -148,6 +175,20 @@ export function registerMediaRoutes(app: OpenAPIHono<{ Bindings: Bindings }>) {
         .update(news)
         .set({ ogImageKey: key, updatedAt: new Date().toISOString() })
         .where(eq(news.slug, ownerSlug))
+        .run();
+    }
+    if (purpose === "product_image" && ownerType === "product" && ownerSlug) {
+      await db
+        .update(products)
+        .set({ imageKey: key, updatedAt: new Date().toISOString() })
+        .where(eq(products.slug, ownerSlug))
+        .run();
+    }
+    if (purpose === "service_image" && ownerType === "service" && ownerSlug) {
+      await db
+        .update(services)
+        .set({ imageKey: key, updatedAt: new Date().toISOString() })
+        .where(eq(services.slug, ownerSlug))
         .run();
     }
 

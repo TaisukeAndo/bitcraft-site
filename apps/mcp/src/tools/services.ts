@@ -13,6 +13,7 @@ const serviceCreateShape = {
   title: z.string().min(1),
   description: z.string().min(1),
   imageUrl: z.string().optional(),
+  imageKey: z.string().optional(),
   href: z.string().optional(),
   linkTitle: z.string().optional(),
 };
@@ -23,6 +24,7 @@ const serviceUpdateShape = {
   title: serviceCreateShape.title.optional(),
   description: serviceCreateShape.description.optional(),
   imageUrl: serviceCreateShape.imageUrl,
+  imageKey: serviceCreateShape.imageKey,
   href: serviceCreateShape.href,
   linkTitle: serviceCreateShape.linkTitle,
 };

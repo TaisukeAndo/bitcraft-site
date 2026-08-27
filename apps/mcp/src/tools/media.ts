@@ -4,8 +4,16 @@ import type { Bindings } from "../lib/bindings";
 import { callApi, callApiForm } from "../lib/api-client";
 import { apiResultToToolResult, jsonResult } from "../lib/tool-result";
 
-const PURPOSES = ["news_og", "seminar_hero", "seminar_card", "seminar_speaker", "other"] as const;
-const OWNER_TYPES = ["news", "seminar"] as const;
+const PURPOSES = [
+  "news_og",
+  "seminar_hero",
+  "seminar_card",
+  "seminar_speaker",
+  "product_image",
+  "service_image",
+  "other",
+] as const;
+const OWNER_TYPES = ["news", "seminar", "product", "service"] as const;
 
 function base64ToBytes(base64: string): Uint8Array {
   const binary = atob(base64);

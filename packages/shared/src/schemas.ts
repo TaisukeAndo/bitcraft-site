@@ -125,6 +125,7 @@ export const productCreateSchema = z.object({
   subTitle: z.string().optional(),
   description: z.string().min(1),
   imageUrl: z.string().optional(),
+  imageKey: z.string().optional(),
   href: z.string().optional(),
   linkTitle: z.string().optional(),
 });
@@ -138,6 +139,7 @@ export const serviceCreateSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
   imageUrl: z.string().optional(),
+  imageKey: z.string().optional(),
   href: z.string().optional(),
   linkTitle: z.string().optional(),
 });
