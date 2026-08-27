@@ -103,6 +103,68 @@ export const seminars = sqliteTable(
   }),
 );
 
+// products（旧Idea。トップページ#ideaセクションの事業アイデア一覧）------------------
+//
+// 表示ラベルは「Idea」から「Product」に変更したが、既存の #idea というid・CSSクラス
+// （idea/idea-list/idea-item等）はレガシー静的サイトと共有しているstyle.cssの
+// セレクタと一致させる必要があるため変更しない（表示テキストのみの改名）。
+// まだ詳細ページを持たないため、トップページのカード表示に必要な項目のみを持つ。
+export const products = sqliteTable(
+  "products",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    slug: text("slug").notNull().unique(),
+    status: text("status", { enum: ["draft", "published"] })
+      .notNull()
+      .default("published"),
+    sortOrder: integer("sort_order").notNull().default(0), // トップページでの表示順（昇順）
+    title: text("title").notNull(), // 例: "Meet"
+    subTitle: text("sub_title"), // カード上部の一言キャッチコピー
+    description: text("description").notNull(),
+    imageUrl: text("image_url"), // 静的パス("/image/xxx.png")またはメディアURL("/media/<key>")
+    href: text("href"), // NULL（または"#"）は「準備中です」のプレースホルダー扱い
+    linkTitle: text("link_title"), // アンカーのtitle属性。未指定時はhrefの有無から既定値を導出する
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    statusSortIdx: index("idx_products_status_sort").on(table.status, table.sortOrder),
+    statusCheck: check("products_status_check", sql`${table.status} IN ('draft', 'published')`),
+  }),
+);
+
+// services（トップページ#serviceセクションの提供サービス一覧。productsと同じ理由でDB管理化）--
+export const services = sqliteTable(
+  "services",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    slug: text("slug").notNull().unique(),
+    status: text("status", { enum: ["draft", "published"] })
+      .notNull()
+      .default("published"),
+    sortOrder: integer("sort_order").notNull().default(0),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    imageUrl: text("image_url"),
+    href: text("href"),
+    linkTitle: text("link_title"),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => ({
+    statusSortIdx: index("idx_services_status_sort").on(table.status, table.sortOrder),
+    statusCheck: check("services_status_check", sql`${table.status} IN ('draft', 'published')`),
+  }),
+);
+
 // applications（セミナー申込。Googleフォームを廃止しD1へ直接保存する）------------
 
 export const applications = sqliteTable(
@@ -320,6 +382,12 @@ export const contactEmailTemplates = sqliteTable(
 
 export type NewsRow = typeof news.$inferSelect;
 export type NewNewsRow = typeof news.$inferInsert;
+
+export type ProductRow = typeof products.$inferSelect;
+export type NewProductRow = typeof products.$inferInsert;
+
+export type ServiceRow = typeof services.$inferSelect;
+export type NewServiceRow = typeof services.$inferInsert;
 
 export type SeminarRow = typeof seminars.$inferSelect;
 export type NewSeminarRow = typeof seminars.$inferInsert;

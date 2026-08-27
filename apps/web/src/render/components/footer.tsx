@@ -23,7 +23,7 @@ export function Footer({ isHome = false }: { isHome?: boolean } = {}) {
               <a href={service}>- Service</a>
             </li>
             <li>
-              <a href={idea}>- Idea</a>
+              <a href={idea}>- Product</a>
             </li>
             <li>
               <a href={news}>- News</a>

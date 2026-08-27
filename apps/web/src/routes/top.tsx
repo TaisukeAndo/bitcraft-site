@@ -1,6 +1,6 @@
 import type { Hono } from "hono";
-import { desc, eq } from "drizzle-orm";
-import { news } from "@bitcraft/db";
+import { asc, desc, eq } from "drizzle-orm";
+import { news, products, services } from "@bitcraft/db";
 import type { Bindings } from "../lib/bindings";
 import { getDb } from "../lib/db";
 import { Layout, renderPage } from "../render/layout";
@@ -17,6 +17,19 @@ export function registerTopRoute(app: Hono<{ Bindings: Bindings }>) {
       .orderBy(desc(news.date))
       .limit(3);
 
+    // #service・#idea(Product)はsortOrder昇順で公開分を全件表示する
+    const publishedServices = await db
+      .select()
+      .from(services)
+      .where(eq(services.status, "published"))
+      .orderBy(asc(services.sortOrder));
+
+    const publishedProducts = await db
+      .select()
+      .from(products)
+      .where(eq(products.status, "published"))
+      .orderBy(asc(products.sortOrder));
+
     return c.html(
       renderPage(
         <Layout
@@ -26,7 +39,7 @@ export function registerTopRoute(app: Hono<{ Bindings: Bindings }>) {
           canonicalPath="/"
           isHome
         >
-          <TopPage latestNews={latestNews} />
+          <TopPage latestNews={latestNews} services={publishedServices} products={publishedProducts} />
         </Layout>,
       ),
     );
