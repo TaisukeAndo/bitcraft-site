@@ -14,6 +14,7 @@ const productCreateShape = {
   subTitle: z.string().optional(),
   description: z.string().min(1),
   imageUrl: z.string().optional(),
+  imageKey: z.string().optional(),
   href: z.string().optional(),
   linkTitle: z.string().optional(),
 };
@@ -25,6 +26,7 @@ const productUpdateShape = {
   subTitle: productCreateShape.subTitle,
   description: productCreateShape.description.optional(),
   imageUrl: productCreateShape.imageUrl,
+  imageKey: productCreateShape.imageKey,
   href: productCreateShape.href,
   linkTitle: productCreateShape.linkTitle,
 };

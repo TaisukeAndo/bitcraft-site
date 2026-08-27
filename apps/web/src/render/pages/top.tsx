@@ -1,10 +1,18 @@
 import type { FC } from "hono/jsx";
 import type { NewsRow, ProductRow, ServiceRow } from "@bitcraft/db";
+import { mediaUrl } from "../../lib/media-url";
 
 // href未設定（NULL/"#"）の項目は「準備中です」のプレースホルダー扱いにする
 // （移行前の静的マークアップの挙動を踏襲。実装計画3章）。
 function isPlaceholderHref(href: string | null): boolean {
   return !href || href === "#";
+}
+
+// imageKey（/v1/media経由でR2にアップロードした画像）が設定されていればそちらを
+// 優先し、無ければimageUrl（静的パス等）にフォールバックする
+// （news.ogImageKey等と同じ優先順位。実装計画4章）。
+function imageSrcFor(item: { imageKey: string | null; imageUrl: string | null }): string {
+  return mediaUrl(item.imageKey) ?? item.imageUrl ?? "";
 }
 
 function linkTitleFor(item: { href: string | null; linkTitle: string | null; title: string }): string {
@@ -65,7 +73,7 @@ export const TopPage: FC<{ latestNews: NewsRow[]; services: ServiceRow[]; produc
                 <li class="list-item">
                   <a href={item.href ?? "#"} title={linkTitleFor(item)} class="list-item-link">
                     <div class="service-image">
-                      <img src={item.imageUrl ?? ""} alt="イメージ" />
+                      <img src={imageSrcFor(item)} alt="イメージ" />
                     </div>
                     <div class="title">
                       <h3>{item.title}</h3>
@@ -91,7 +99,7 @@ export const TopPage: FC<{ latestNews: NewsRow[]; services: ServiceRow[]; produc
               {products.map((item) => (
                 <li class="idea-item">
                   <div class="idea-image">
-                    <img src={item.imageUrl ?? ""} alt="イメージ" />
+                    <img src={imageSrcFor(item)} alt="イメージ" />
                   </div>
                   <div class="idea-disc">
                     <p class="sub-title">{item.subTitle}</p>
