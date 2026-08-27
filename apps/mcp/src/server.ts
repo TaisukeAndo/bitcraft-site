@@ -1,6 +1,8 @@
 import { McpServer } from "@modelcontextprotocol/server";
 import type { Bindings } from "./lib/bindings";
 import { registerNewsTools } from "./tools/news";
+import { registerProductTools } from "./tools/products";
+import { registerServiceTools } from "./tools/services";
 import { registerSeminarTools } from "./tools/seminars";
 import { registerEmailTools } from "./tools/emails";
 import { registerMediaTools } from "./tools/media";
@@ -14,6 +16,8 @@ import { registerContactEmailTools } from "./tools/contact-emails";
 export function createServer(env: Bindings, token: string): McpServer {
   const server = new McpServer({ name: "bitcraft-cms", version: "1.0.0" });
   registerNewsTools(server, env, token);
+  registerProductTools(server, env, token);
+  registerServiceTools(server, env, token);
   registerSeminarTools(server, env, token);
   registerEmailTools(server, env, token);
   registerMediaTools(server, env, token);

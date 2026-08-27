@@ -410,7 +410,7 @@ footer{
     background-color: var(--base-color);
     color:var(--background-color);
     font-weight: 300;
-    padding-top: 20px;
+    padding-top: 40px;
     padding-bottom: 5px;
 }
 footer .footer-menu{
@@ -492,7 +492,7 @@ footer small, .policy{
         background-color: var(--base-color);
         color:var(--background-color);
         font-weight: 300;
-        padding-top: 20px;
+        padding-top: 40px;
         padding-bottom: 5px;
     }
     footer .footer-menu .image{

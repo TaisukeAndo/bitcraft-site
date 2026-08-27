@@ -31,7 +31,7 @@ export function Header({ isHome = false }: { isHome?: boolean } = {}) {
           </li>
           <li>
             <a class="menu-item" href={idea}>
-              Idea
+              Product
             </a>
           </li>
           <li>

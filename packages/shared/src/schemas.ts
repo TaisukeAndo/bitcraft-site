@@ -114,6 +114,36 @@ export const newsCreateSchema = z.object({
 
 export const newsUpdateSchema = newsCreateSchema.omit({ slug: true }).partial();
 
+// products/services の入力バリデーション（POST/PATCH /v1/products[/{slug}], /v1/services[/{slug}]）。
+// トップページ#idea(表示名はProduct)・#serviceセクションの一覧項目をDBで管理するための
+// CRUD入力。まだ詳細ページを持たないため、トップページのカード表示に必要な項目のみ持つ。
+export const productCreateSchema = z.object({
+  slug: slugSchema,
+  status: z.enum(["draft", "published"]).optional(),
+  sortOrder: z.number().int().optional(),
+  title: z.string().min(1),
+  subTitle: z.string().optional(),
+  description: z.string().min(1),
+  imageUrl: z.string().optional(),
+  href: z.string().optional(),
+  linkTitle: z.string().optional(),
+});
+
+export const productUpdateSchema = productCreateSchema.omit({ slug: true }).partial();
+
+export const serviceCreateSchema = z.object({
+  slug: slugSchema,
+  status: z.enum(["draft", "published"]).optional(),
+  sortOrder: z.number().int().optional(),
+  title: z.string().min(1),
+  description: z.string().min(1),
+  imageUrl: z.string().optional(),
+  href: z.string().optional(),
+  linkTitle: z.string().optional(),
+});
+
+export const serviceUpdateSchema = serviceCreateSchema.omit({ slug: true }).partial();
+
 // seminars.sections_json の入力バリデーション（POST/PATCH /v1/seminars[/{slug}]）。
 // SeminarSections（types.ts）と形を一致させる。
 export const seminarSectionsSchema = z.object({

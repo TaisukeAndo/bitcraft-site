@@ -1,9 +1,25 @@
 import type { FC } from "hono/jsx";
-import type { NewsRow } from "@bitcraft/db";
+import type { NewsRow, ProductRow, ServiceRow } from "@bitcraft/db";
 
-// トップページの#news部分はD1の最新3件で描画するが、Service/Idea/About/Contact
-// は既存コンテンツをそのまま踏襲した静的セクション（実装計画3章）。
-export const TopPage: FC<{ latestNews: NewsRow[] }> = ({ latestNews }) => {
+// href未設定（NULL/"#"）の項目は「準備中です」のプレースホルダー扱いにする
+// （移行前の静的マークアップの挙動を踏襲。実装計画3章）。
+function isPlaceholderHref(href: string | null): boolean {
+  return !href || href === "#";
+}
+
+function linkTitleFor(item: { href: string | null; linkTitle: string | null; title: string }): string {
+  if (item.linkTitle) return item.linkTitle;
+  return isPlaceholderHref(item.href) ? "準備中です。" : item.title;
+}
+
+// トップページの#news・#service・#idea(表示名はProduct)はD1駆動で描画する
+// （News/Service/Productとも実装計画3章）。About/Contactは既存コンテンツを
+// そのまま踏襲した静的セクション。
+export const TopPage: FC<{ latestNews: NewsRow[]; services: ServiceRow[]; products: ProductRow[] }> = ({
+  latestNews,
+  services,
+  products,
+}) => {
   return (
     <>
       <div class="loading">
@@ -45,148 +61,48 @@ export const TopPage: FC<{ latestNews: NewsRow[] }> = ({ latestNews }) => {
               <p>要件定義から設計・開発・運用まで、ITソリューションを一貫して提供します。</p>
             </div>
             <ul class="service-list">
-              <li class="list-item">
-                <a href="#" title="準備中です。" class="list-item-link">
-                  <div class="service-image">
-                    <img src="/image/service-design-img.png" alt="イメージ" />
-                  </div>
-                  <div class="title">
-                    <h3>UI / UX デザイン</h3>
-                    <i class="fa-solid fa-circle-chevron-right"></i>
-                  </div>
-                  <p>
-                    ユーザー視点を重視し、使いやすく魅力的なデザインを提供。優れた操作性を実現し、Web・アプリの価値を高めます。ユーザビリティ調査から設計まで一貫して対応します。
-                  </p>
-                </a>
-              </li>
-              <li class="list-item">
-                <a href="#" title="準備中です。" class="list-item-link">
-                  <div class="service-image">
-                    <img src="/image/service-web-img.png" alt="イメージ" />
-                  </div>
-                  <div class="title">
-                    <h3>Webサイト制作</h3>
-                    <i class="fa-solid fa-circle-chevron-right"></i>
-                  </div>
-                  <p>
-                    企業や個人の目的に合わせたWebサイトを設計・構築。デザイン性と機能性を両立し、SEOやモバイル対応も考慮。要件定義から運用サポートまで幅広く対応します。
-                  </p>
-                </a>
-              </li>
-              <li class="list-item">
-                <a href="#" title="準備中です。" class="list-item-link">
-                  <div class="service-image">
-                    <img src="/image/service-system-img.png" alt="イメージ" />
-                  </div>
-                  <div class="title">
-                    <h3>システム開発</h3>
-                    <i class="fa-solid fa-circle-chevron-right"></i>
-                  </div>
-                  <p>
-                    業務効率化や新規サービスの実現に向け、最適なシステムを開発。Webアプリや業務システム、API連携など、要件に応じた柔軟な設計・実装を行います。
-                  </p>
-                </a>
-              </li>
-              <li class="list-item">
-                <a href="#" title="準備中です。" class="list-item-link">
-                  <div class="service-image">
-                    <img src="/image/service-3dcg-img.png" alt="イメージ" />
-                  </div>
-                  <div class="title">
-                    <h3>映像・3DCG</h3>
-                    <i class="fa-solid fa-circle-chevron-right"></i>
-                  </div>
-                  <p>
-                    キャラクターモデリングやプロダクトデザインなど、高品質な3DCGを制作。ゲームや映像、VR/ARなど幅広い分野に対応し、視覚的に魅力あるコンテンツを提供します。
-                  </p>
-                </a>
-              </li>
-              <li class="list-item">
-                <a href="/service/seminar/" title="セミナー・ワークショップ" class="list-item-link">
-                  <div class="service-image">
-                    <img src="/image/service-education-img.jpg" alt="イメージ" />
-                  </div>
-                  <div class="title">
-                    <h3>セミナー・ワークショップ</h3>
-                    <i class="fa-solid fa-circle-chevron-right"></i>
-                  </div>
-                  <p>
-                    プログラミングやデザインなど、専門スキルを指導。初心者から実務レベルまで対応し、学習者の目標に合わせたカリキュラムを提供します。企業研修や個別指導も可能です。
-                  </p>
-                </a>
-              </li>
-              <li class="list-item">
-                <a href="#" title="準備中です。" class="list-item-link">
-                  <div class="service-image">
-                    <img src="/image/service-pm-img.png" alt="イメージ" />
-                  </div>
-                  <div class="title">
-                    <h3>マネージャー業務</h3>
-                    <i class="fa-solid fa-circle-chevron-right"></i>
-                  </div>
-                  <p>
-                    開発プロジェクトの進行管理や品質管理を担当。要件定義からスケジュール調整、チームビルディングまで、円滑なプロジェクト運営をサポートします。
-                  </p>
-                </a>
-              </li>
+              {services.map((item) => (
+                <li class="list-item">
+                  <a href={item.href ?? "#"} title={linkTitleFor(item)} class="list-item-link">
+                    <div class="service-image">
+                      <img src={item.imageUrl ?? ""} alt="イメージ" />
+                    </div>
+                    <div class="title">
+                      <h3>{item.title}</h3>
+                      <i class="fa-solid fa-circle-chevron-right"></i>
+                    </div>
+                    <p>{item.description}</p>
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
-        {/* Idea */}
+        {/* Product（旧Idea。id/クラス名はstyle.cssのセレクタと合わせるためidea/idea-*のまま） */}
         <div class="idea" id="idea">
           <div class="content">
             <p class="number-white">010</p>
             <div class="section-title">
-              <h2>Idea</h2>
+              <h2>Product</h2>
               <p>思いついた事業アイデアをここにメモしておきます。皆さんと一緒に形に出来たら嬉しいです。</p>
             </div>
             <ul class="idea-list">
-              <li class="idea-item">
-                <div class="idea-image">
-                  <img src="/image/idea-meet-image.png" alt="イメージ" />
-                </div>
-                <div class="idea-disc">
-                  <p class="sub-title">出会いやつながりを求める人のためのどこでも相席アプリ</p>
-                  <a class="title" href="#" alt="準備中です。">
-                    <h3>Meet</h3>
-                    <i class="fa-solid fa-circle-chevron-right"></i>
-                  </a>
-                  <p>
-                    「Meet」は18～30歳の若者を対象に、同じ趣味や食事仲間、異性との出会いを提供するマッチングサービス。人集め・日程調整・店選びの手間を省き、企画者が設定したイベントに参加者が応募する仕組みで、スムーズな出会いを実現。提携飲食店を会場とすることで、店舗の集客支援とマネタイズも可能にします。
-                  </p>
-                </div>
-              </li>
-              <li class="idea-item">
-                <div class="idea-image">
-                  <img src="/image/idea-feereal-image.png" alt="イメージ" />
-                </div>
-                <div class="idea-disc">
-                  <p class="sub-title">感情のインスタントシェアアプリ</p>
-                  <a class="title" href="#" alt="準備中です。">
-                    <h3>FeeReal</h3>
-                    <i class="fa-solid fa-circle-chevron-right"></i>
-                  </a>
-                  <p>
-                    「FeeReal」はユーザーが感情に関する問いかけに直感的に回答し、その結果を簡潔なビジュアルイメージとして各種SNSで簡単にシェアできます。これにより、言葉にしにくい感情を気軽に共有し、コミュニケーションにおける「温度感」のズレをなくすことを目指しています。
-                  </p>
-                </div>
-              </li>
-              <li class="idea-item">
-                <div class="idea-image">
-                  <img src="/image/idea-roughletter-image.png" alt="イメージ" />
-                </div>
-                <div class="idea-disc">
-                  <p class="sub-title">ビジネスチャンスを逃さない。メール文化に革命を。</p>
-                  <a class="title" href="#" alt="準備中です。">
-                    <h3>Rough Letter</h3>
-                    <i class="fa-solid fa-circle-chevron-right"></i>
-                  </a>
-                  <p>
-                    「Rough Letter」は、名刺交換後の会話内容を記録し、AIが自動でメールの下書きを作成する営業支援サービス。スタートアップやビジネスマン向けに、効率的なフォローアップを実現。添付ファイルや訴求内容も自動反映し、人別に整理されたチャット型UIで見逃し防止と返信サポートも提供します。
-                  </p>
-                </div>
-              </li>
+              {products.map((item) => (
+                <li class="idea-item">
+                  <div class="idea-image">
+                    <img src={item.imageUrl ?? ""} alt="イメージ" />
+                  </div>
+                  <div class="idea-disc">
+                    <p class="sub-title">{item.subTitle}</p>
+                    <a class="title" href={item.href ?? "#"} title={linkTitleFor(item)}>
+                      <h3>{item.title}</h3>
+                      <i class="fa-solid fa-circle-chevron-right"></i>
+                    </a>
+                    <p>{item.description}</p>
+                  </div>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

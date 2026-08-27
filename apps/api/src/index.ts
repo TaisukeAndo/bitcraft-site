@@ -6,6 +6,8 @@ import { registerSeminarApplicationRoutes } from "./routes/seminars";
 import { registerSeminarCrudRoutes } from "./routes/seminars-crud";
 import { registerEmailTemplateRoutes } from "./routes/emails";
 import { registerNewsRoutes } from "./routes/news";
+import { registerProductRoutes } from "./routes/products";
+import { registerServiceRoutes } from "./routes/services";
 import { registerMediaRoutes } from "./routes/media";
 import { registerApiKeyRoutes } from "./routes/api-keys";
 import { registerContactRoutes } from "./routes/contacts";
@@ -67,6 +69,8 @@ app.openapi(authVerifyRoute, async (c) => {
 });
 
 registerNewsRoutes(app);
+registerProductRoutes(app);
+registerServiceRoutes(app);
 registerSeminarCrudRoutes(app);
 registerSeminarApplicationRoutes(app);
 registerEmailTemplateRoutes(app);
